@@ -1,0 +1,37 @@
+# Workspace root — tooling configuration and dev dependencies.
+# The installable packages live under packages/*; this root is not a package.
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8",
+    "mypy>=1.13",
+    "pytest>=8.3",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "SIM", # flake8-simplify
+    "C4",  # flake8-comprehensions
+    "RUF", # ruff-specific
+]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["packages", "tests"]
+exclude = ["build", "dist"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "packages"]
+addopts = "-q --strict-markers"
