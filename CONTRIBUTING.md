@@ -15,6 +15,11 @@
 - No secrets, personal data or client content.
 - Architecture decisions recorded in `docs/adr/`.
 - WCAG 2.2 AA accessibility as the baseline for the admin panel and reference theme.
+- **Docs move with the code**: any change that affects behavior, structure or
+  plans updates README/PLAN/ADRs in the same commit. `tests/test_docs.py`
+  compares the docs against the code in CI, so drift fails the build — when
+  adding a documented fact worth guarding, add its check there too. Keep each
+  fact in one authoritative document and link to it instead of repeating it.
 
 ## Commands (target)
 
