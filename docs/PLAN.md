@@ -31,9 +31,10 @@ Short plan by milestones, per the brief ([BRIEF.md](BRIEF.md)). Small increments
       extensibility contracts); page state aggregates its sections (worst wins)
 - [x] Media assets: mandatory EN alt text, translatable alt, image dimensions
       required, safe relative paths
-- [ ] Server backends: PostgreSQL (prod target), SQL Server, MySQL/MariaDB —
-      implement behind the ADR-0004 interface; shared-layer decision (e.g.
-      SQLAlchemy) gets its own ADR; test via project-prefixed Docker containers
+- [x] PostgreSQL backend ([ADR-0009](adr/0009-postgres-backend.md)): psycopg 3,
+      optional extra `cms-core[postgres]`, shared ANSI migration history,
+      conformance suite green in CI (service container) and locally (Docker)
+- [ ] SQL Server and MySQL/MariaDB backends — same mold as ADR-0009
 
 > **PoC anchor:** Milestones 2 and 4 are executed against a concrete target —
 > reproducing the ph7x.com architecture (URL tree, head contract, design
@@ -105,6 +106,33 @@ Small pending items: GitHub social preview upload (owner, web UI only);
 reserve the PyPI names (`stillsite`; decide `stillsite-*` vs `cms-*`
 distribution naming at first release, with an ADR); rename the local working
 folder to match the project name.
+
+## Demo readiness plan (stillsite.ph7x.com)
+
+The public demo is live and auto-deployed from `main`. "Demo = ready" means a
+visitor can judge the product from it. Phases, in execution order:
+
+1. **Infrastructure** — ✅ done: Azure SWA Free, custom domain + SSL,
+   deploy-on-merge workflow building with the real CLI.
+2. **PostgreSQL backend (closes Milestone 1)** — the ADR-0004 conformance
+   suite runs against PostgreSQL in CI (service container) and locally
+   (project-prefixed Docker container). Acceptance: same tests, two engines,
+   zero test changes.
+3. **Demo content** — seed grows to a realistic fictional site: ~6 articles
+   across 2–3 categories with tags (exercises pagination, category and tag
+   pages), an about page, and at least one image via the media pipeline.
+   Acceptance: every generated surface is reachable from the demo home page.
+4. **Client-side search** — small theme script consuming the per-language
+   `search-index.json` (the index already ships). Acceptance: typing in the
+   blog page filters articles, no external requests.
+5. **Reference theme (Milestone 4)** — `cms-theme-ph7x-reference` implements
+   the PoC design system (tokens, Inter/Newsreader local fonts, 820px
+   breakpoint, dark editorial look, effects); the demo switches to it via
+   `theme = "ph7x-reference"`. Acceptance: theme conformance tests green
+   (hidden rule, no inline styles, local fonts only, reduced-motion).
+6. **Ready gate** — WCAG 2.2 AA automated checks green on the built demo,
+   all five languages complete, README quickstart links the demo, social
+   preview uploaded. Then the Milestone 4 announcement.
 
 ## Extensibility contracts (cross-milestone)
 

@@ -102,7 +102,9 @@ README promises. Grows one check per new guarded fact.
 | Example build (seed→validate→build→export via the CLI) | job `Example build` | in force |
 | Head contract + determinism + URL tree | `tests/test_builder.py`, `tests/test_cli.py` | in force |
 | Full PoC structural parity (categories, pagination, JSON-LD) | extend at M2 follow-ups | planned |
-| Backend conformance (Docker engines) | new job/matrix at M1-completion | planned |
+| Backend conformance (PostgreSQL service container) | job `Backend conformance (PostgreSQL)` | in force |
+| Output integrity (HTML refs, CSS urls, theme assets) | `tests/test_output_integrity.py` | in force |
+| Backend conformance (SQL Server, MySQL) | same mold when implemented | planned |
 | Accessibility (axe) + no-scroll checks | new job at M4 | planned |
 | Coverage floor (fail under threshold) | add with M2, target ≥90% on packages | planned |
 

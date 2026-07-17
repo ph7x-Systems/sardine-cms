@@ -1,6 +1,8 @@
-"""Backend round-trips and migration behavior (SQLite backend via the factory)."""
+"""Backend conformance suite (ADR-0004): every engine must pass unchanged.
 
-from pathlib import Path
+The `backend` fixture (tests/conftest.py) parameterizes these tests over all
+implemented engines — SQLite always, PostgreSQL when a server is available.
+"""
 
 from cms_core import (
     ArticleContent,
@@ -13,32 +15,27 @@ from cms_core import (
     new_article,
     new_page,
 )
-from cms_core.storage import MIGRATIONS, StorageBackend, create_storage
+from cms_core.storage import MIGRATIONS, StorageBackend
 
 
-def open_backend(tmp_path: Path) -> StorageBackend:
-    return create_storage(f"sqlite:///{tmp_path / 'cms.sqlite3'}")
-
-
-def test_connect_applies_all_migrations(tmp_path: Path) -> None:
-    backend = open_backend(tmp_path)
+def test_connect_applies_all_migrations(backend: StorageBackend) -> None:
     assert backend.schema_version() == len(MIGRATIONS)
     # A second migrate call is a no-op, not an error.
     assert backend.migrate() == len(MIGRATIONS)
 
 
-def test_article_round_trip(tmp_path: Path) -> None:
-    backend = open_backend(tmp_path)
+def test_article_round_trip(backend: StorageBackend) -> None:
     article = new_article("first-post", ArticleContent(title="First", body_markdown="Hello."))
     article.set_translation(Language.PT_PT, ArticleContent(title="Primeiro", body_markdown="Olá."))
     article.status = ContentStatus.REVIEW
+    article.category = "field-notes"
+    article.tags = ("craft", "maps")
 
     backend.save_article(article)
     assert backend.load_article("first-post") == article
 
 
-def test_save_is_an_upsert(tmp_path: Path) -> None:
-    backend = open_backend(tmp_path)
+def test_save_is_an_upsert(backend: StorageBackend) -> None:
     article = new_article("first-post", ArticleContent(title="First"))
     backend.save_article(article)
 
@@ -52,8 +49,7 @@ def test_save_is_an_upsert(tmp_path: Path) -> None:
     assert set(loaded.translations) == {Language.ES}
 
 
-def test_delete_cascades_to_translations(tmp_path: Path) -> None:
-    backend = open_backend(tmp_path)
+def test_delete_cascades_to_translations(backend: StorageBackend) -> None:
     article = new_article("first-post", ArticleContent(title="First"))
     article.set_translation(Language.FR, ArticleContent(title="Premier"))
     backend.save_article(article)
@@ -63,13 +59,11 @@ def test_delete_cascades_to_translations(tmp_path: Path) -> None:
     assert backend.list_article_ids() == []
 
 
-def test_missing_article_loads_as_none(tmp_path: Path) -> None:
-    backend = open_backend(tmp_path)
+def test_missing_article_loads_as_none(backend: StorageBackend) -> None:
     assert backend.load_article("nope") is None
 
 
-def test_page_round_trip_preserves_section_order(tmp_path: Path) -> None:
-    backend = open_backend(tmp_path)
+def test_page_round_trip_preserves_section_order(backend: StorageBackend) -> None:
     page = new_page("home", PageContent(title="Home", slug="home"))
     for key in ("hero", "features", "contact"):
         page.sections.append(
@@ -87,8 +81,7 @@ def test_page_round_trip_preserves_section_order(tmp_path: Path) -> None:
     assert [section.key for section in loaded.sections] == ["hero", "features", "contact"]
 
 
-def test_page_delete_removes_page(tmp_path: Path) -> None:
-    backend = open_backend(tmp_path)
+def test_page_delete_removes_page(backend: StorageBackend) -> None:
     page = new_page("home", PageContent(title="Home", slug="home"))
     hero = Section(key="hero", kind="hero", source=SectionContent(fields={"heading": "Welcome"}))
     hero.set_translation(Language.FR, SectionContent(fields={"heading": "Bienvenue"}))
@@ -97,12 +90,10 @@ def test_page_delete_removes_page(tmp_path: Path) -> None:
 
     assert backend.delete_page("home")
     assert backend.list_page_ids() == []
-    reloaded = backend.load_page("home")
-    assert reloaded is None
+    assert backend.load_page("home") is None
 
 
-def test_media_round_trip_and_delete(tmp_path: Path) -> None:
-    backend = open_backend(tmp_path)
+def test_media_round_trip_and_delete(backend: StorageBackend) -> None:
     asset = MediaAsset(
         id="logo",
         path="images/logo.svg",
@@ -119,8 +110,15 @@ def test_media_round_trip_and_delete(tmp_path: Path) -> None:
     assert backend.load_media_asset("logo") is None
 
 
-def test_load_all_collections(tmp_path: Path) -> None:
-    backend = open_backend(tmp_path)
+def test_has_content_reflects_all_collections(backend: StorageBackend) -> None:
+    assert not backend.has_content()
+    backend.save_page(new_page("home", PageContent(title="Home", slug="home")))
+    assert backend.has_content()
+    backend.delete_page("home")
+    assert not backend.has_content()
+
+
+def test_load_all_collections(backend: StorageBackend) -> None:
     backend.save_article(new_article("b-post", ArticleContent(title="B")))
     backend.save_article(new_article("a-post", ArticleContent(title="A")))
     backend.save_page(new_page("home", PageContent(title="Home", slug="home")))
@@ -130,6 +128,6 @@ def test_load_all_collections(tmp_path: Path) -> None:
     assert backend.load_all_media_assets() == []
 
 
-def test_backend_is_a_context_manager(tmp_path: Path) -> None:
-    with open_backend(tmp_path) as backend:
-        backend.save_article(new_article("post", ArticleContent(title="Post")))
+def test_backend_is_a_context_manager(backend: StorageBackend) -> None:
+    with backend as storage:
+        storage.save_article(new_article("post", ArticleContent(title="Post")))

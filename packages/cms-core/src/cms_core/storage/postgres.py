@@ -1,13 +1,14 @@
-"""SQLite backend (development default).
+"""PostgreSQL backend (production target).
 
-Schema migrations are ordered scripts applied once each, tracked via SQLite's
-``user_version`` pragma.
+Driver: psycopg 3 — an optional dependency (`pip install cms-core[postgres]`).
+Applies the same shared migration history as SQLite, tracked in a
+``schema_migrations`` table. All statements are parameterized; each write is
+one transaction.
 """
 
 import json
-import sqlite3
 from datetime import datetime
-from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
 from cms_core.languages import Language
 from cms_core.media import MediaAsset
@@ -16,48 +17,45 @@ from cms_core.pages import Page, PageContent, Section, SectionContent
 from cms_core.states import ContentStatus
 from cms_core.storage.base import StorageBackend
 from cms_core.storage.migrations import MIGRATIONS
-
-__all__ = ["MIGRATIONS", "SQLiteBackend", "sqlite_path_from_location"]
 from cms_core.translatable import Translation
 
-
-def sqlite_path_from_location(location: str) -> str:
-    """Translate the URL location part into a filesystem path.
-
-    ``sqlite:///relative.db`` -> ``relative.db``;
-    ``sqlite:////abs/path.db`` -> ``/abs/path.db``;
-    ``:memory:`` (with or without a leading slash) is passed through.
-    """
-    path = location.removeprefix("/")
-    if path == ":memory:":
-        return path
-    if location.startswith("//"):
-        return location[1:]
-    return path
+if TYPE_CHECKING:
+    import psycopg
 
 
-class SQLiteBackend(StorageBackend):
-    def __init__(self, path: Path | str) -> None:
-        self._connection = sqlite3.connect(path)
-        self._connection.execute("PRAGMA foreign_keys = ON")
-        self._connection.execute("PRAGMA busy_timeout = 5000")
-        # WAL survives crashes without blocking readers; NORMAL sync is the
-        # recommended pairing (durable at the application level, fast).
-        # In-memory databases report "memory" and are unaffected.
-        self._connection.execute("PRAGMA journal_mode = WAL")
-        self._connection.execute("PRAGMA synchronous = NORMAL")
+def _connect(dsn: str) -> "psycopg.Connection[Any]":
+    try:
+        import psycopg
+    except ImportError as error:  # pragma: no cover - exercised without the extra
+        raise ImportError(
+            "the PostgreSQL backend needs the optional dependency: pip install 'cms-core[postgres]'"
+        ) from error
+    return psycopg.connect(dsn)
+
+
+class PostgresBackend(StorageBackend):
+    def __init__(self, dsn: str) -> None:
+        self._connection = _connect(dsn)
         self.migrate()
 
     def schema_version(self) -> int:
-        row = self._connection.execute("PRAGMA user_version").fetchone()
-        return int(row[0])
+        with self._connection.transaction():
+            self._connection.execute(
+                "CREATE TABLE IF NOT EXISTS schema_migrations (version INTEGER PRIMARY KEY)"
+            )
+        row = self._connection.execute(
+            "SELECT COALESCE(MAX(version), 0) FROM schema_migrations"
+        ).fetchone()
+        return int(row[0]) if row else 0
 
     def migrate(self) -> int:
         current = self.schema_version()
         for number, script in enumerate(MIGRATIONS[current:], start=current + 1):
-            self._connection.executescript(script)
-            self._connection.execute(f"PRAGMA user_version = {number}")
-            self._connection.commit()
+            with self._connection.transaction():
+                self._connection.execute(script)
+                self._connection.execute(
+                    "INSERT INTO schema_migrations (version) VALUES (%s)", (number,)
+                )
         return self.schema_version()
 
     def close(self) -> None:
@@ -66,13 +64,13 @@ class SQLiteBackend(StorageBackend):
     # Articles
 
     def save_article(self, article: Article) -> None:
-        with self._connection as connection:
-            connection.execute(
+        with self._connection.transaction():
+            self._connection.execute(
                 "INSERT INTO articles"
                 " (id, status, created_at, updated_at, title, summary, body_markdown, slug,"
                 "  category, tags_json)"
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-                " ON CONFLICT(id) DO UPDATE SET"
+                " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                " ON CONFLICT (id) DO UPDATE SET"
                 " status = excluded.status, updated_at = excluded.updated_at,"
                 " title = excluded.title, summary = excluded.summary,"
                 " body_markdown = excluded.body_markdown, slug = excluded.slug,"
@@ -90,12 +88,17 @@ class SQLiteBackend(StorageBackend):
                     json.dumps(list(article.tags)),
                 ),
             )
-            connection.execute("DELETE FROM translations WHERE article_id = ?", (article.id,))
-            connection.executemany(
-                "INSERT INTO translations"
-                " (article_id, language, title, summary, body_markdown, slug, source_checksum)"
-                " VALUES (?, ?, ?, ?, ?, ?, ?)",
-                [
+            self._connection.execute(
+                "DELETE FROM translations WHERE article_id = %s", (article.id,)
+            )
+            for language, translation in sorted(
+                article.translations.items(), key=lambda item: item[0].value
+            ):
+                self._connection.execute(
+                    "INSERT INTO translations"
+                    " (article_id, language, title, summary, body_markdown, slug,"
+                    "  source_checksum)"
+                    " VALUES (%s, %s, %s, %s, %s, %s, %s)",
                     (
                         article.id,
                         language.value,
@@ -104,18 +107,14 @@ class SQLiteBackend(StorageBackend):
                         translation.content.body_markdown,
                         translation.content.slug,
                         translation.source_checksum,
-                    )
-                    for language, translation in sorted(
-                        article.translations.items(), key=lambda item: item[0].value
-                    )
-                ],
-            )
+                    ),
+                )
 
     def load_article(self, article_id: str) -> Article | None:
         row = self._connection.execute(
             "SELECT id, status, created_at, updated_at, title, summary, body_markdown, slug,"
             " category, tags_json"
-            " FROM articles WHERE id = ?",
+            " FROM articles WHERE id = %s",
             (article_id,),
         ).fetchone()
         if row is None:
@@ -123,7 +122,7 @@ class SQLiteBackend(StorageBackend):
         translations: dict[Language, Translation[ArticleContent]] = {}
         for t_row in self._connection.execute(
             "SELECT language, title, summary, body_markdown, slug, source_checksum"
-            " FROM translations WHERE article_id = ? ORDER BY language",
+            " FROM translations WHERE article_id = %s ORDER BY language",
             (article_id,),
         ):
             translations[Language(t_row[0])] = Translation[ArticleContent](
@@ -144,8 +143,8 @@ class SQLiteBackend(StorageBackend):
         )
 
     def delete_article(self, article_id: str) -> bool:
-        with self._connection as connection:
-            cursor = connection.execute("DELETE FROM articles WHERE id = ?", (article_id,))
+        with self._connection.transaction():
+            cursor = self._connection.execute("DELETE FROM articles WHERE id = %s", (article_id,))
         return cursor.rowcount > 0
 
     def list_article_ids(self) -> list[str]:
@@ -155,11 +154,11 @@ class SQLiteBackend(StorageBackend):
     # Pages
 
     def save_page(self, page: Page) -> None:
-        with self._connection as connection:
-            connection.execute(
+        with self._connection.transaction():
+            self._connection.execute(
                 "INSERT INTO pages (id, status, created_at, updated_at, title, description, slug)"
-                " VALUES (?, ?, ?, ?, ?, ?, ?)"
-                " ON CONFLICT(id) DO UPDATE SET"
+                " VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                " ON CONFLICT (id) DO UPDATE SET"
                 " status = excluded.status, updated_at = excluded.updated_at,"
                 " title = excluded.title, description = excluded.description,"
                 " slug = excluded.slug",
@@ -173,12 +172,14 @@ class SQLiteBackend(StorageBackend):
                     page.source.slug,
                 ),
             )
-            connection.execute("DELETE FROM page_translations WHERE page_id = ?", (page.id,))
-            connection.executemany(
-                "INSERT INTO page_translations"
-                " (page_id, language, title, description, slug, source_checksum)"
-                " VALUES (?, ?, ?, ?, ?, ?)",
-                [
+            self._connection.execute("DELETE FROM page_translations WHERE page_id = %s", (page.id,))
+            for language, translation in sorted(
+                page.translations.items(), key=lambda item: item[0].value
+            ):
+                self._connection.execute(
+                    "INSERT INTO page_translations"
+                    " (page_id, language, title, description, slug, source_checksum)"
+                    " VALUES (%s, %s, %s, %s, %s, %s)",
                     (
                         page.id,
                         language.value,
@@ -186,17 +187,13 @@ class SQLiteBackend(StorageBackend):
                         translation.content.description,
                         translation.content.slug,
                         translation.source_checksum,
-                    )
-                    for language, translation in sorted(
-                        page.translations.items(), key=lambda item: item[0].value
-                    )
-                ],
-            )
-            connection.execute("DELETE FROM sections WHERE page_id = ?", (page.id,))
+                    ),
+                )
+            self._connection.execute("DELETE FROM sections WHERE page_id = %s", (page.id,))
             for position, section in enumerate(page.sections):
-                connection.execute(
+                self._connection.execute(
                     "INSERT INTO sections (page_id, key, position, kind, fields_json, media_json)"
-                    " VALUES (?, ?, ?, ?, ?, ?)",
+                    " VALUES (%s, %s, %s, %s, %s, %s)",
                     (
                         page.id,
                         section.key,
@@ -206,36 +203,35 @@ class SQLiteBackend(StorageBackend):
                         json.dumps(section.source.media),
                     ),
                 )
-                connection.executemany(
-                    "INSERT INTO section_translations"
-                    " (page_id, section_key, language, fields_json, media_json, source_checksum)"
-                    " VALUES (?, ?, ?, ?, ?, ?)",
-                    [
+                for section_language, section_translation in sorted(
+                    section.translations.items(), key=lambda item: item[0].value
+                ):
+                    self._connection.execute(
+                        "INSERT INTO section_translations"
+                        " (page_id, section_key, language, fields_json, media_json,"
+                        "  source_checksum)"
+                        " VALUES (%s, %s, %s, %s, %s, %s)",
                         (
                             page.id,
                             section.key,
-                            language.value,
-                            json.dumps(translation.content.fields, sort_keys=True),
-                            json.dumps(translation.content.media),
-                            translation.source_checksum,
-                        )
-                        for language, translation in sorted(
-                            section.translations.items(), key=lambda item: item[0].value
-                        )
-                    ],
-                )
+                            section_language.value,
+                            json.dumps(section_translation.content.fields, sort_keys=True),
+                            json.dumps(section_translation.content.media),
+                            section_translation.source_checksum,
+                        ),
+                    )
 
     def _load_sections(self, page_id: str) -> list[Section]:
         sections: list[Section] = []
         for row in self._connection.execute(
             "SELECT key, kind, fields_json, media_json FROM sections"
-            " WHERE page_id = ? ORDER BY position",
+            " WHERE page_id = %s ORDER BY position",
             (page_id,),
-        ):
+        ).fetchall():
             translations: dict[Language, Translation[SectionContent]] = {}
             for t_row in self._connection.execute(
                 "SELECT language, fields_json, media_json, source_checksum"
-                " FROM section_translations WHERE page_id = ? AND section_key = ?"
+                " FROM section_translations WHERE page_id = %s AND section_key = %s"
                 " ORDER BY language",
                 (page_id, row[0]),
             ):
@@ -256,7 +252,7 @@ class SQLiteBackend(StorageBackend):
     def load_page(self, page_id: str) -> Page | None:
         row = self._connection.execute(
             "SELECT id, status, created_at, updated_at, title, description, slug"
-            " FROM pages WHERE id = ?",
+            " FROM pages WHERE id = %s",
             (page_id,),
         ).fetchone()
         if row is None:
@@ -264,7 +260,7 @@ class SQLiteBackend(StorageBackend):
         translations: dict[Language, Translation[PageContent]] = {}
         for t_row in self._connection.execute(
             "SELECT language, title, description, slug, source_checksum"
-            " FROM page_translations WHERE page_id = ? ORDER BY language",
+            " FROM page_translations WHERE page_id = %s ORDER BY language",
             (page_id,),
         ):
             translations[Language(t_row[0])] = Translation[PageContent](
@@ -278,12 +274,12 @@ class SQLiteBackend(StorageBackend):
             updated_at=datetime.fromisoformat(row[3]),
             source=PageContent(title=row[4], description=row[5], slug=row[6]),
             translations=translations,
-            sections=self._load_sections(page_id),
+            sections=self._load_sections(row[0]),
         )
 
     def delete_page(self, page_id: str) -> bool:
-        with self._connection as connection:
-            cursor = connection.execute("DELETE FROM pages WHERE id = ?", (page_id,))
+        with self._connection.transaction():
+            cursor = self._connection.execute("DELETE FROM pages WHERE id = %s", (page_id,))
         return cursor.rowcount > 0
 
     def list_page_ids(self) -> list[str]:
@@ -293,27 +289,25 @@ class SQLiteBackend(StorageBackend):
     # Media
 
     def save_media_asset(self, asset: MediaAsset) -> None:
-        with self._connection as connection:
-            connection.execute(
+        with self._connection.transaction():
+            self._connection.execute(
                 "INSERT INTO media_assets (id, path, mime_type, width, height)"
-                " VALUES (?, ?, ?, ?, ?)"
-                " ON CONFLICT(id) DO UPDATE SET"
+                " VALUES (%s, %s, %s, %s, %s)"
+                " ON CONFLICT (id) DO UPDATE SET"
                 " path = excluded.path, mime_type = excluded.mime_type,"
                 " width = excluded.width, height = excluded.height",
                 (asset.id, asset.path, asset.mime_type, asset.width, asset.height),
             )
-            connection.execute("DELETE FROM media_alt_texts WHERE media_id = ?", (asset.id,))
-            connection.executemany(
-                "INSERT INTO media_alt_texts (media_id, language, alt) VALUES (?, ?, ?)",
-                [
-                    (asset.id, language.value, alt)
-                    for language, alt in sorted(asset.alt.items(), key=lambda item: item[0].value)
-                ],
-            )
+            self._connection.execute("DELETE FROM media_alt_texts WHERE media_id = %s", (asset.id,))
+            for language, alt in sorted(asset.alt.items(), key=lambda item: item[0].value):
+                self._connection.execute(
+                    "INSERT INTO media_alt_texts (media_id, language, alt) VALUES (%s, %s, %s)",
+                    (asset.id, language.value, alt),
+                )
 
     def load_media_asset(self, asset_id: str) -> MediaAsset | None:
         row = self._connection.execute(
-            "SELECT id, path, mime_type, width, height FROM media_assets WHERE id = ?",
+            "SELECT id, path, mime_type, width, height FROM media_assets WHERE id = %s",
             (asset_id,),
         ).fetchone()
         if row is None:
@@ -321,7 +315,7 @@ class SQLiteBackend(StorageBackend):
         alt = {
             Language(alt_row[0]): str(alt_row[1])
             for alt_row in self._connection.execute(
-                "SELECT language, alt FROM media_alt_texts WHERE media_id = ? ORDER BY language",
+                "SELECT language, alt FROM media_alt_texts WHERE media_id = %s ORDER BY language",
                 (asset_id,),
             )
         }
@@ -330,8 +324,8 @@ class SQLiteBackend(StorageBackend):
         )
 
     def delete_media_asset(self, asset_id: str) -> bool:
-        with self._connection as connection:
-            cursor = connection.execute("DELETE FROM media_assets WHERE id = ?", (asset_id,))
+        with self._connection.transaction():
+            cursor = self._connection.execute("DELETE FROM media_assets WHERE id = %s", (asset_id,))
         return cursor.rowcount > 0
 
     def list_media_ids(self) -> list[str]:
