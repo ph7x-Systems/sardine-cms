@@ -23,7 +23,10 @@ Short plan by milestones, per the brief ([BRIEF.md](BRIEF.md)). Small increments
 - [x] PoC persistence: SQLite via stdlib `sqlite3`, no ORM yet ([ADR-0003](adr/0003-sqlite-poc-persistence.md))
 - [x] Versioned migrations (ordered scripts tracked via `user_version`)
 - [x] Deterministic JSON/Markdown export as the portable source of truth
-- [ ] Remaining schemas: pages, sections, media
+- [x] Pages composed of typed sections (`kind` maps to a theme template per the
+      extensibility contracts); page state aggregates its sections (worst wins)
+- [x] Media assets: mandatory EN alt text, translatable alt, image dimensions
+      required, safe relative paths
 - [ ] PostgreSQL backend (prod) — ORM/query-layer decision gets its own ADR
 
 ## Milestone 2 — Validation and build

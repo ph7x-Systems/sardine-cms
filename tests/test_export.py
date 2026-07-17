@@ -24,7 +24,7 @@ def test_export_is_deterministic_and_sorted() -> None:
     payload = json.loads(first)
     ids = [entry["id"] for entry in payload["articles"]]
     assert ids == sorted(ids)
-    assert payload["schema_version"] == 1
+    assert payload["schema_version"] == 2
 
 
 def test_export_records_translation_states() -> None:
@@ -48,3 +48,32 @@ def test_markdown_files_end_with_single_newline() -> None:
     for content in export_markdown_files(make_articles()).values():
         assert content.endswith("\n")
         assert not content.endswith("\n\n")
+
+
+def test_export_includes_pages_and_media() -> None:
+    from cms_core import Language, MediaAsset, PageContent, Section, SectionContent, new_page
+
+    page = new_page("home", PageContent(title="Home", slug="home"), now=FIXED_NOW)
+    hero = Section(key="hero", kind="hero", source=SectionContent(fields={"heading": "Welcome"}))
+    page.sections.append(hero)
+    hero.set_translation(Language.PT_PT, SectionContent(fields={"heading": "Bem-vindo"}))
+    asset = MediaAsset(
+        id="hero-image",
+        path="images/hero.webp",
+        mime_type="image/webp",
+        width=1600,
+        height=900,
+        alt={Language.EN: "A sunrise"},
+    )
+
+    first = export_content_json([], pages=[page], media=[asset])
+    second = export_content_json([], pages=[page], media=[asset])
+    assert first == second
+
+    payload = json.loads(first)
+    exported_page = payload["pages"][0]
+    assert exported_page["id"] == "home"
+    assert exported_page["sections"][0]["kind"] == "hero"
+    assert exported_page["sections"][0]["languages"]["pt-pt"]["state"] == "complete"
+    assert payload["media"][0]["alt"] == {"en": "A sunrise"}
+    assert payload["media"][0]["width"] == 1600

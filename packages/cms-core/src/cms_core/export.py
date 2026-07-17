@@ -8,7 +8,9 @@ import json
 from collections.abc import Iterable
 
 from cms_core.languages import SOURCE_LANGUAGE, Language
+from cms_core.media import MediaAsset
 from cms_core.models import SCHEMA_VERSION, Article, ArticleContent
+from cms_core.pages import Page, Section
 
 
 def article_to_portable(article: Article) -> dict[str, object]:
@@ -37,13 +39,80 @@ def article_to_portable(article: Article) -> dict[str, object]:
     }
 
 
-def export_content_json(articles: Iterable[Article]) -> str:
+def section_to_portable(section: Section) -> dict[str, object]:
+    languages: dict[str, dict[str, object]] = {
+        SOURCE_LANGUAGE.value: {
+            "state": "complete",
+            "fields": dict(sorted(section.source.fields.items())),
+            "media": list(section.source.media),
+        }
+    }
+    for language, translation in sorted(
+        section.translations.items(), key=lambda item: item[0].value
+    ):
+        languages[language.value] = {
+            "state": section.translation_state(language).value,
+            "fields": dict(sorted(translation.content.fields.items())),
+            "media": list(translation.content.media),
+            "source_checksum": translation.source_checksum,
+        }
+    return {"key": section.key, "kind": section.kind, "languages": languages}
+
+
+def page_to_portable(page: Page) -> dict[str, object]:
+    languages: dict[str, dict[str, str]] = {
+        SOURCE_LANGUAGE.value: {
+            "state": "complete",
+            "title": page.source.title,
+            "description": page.source.description,
+            "slug": page.source.slug,
+        }
+    }
+    for language, translation in sorted(page.translations.items(), key=lambda item: item[0].value):
+        languages[language.value] = {
+            "state": page.translation_state(language).value,
+            "title": translation.content.title,
+            "description": translation.content.description,
+            "slug": translation.content.slug,
+            "source_checksum": translation.source_checksum,
+        }
+    return {
+        "id": page.id,
+        "status": page.status.value,
+        "created_at": page.created_at.isoformat(),
+        "updated_at": page.updated_at.isoformat(),
+        "languages": languages,
+        "sections": [section_to_portable(section) for section in page.sections],
+    }
+
+
+def media_to_portable(asset: MediaAsset) -> dict[str, object]:
+    return {
+        "id": asset.id,
+        "path": asset.path,
+        "mime_type": asset.mime_type,
+        "width": asset.width,
+        "height": asset.height,
+        "alt": {
+            language.value: text
+            for language, text in sorted(asset.alt.items(), key=lambda item: item[0].value)
+        },
+    }
+
+
+def export_content_json(
+    articles: Iterable[Article],
+    pages: Iterable[Page] = (),
+    media: Iterable[MediaAsset] = (),
+) -> str:
     payload = {
         "schema_version": SCHEMA_VERSION,
         "articles": [
             article_to_portable(article)
             for article in sorted(articles, key=lambda article: article.id)
         ],
+        "pages": [page_to_portable(page) for page in sorted(pages, key=lambda page: page.id)],
+        "media": [media_to_portable(asset) for asset in sorted(media, key=lambda asset: asset.id)],
     }
     return json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
 
