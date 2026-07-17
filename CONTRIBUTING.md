@@ -24,6 +24,11 @@
   adding a documented fact worth guarding, add its check there too. Keep each
   fact in one authoritative document and link to it instead of repeating it.
 
+## Sharing themes, targets, backends and plugins
+
+See [docs/ECOSYSTEM.md](docs/ECOSYSTEM.md): free (OSI) license, the
+relevant conformance suite green in your CI, and a registry PR.
+
 ## Commands (target)
 
 ```bash

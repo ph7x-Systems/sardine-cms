@@ -155,7 +155,8 @@ Normative design rules live in [DESIGN_RULES.md](DESIGN_RULES.md); building a
 theme is documented in [THEME_GUIDE.md](THEME_GUIDE.md); the frontend
 technology strategy (native platform, Web Component islands, no framework) is
 [ADR-0010](adr/0010-frontend-technology-strategy.md). The outward roadmap is
-[ROADMAP.md](ROADMAP.md).
+[ROADMAP.md](ROADMAP.md). Community sharing — licenses, naming, registry — is
+[ECOSYSTEM.md](ECOSYSTEM.md) / [ADR-0011](adr/0011-community-ecosystem-policy.md).
 
 ## Open decisions
 
