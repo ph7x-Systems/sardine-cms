@@ -1,6 +1,6 @@
-# Ph7x.CMS.Framework
+# Stillsite
 
-[![CI](https://github.com/ph7x-Systems/Ph7x.CMS.Framework/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ph7x-Systems/Ph7x.CMS.Framework/actions/workflows/ci.yml)
+[![CI](https://github.com/ph7x-Systems/stillsite/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ph7x-Systems/stillsite/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue.svg)](pyproject.toml)
 [![Checked with mypy (strict)](https://img.shields.io/badge/mypy-strict-blue.svg)](pyproject.toml)
@@ -38,7 +38,7 @@ tests/                          # unit and integration tests
 
 ## Status
 
-Freshly initialized repository. Private during initial development; planned to become public later — all content must be written as if public (no secrets, personal data or client content). See [docs/PLAN.md](docs/PLAN.md) for the execution plan and [docs/BRIEF.md](docs/BRIEF.md) for the full brief.
+Early development, in the open. The content core (models, translation states, multi-engine storage, deterministic export) is implemented and tested; the validator, builder and CLI are next — see [docs/PLAN.md](docs/PLAN.md) for the execution plan, [docs/POC_PLAN.md](docs/POC_PLAN.md) for the proof-of-concept target and [docs/BRIEF.md](docs/BRIEF.md) for the full brief. No secrets, personal data or client content live in this repository.
 
 ## Local development
 

@@ -1,7 +1,7 @@
 # Support
 
 - **Questions and ideas** — open a
-  [GitHub issue](https://github.com/ph7x-Systems/Ph7x.CMS.Framework/issues)
+  [GitHub issue](https://github.com/ph7x-Systems/stillsite/issues)
   with the question template. Please search existing issues first.
 - **Bugs** — open an issue with the bug template: steps to reproduce, expected
   vs. actual behavior, versions.
