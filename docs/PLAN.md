@@ -26,6 +26,9 @@ Short plan by milestones, per the brief ([BRIEF.md](BRIEF.md)). Small increments
 - [ ] `cms-validation`: language parity, structure, editorial rules, configurable per project
 - [ ] `cms-build`: deterministic generator — pages, listings, categories, tags, static search, RSS, sitemap, canonical, hreflang
 - [ ] CLI (`cms`): `validate`, `build`, `preview`, `export`, `seed` — Typer-based
+- [ ] `cms init`: interactive scaffolding of new projects from Copier templates
+      (kept in-stack instead of a Node-based generator; templates derive from
+      `examples/multilingual-company-site`; record Copier decision as an ADR)
 - [ ] Static export independent of the admin panel, ready for Azure Static Web Apps
 
 ## Milestone 3 — Admin panel
