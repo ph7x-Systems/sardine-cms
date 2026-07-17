@@ -35,6 +35,11 @@ Short plan by milestones, per the brief ([BRIEF.md](BRIEF.md)). Small increments
       implement behind the ADR-0004 interface; shared-layer decision (e.g.
       SQLAlchemy) gets its own ADR; test via project-prefixed Docker containers
 
+> **PoC anchor:** Milestones 2 and 4 are executed against a concrete target —
+> reproducing the ph7x.com architecture (URL tree, head contract, design
+> system) with fictional content, per [POC_PLAN.md](POC_PLAN.md). The original
+> site is read-only reference; its documented bugs become design guarantees.
+
 ## Milestone 2 — Validation and build
 
 - [ ] `cms-validation`: language parity, structure, editorial rules, configurable per project
