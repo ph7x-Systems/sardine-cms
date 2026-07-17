@@ -1,5 +1,11 @@
 # Ph7x.CMS.Framework
 
+[![CI](https://github.com/ph7x-Systems/Ph7x.CMS.Framework/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ph7x-Systems/Ph7x.CMS.Framework/actions/workflows/ci.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue.svg)](pyproject.toml)
+[![Checked with mypy (strict)](https://img.shields.io/badge/mypy-strict-blue.svg)](pyproject.toml)
+[![Code style: ruff](https://img.shields.io/badge/style-ruff-261230.svg)](pyproject.toml)
+
 Reusable multilingual, static-first CMS framework extracted from the pH7x Systems website architecture.
 
 > **License:** [Apache-2.0](LICENSE) (see [ADR-0002](docs/adr/0002-license-apache-2.md)).

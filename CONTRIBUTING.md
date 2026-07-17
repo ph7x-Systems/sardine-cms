@@ -5,7 +5,10 @@
 1. Create a branch off `main` (`feature/...`, `fix/...`, `docs/...`).
 2. Small increments, clear imperative commits (`Add page schema validation`).
 3. Before opening a PR: lint, type checking and tests must pass locally.
-4. `main` is protected — merge only via pull request with green CI.
+4. `main` is fully protected, **admins included**: no direct pushes, no
+   force-pushes, no deletion. Every change lands via pull request with all
+   six CI checks green, linear history (squash or rebase merge) and resolved
+   conversations. Branches are deleted on merge.
 
 ## Project rules
 
