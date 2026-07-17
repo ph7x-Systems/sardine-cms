@@ -1,0 +1,42 @@
+{% extends "base.html.j2" %}
+{% block main %}
+{% set hero_sections = sections | selectattr("kind", "equalto", "hero") | list %}
+<article class="page">
+  {% if not hero_sections %}
+  <h1>{{ page.title }}</h1>
+  {% if page.description %}<p class="lead">{{ page.description }}</p>{% endif %}
+  {% endif %}
+  {% for section in sections %}
+  {% if section.kind == "hero" %}
+  <section class="section hero" id="{{ section.key }}">
+    <div class="aurora" aria-hidden="true"><span class="a1"></span><span class="a2"></span></div>
+    {% for name, value in section.fields %}
+    {% if name == "heading" %}<h1 class="display">{{ value }}</h1>{% else %}<p class="lead">{{ value }}</p>{% endif %}
+    {% endfor %}
+    {% if page.description %}<p class="lead sub">{{ page.description }}</p>{% endif %}
+    {% for image in section.images %}
+    <img class="hero-art" src="{{ image.url }}" alt="{{ image.alt }}" width="{{ image.width }}" height="{{ image.height }}">
+    {% endfor %}
+  </section>
+  {% elif section.kind == "story" %}
+  <section class="section story" id="{{ section.key }}">
+    {% for name, value in section.fields %}
+    {% if name == "heading" %}<h2>{{ value }}</h2>{% else %}<p class="prose">{{ value }}</p>{% endif %}
+    {% endfor %}
+    {% for image in section.images %}
+    <img src="{{ image.url }}" alt="{{ image.alt }}" width="{{ image.width }}" height="{{ image.height }}">
+    {% endfor %}
+  </section>
+  {% else %}
+  <section class="section section-{{ section.kind }}" id="{{ section.key }}">
+    {% for name, value in section.fields %}
+    <div class="field field-{{ name }}">{{ value }}</div>
+    {% endfor %}
+    {% for image in section.images %}
+    <img src="{{ image.url }}" alt="{{ image.alt }}" width="{{ image.width }}" height="{{ image.height }}">
+    {% endfor %}
+  </section>
+  {% endif %}
+  {% endfor %}
+</article>
+{% endblock %}

@@ -3,7 +3,7 @@ name = "Aurora Cartography"
 base_url = "https://example.com"
 languages = ["pt-pt", "es", "fr", "de"]
 blog_path = "blog"
-theme = "default"
+theme = "ph7x-reference"
 
 [site.categories.field-notes]
 en = "Field notes"

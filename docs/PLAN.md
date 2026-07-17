@@ -80,11 +80,38 @@ Layering and development rules for this milestone are fixed in
 - [ ] Media library (mandatory alt text, dimensions, type/size validation)
 - [ ] Preview and `draft → review → published → archived` workflow
 
-## Milestone 4 — Reference theme and example
+## Milestone 4 — Reference theme and example (detailed plan)
 
-- [ ] `cms-theme-ph7x-reference`: tokens, local fonts (Inter, Newsreader), inline SVG, 820px breakpoint, zero inline styles, `[hidden]{display:none!important}`
-- [ ] `examples/multilingual-company-site` with fictional content in 5 languages
-- [ ] Documentation: installation, architecture, content model, theme extension, deployment
+Executed against DESIGN_RULES.md; every mechanical rule lands as a test in
+the theme conformance suite.
+
+- [x] **Theme discovery by entry points (ADR-0012)** — `stillsite.themes`
+      entry-point group; `create_theme` loads lazily on a registry miss, so
+      installed theme packages need zero configuration; same policy will
+      serve targets/backends/plugins later
+- [x] **Package scaffold** `cms-theme-ph7x-reference` (src layout, templates
+      and assets as package data, Apache-2.0, entry point registered)
+- [x] **Shared Jinja base** in `cms-build` (`JinjaTheme`) so the reference
+      theme layers over the default's templates instead of copying them; the
+      head contract moves to a shared `_head.html.j2` partial (one source)
+- [x] **Design tokens + base layer** — dark editorial look: full token set
+      (`--bg --ink --muted --head --accent --navy --green --panel --line
+      --line-2 --faint --maxw --sans --serif`), `[hidden]` first rule, 820px
+      main breakpoint, zero inline styles
+- [x] **Section kinds**: `hero` (aurora/grain backdrop), `story`,
+      `features`, generic fallback — same context contract as the default
+- [x] **Local fonts**: Inter (sans) + Newsreader (serif/italic), latin
+      subsets, woff2, preloaded, OFL license files shipped alongside
+- [x] **Effects without JS**: grain/aurora and reveals via modern CSS
+      (gradients, scroll-driven animations behind `@supports`), honoring
+      `prefers-reduced-motion` — ADR-0010's CSS-over-JS rule; JS budget
+      unchanged (search island only)
+- [x] **Theme conformance suite** (`tests/test_theme_conformance.py`)
+      running the DESIGN_RULES mechanical checks over every shipped theme
+- [x] **Demo switch**: example project sets `theme = "ph7x-reference"`;
+      CI/deploy install the theme package; COMPONENTS.md updated
+- [ ] Documentation pass: installation, architecture, content model, theme
+      extension, deployment (pre-announcement)
 
 ## Next steps (priority order)
 
