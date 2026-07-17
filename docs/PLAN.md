@@ -30,6 +30,9 @@ Short plan by milestones, per the brief ([BRIEF.md](BRIEF.md)). Small increments
 
 - [ ] `cms-validation`: language parity, structure, editorial rules, configurable per project
 - [ ] `cms-build`: deterministic generator — pages, listings, categories, tags, static search, RSS, sitemap, canonical, hreflang
+- [ ] Theme interface: HTML rendering goes through a theme package (templates +
+      design tokens + static assets); any template/partial/token overridable per
+      project without forking the theme (design to be recorded in an ADR)
 - [ ] CLI (`cms`): `validate`, `build`, `preview`, `export`, `seed` — Typer-based
 - [ ] `cms init`: interactive scaffolding of new projects from Copier templates
       (kept in-stack instead of a Node-based generator; templates derive from
@@ -50,6 +53,21 @@ Short plan by milestones, per the brief ([BRIEF.md](BRIEF.md)). Small increments
 - [ ] `cms-theme-ph7x-reference`: tokens, local fonts (Inter, Newsreader), inline SVG, 820px breakpoint, zero inline styles, `[hidden]{display:none!important}`
 - [ ] `examples/multilingual-company-site` with fictional content in 5 languages
 - [ ] Documentation: installation, architecture, content model, theme extension, deployment
+
+## Extensibility contracts (cross-milestone)
+
+Everything user-facing must be extensible without forking the framework:
+
+- **Themes/designs**: a theme is an installable package (templates, design
+  tokens, static assets). Projects pick a theme and may override any template,
+  partial or token locally; the reference theme is just the default.
+- **HTML output**: all HTML is produced by theme templates — no markup
+  hardcoded in `cms-build`. Markdown rendering supports custom blocks/
+  shortcodes so editors can embed rich HTML components without raw HTML.
+- **Extensions/plugins**: registration points for custom content types,
+  validation rules (`cms-validation` is configurable per project), build
+  steps and CLI subcommands. Mechanism (entry points vs. explicit registry)
+  decided in an ADR when the first extension lands.
 
 ## Open decisions
 
