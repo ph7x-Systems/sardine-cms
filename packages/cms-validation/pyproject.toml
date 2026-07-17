@@ -1,0 +1,15 @@
+[project]
+name = "cms-validation"
+version = "0.1.0"
+description = "Configurable content validation rules for Ph7x.CMS.Framework"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+dependencies = ["cms-core"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cms_validation"]

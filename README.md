@@ -2,7 +2,7 @@
 
 Reusable multilingual, static-first CMS framework extracted from the pH7x Systems website architecture.
 
-> **License:** to be decided (marked as pending — see [open decisions](docs/PLAN.md#open-decisions)).
+> **License:** [Apache-2.0](LICENSE) (see [ADR-0002](docs/adr/0002-license-apache-2.md)).
 
 ## What it is
 
@@ -36,7 +36,21 @@ Freshly initialized repository. Private during initial development; planned to b
 
 ## Local development
 
-Requirements and commands will be documented as the MVP is implemented. Target CLI:
+Requires Python 3.12+.
+
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install --group dev            # ruff, mypy, pytest
+python -m pip install -e packages/cms-core -e packages/cms-validation -e packages/cms-build
+
+ruff check . && ruff format --check .        # lint
+mypy                                         # type checking (strict)
+pytest                                       # tests
+```
+
+CI (GitHub Actions) runs the same checks plus a docs link check and a secret
+scan on every push and pull request. Target CLI (Milestone 2):
 
 ```bash
 cms validate   # validate content and language parity

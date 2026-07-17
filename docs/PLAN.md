@@ -5,9 +5,13 @@ Short plan by milestones, per the brief ([BRIEF.md](BRIEF.md)). Small increments
 ## Milestone 0 — Foundation (current)
 
 - [x] Repository initialized (`main`), folder structure, base docs
-- [ ] Python toolchain: `pyproject.toml`, lint (ruff), type checking (mypy), pytest
-- [ ] GitHub Actions CI: lint, types, tests, content validation, example build
-- [ ] ADR-0001: base architecture (Python core + FastAPI admin)
+- [x] Repository published to GitHub (`ph7x-Systems/Ph7x.CMS.Framework`, private)
+- [x] License: Apache-2.0 (`LICENSE`, `NOTICE`, ADR-0002)
+- [x] Python toolchain: `pyproject.toml`, lint (ruff), type checking (mypy), pytest
+- [x] GitHub Actions CI: lint, types, tests, docs link check, secret scan
+      (content validation and example build jobs arrive with Milestone 2)
+- [x] ADR-0001: base architecture (Python core + FastAPI admin)
+- [ ] Branch protection on `main` requiring CI checks (enable once CI is green)
 
 ## Milestone 1 — Content core
 
@@ -20,7 +24,7 @@ Short plan by milestones, per the brief ([BRIEF.md](BRIEF.md)). Small increments
 
 - [ ] `cms-validation`: language parity, structure, editorial rules, configurable per project
 - [ ] `cms-build`: deterministic generator — pages, listings, categories, tags, static search, RSS, sitemap, canonical, hreflang
-- [ ] CLI: `validate`, `build`, `preview`, `export`, `seed`
+- [ ] CLI (`cms`): `validate`, `build`, `preview`, `export`, `seed` — Typer-based
 - [ ] Static export independent of the admin panel, ready for Azure Static Web Apps
 
 ## Milestone 3 — Admin panel
@@ -40,10 +44,13 @@ Short plan by milestones, per the brief ([BRIEF.md](BRIEF.md)). Small increments
 
 ## Open decisions
 
-- License (to be decided — marked in the README)
 - Admin UI: server-rendered vs. lightweight TypeScript (decide in Milestone 3, with an ADR)
 - Static search strategy (pre-generated index vs. lunr-like)
-- Remote publishing to `ph7x-Systems/Ph7x.CMS.Framework` — **blocked**: local GitHub authentication expired; repository created locally only for now
+
+## Decided
+
+- License: Apache-2.0 ([ADR-0002](adr/0002-license-apache-2.md))
+- Remote repository: `ph7x-Systems/Ph7x.CMS.Framework` on GitHub (private; public later)
 
 ## Constraints
 

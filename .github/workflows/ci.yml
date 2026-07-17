@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  PACKAGES: >-
+    packages/cms-core
+    packages/cms-validation
+    packages/cms-build
+
+jobs:
+  lint:
+    name: Lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install --group dev
+      - run: ruff check .
+      - run: ruff format --check .
+
+  typecheck:
+    name: Types (mypy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: |
+          python -m pip install --group dev
+          for pkg in $PACKAGES; do python -m pip install -e "$pkg"; done
+      - run: mypy
+
+  test:
+    name: Tests (pytest, py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install --upgrade pip
+      - run: |
+          python -m pip install --group dev
+          for pkg in $PACKAGES; do python -m pip install -e "$pkg"; done
+      - run: pytest
+
+  docs-links:
+    name: Docs internal links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: lycheeverse/lychee-action@v2
+        with:
+          args: --offline --no-progress "**/*.md"
+          fail: true
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install trufflehog
+        run: curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin
+      - name: Scan repository
+        run: trufflehog filesystem . --fail --no-update
+
+  # Content validation and example-site build jobs are added in Milestone 2,
+  # once cms-validation and cms-build produce runnable CLIs.
