@@ -1,7 +1,7 @@
 [project]
 name = "cms-build"
 version = "0.1.0"
-description = "Deterministic static site generator for Ph7x.CMS.Framework"
+description = "Deterministic static site generator for Stillsite"
 readme = "README.md"
 requires-python = ">=3.12"
 license = "Apache-2.0"

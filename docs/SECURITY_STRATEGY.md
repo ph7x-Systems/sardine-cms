@@ -1,4 +1,4 @@
-# Security Strategy — Ph7x.CMS.Framework
+# Security Strategy — Stillsite
 
 This document is the security plan for the framework: principles, threat
 model, the controls that exist today, and the controls each milestone must

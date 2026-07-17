@@ -1,11 +1,11 @@
-# Execution Plan — Ph7x.CMS.Framework
+# Execution Plan — Stillsite
 
 Short plan by milestones, per the brief ([BRIEF.md](BRIEF.md)). Small increments, clear commits, reversible decisions recorded as ADRs.
 
 ## Milestone 0 — Foundation (current)
 
 - [x] Repository initialized (`main`), folder structure, base docs
-- [x] Repository published to GitHub (`ph7x-Systems/Ph7x.CMS.Framework`, private)
+- [x] Repository published to GitHub (`ph7x-Systems/stillsite`, public)
 - [x] License: Apache-2.0 (`LICENSE`, `NOTICE`, ADR-0002)
 - [x] Python toolchain: `pyproject.toml`, lint (ruff), type checking (mypy), pytest
 - [x] GitHub Actions CI: lint, types, tests, docs link check, secret scan
@@ -96,7 +96,9 @@ Everything user-facing must be extensible without forking the framework:
 ## Decided
 
 - License: Apache-2.0 ([ADR-0002](adr/0002-license-apache-2.md))
-- Remote repository: `ph7x-Systems/Ph7x.CMS.Framework` on GitHub (private; public later)
+- Remote repository: `ph7x-Systems/stillsite` on GitHub (public since 2026-07-17)
+- Project name: **Stillsite** — coined, screened against PyPI/npm/GitHub and
+  trademark databases before adoption; owned by pH7x Systems
 
 ## Testing
 
@@ -127,11 +129,12 @@ promises — and only with zero documentation drift. Criteria (all objective):
 4. README reflects reality for a first-time visitor (install, quickstart,
    what works today vs. roadmap) — guarded by the anti-drift tests.
 
-Recommended timing: **flip at the end of Milestone 2** (framework usable,
-example site building in CI), and treat the end of Milestone 4 (reference
-theme + polished example) as the **announcement/launch** moment. Between the
-two, the repo is public but low-key. The flip itself happens via a PR that
-records the executed checklist.
+**Executed 2026-07-17**: the owner opted to flip early (public repos get
+unlimited GitHub Actions minutes, and the sweep found nothing to hide) after
+a full audit — history squashed to a single clean release commit, all
+criteria of SECURITY_STRATEGY.md §4 verified. The repo is public but
+low-key; the **announcement/launch** moment stays at the end of Milestone 4
+(reference theme + polished example).
 
 ## Constraints
 

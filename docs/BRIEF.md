@@ -3,7 +3,7 @@
 Create a new product and its GitHub repository (private for now; may become public later):
 
 - Organization: `ph7x-Systems`
-- Repository: `Ph7x.CMS.Framework`
+- Repository: `Stillsite`
 - Default branch: `main`
 - Description: `Reusable multilingual, static-first CMS framework extracted from the pH7x Systems website architecture.`
 
