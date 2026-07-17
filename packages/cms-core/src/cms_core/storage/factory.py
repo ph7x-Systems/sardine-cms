@@ -62,7 +62,13 @@ def _sqlite_factory(location: str) -> StorageBackend:
     return SQLiteBackend(sqlite_path_from_location(location))
 
 
+def _postgres_factory(location: str) -> StorageBackend:
+    from cms_core.storage.postgres import PostgresBackend
+
+    return PostgresBackend(f"postgresql://{location}")
+
+
 register_backend("sqlite", _sqlite_factory)
-register_backend("postgresql", _planned("PostgreSQL"))
+register_backend("postgresql", _postgres_factory)
 register_backend("mssql", _planned("SQL Server"))
 register_backend("mysql", _planned("MySQL/MariaDB"))

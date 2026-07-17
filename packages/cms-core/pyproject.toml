@@ -7,6 +7,9 @@ requires-python = ">=3.12"
 license = "Apache-2.0"
 dependencies = ["pydantic>=2.9"]
 
+[project.optional-dependencies]
+postgres = ["psycopg[binary]>=3.2"]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

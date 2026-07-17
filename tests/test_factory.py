@@ -33,8 +33,6 @@ def test_all_planned_backends_are_registered() -> None:
 @pytest.mark.parametrize(
     "url",
     [
-        "postgresql://cms:secret@localhost/cms",
-        "postgres://cms:secret@localhost/cms",
         "mssql://cms:secret@localhost/cms",
         "sqlserver://cms:secret@localhost/cms",
         "mysql://cms:secret@localhost/cms",
@@ -44,6 +42,14 @@ def test_all_planned_backends_are_registered() -> None:
 def test_planned_backends_fail_loudly(url: str) -> None:
     with pytest.raises(NotImplementedError, match="planned"):
         create_storage(url)
+
+
+def test_postgresql_is_implemented_not_planned() -> None:
+    # Implemented: resolving the scheme must not raise NotImplementedError.
+    # (An unreachable host raises the driver's connection error instead.)
+    with pytest.raises(Exception) as excinfo:
+        create_storage("postgresql://cms:secret@127.0.0.1:1/nope")
+    assert not isinstance(excinfo.value, NotImplementedError)
 
 
 def test_unknown_scheme_lists_known_ones() -> None:
