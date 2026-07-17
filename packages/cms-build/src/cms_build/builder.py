@@ -28,6 +28,7 @@ from cms_build.config import SiteConfig
 from cms_build.head import Head, build_head, hreflang_code
 from cms_build.markdown import render_markdown
 from cms_build.themes import Theme, create_theme
+from cms_build.ui import ui_label
 
 MEDIA_PREFIX = "media"
 
@@ -299,6 +300,7 @@ class _SiteBuilder:
             lang: len(_chunk(self.articles_by_language[lang], self.config.page_size))
             for lang in self.config.all_languages
         }
+        blog_label = ui_label(self.config, "blog", language)
         for index, chunk in enumerate(chunks, start=1):
             path = urls.blog_page_path(self.config, language, index)
             paths = {
@@ -308,14 +310,14 @@ class _SiteBuilder:
             }
             head = build_head(
                 self.config,
-                title="Blog" if index == 1 else f"Blog — page {index}",
+                title=blog_label if index == 1 else f"{blog_label} — {index}",
                 description=self.config.name,
                 language=language,
                 paths_by_language=paths,
             )
             context = self._base_context(language, head)
             context["listing"] = {
-                "title": "Blog",
+                "title": blog_label,
                 "entries": self._listing_entries(chunk, language),
                 "page": index,
                 "pages": len(chunks),
@@ -327,6 +329,8 @@ class _SiteBuilder:
                     if index < len(chunks)
                     else None
                 ),
+                "search_index_url": self._search_index_url(language),
+                "search_label": ui_label(self.config, "search", language),
             }
             self._render("listing", path, context)
 
@@ -384,10 +388,15 @@ class _SiteBuilder:
             "pages": 1,
             "previous_url": None,
             "next_url": None,
+            "search_index_url": self._search_index_url(language),
+            "search_label": ui_label(self.config, "search", language),
         }
         self._render("listing", path, context)
 
     # Feeds and utility pages
+
+    def _search_index_url(self, language: Language) -> str:
+        return urls.blog_index_path(self.config, language) + "search-index.json"
 
     def _build_feeds(self, language: Language) -> None:
         articles = self.articles_by_language[language]
@@ -420,7 +429,7 @@ class _SiteBuilder:
     def _build_not_found(self) -> None:
         head = build_head(
             self.config,
-            title="Page not found",
+            title=ui_label(self.config, "not-found", SOURCE_LANGUAGE),
             description=self.config.name,
             language=SOURCE_LANGUAGE,
             paths_by_language={SOURCE_LANGUAGE: "/404.html"},

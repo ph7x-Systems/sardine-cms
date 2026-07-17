@@ -114,17 +114,17 @@ visitor can judge the product from it. Phases, in execution order:
 
 1. **Infrastructure** — ✅ done: Azure SWA Free, custom domain + SSL,
    deploy-on-merge workflow building with the real CLI.
-2. **PostgreSQL backend (closes Milestone 1)** — the ADR-0004 conformance
-   suite runs against PostgreSQL in CI (service container) and locally
-   (project-prefixed Docker container). Acceptance: same tests, two engines,
-   zero test changes.
+2. **PostgreSQL backend (closes Milestone 1)** — ✅ done (ADR-0009): the
+   conformance suite passed unchanged against PostgreSQL 16 in CI and
+   locally; required check number eight.
 3. **Demo content** — ✅ done: 6 articles across 3 categories with tags, an
    about page, and a compass illustration through the media pipeline (the
    seed also writes referenced media files, so scaffolded projects build
    with no broken references); ~100 pages across the 5 languages.
-4. **Client-side search** — small theme script consuming the per-language
-   `search-index.json` (the index already ships). Acceptance: typing in the
-   blog page filters articles, no external requests.
+4. **Client-side search** — ✅ done: the `<site-search>` Web Component island
+   (ADR-0010) filters listings from the per-language `search-index.json`;
+   localized labels via the new UI-label system (`[site.labels]` override);
+   pages stay complete without JavaScript; theme JS budget enforced by test.
 5. **Reference theme (Milestone 4)** — `cms-theme-ph7x-reference` implements
    the PoC design system (tokens, Inter/Newsreader local fonts, 820px
    breakpoint, dark editorial look, effects); the demo switches to it via

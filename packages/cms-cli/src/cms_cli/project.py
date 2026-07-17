@@ -61,6 +61,7 @@ def load_project(directory: Path) -> Project:
         theme=site_data.get("theme", "default"),
         page_size=site_data.get("page_size", 10),
         categories=site_data.get("categories", {}),
+        labels=site_data.get("labels", {}),
         organization=site_data.get("organization"),
     )
 
