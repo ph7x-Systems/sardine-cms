@@ -13,6 +13,7 @@ env:
     packages/cms-core
     packages/cms-validation
     packages/cms-build
+    packages/cms-theme-ph7x-reference
     packages/cms-cli
 
 jobs:

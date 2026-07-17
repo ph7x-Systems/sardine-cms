@@ -2,10 +2,12 @@
 <html lang="{{ head.language.value }}">
 <head>
 {% include "_head.html.j2" %}
-{% block fonts %}{% endblock %}
+<link rel="preload" as="font" type="font/woff2" crossorigin href="{{ asset_urls['assets/fonts/inter-latin.woff2'] }}">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="{{ asset_urls['assets/fonts/newsreader-latin.woff2'] }}">
 <link rel="stylesheet" href="{{ asset_urls['assets/site.css'] }}">
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 <header class="site-header">
   <nav class="site-nav" aria-label="Main">
     <a class="brand" href="{{ nav.home_url }}">{{ head.site_name }}</a>
@@ -16,7 +18,7 @@
     </ul>
   </nav>
 </header>
-<main>
+<main id="main">
 {% block main %}{% endblock %}
 </main>
 <footer class="site-footer">

@@ -1,0 +1,21 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ head.title }} | {{ head.site_name }}</title>
+<meta name="description" content="{{ head.description }}">
+<meta property="og:type" content="{{ head.og_type }}">
+<meta property="og:site_name" content="{{ head.site_name }}">
+<meta property="og:title" content="{{ head.title }}">
+<meta property="og:description" content="{{ head.description }}">
+<meta property="og:url" content="{{ head.canonical }}">
+<meta property="og:locale" content="{{ head.og_locale }}">
+{% for locale in head.og_locale_alternates %}
+<meta property="og:locale:alternate" content="{{ locale }}">
+{% endfor %}
+<meta name="robots" content="index, follow">
+{% for alternate in head.alternates %}
+<link rel="alternate" hreflang="{{ alternate.hreflang }}" href="{{ alternate.href }}">
+{% endfor %}
+<link rel="canonical" href="{{ head.canonical }}">
+{% if head.json_ld %}
+<script type="application/ld+json">{{ head.json_ld | safe }}</script>
+{% endif %}

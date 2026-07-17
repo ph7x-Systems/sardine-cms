@@ -32,9 +32,18 @@ every page is complete without them. Total JS budget ≤ 20 KB (tested).
 | --- | --- | --- | --- |
 | `<site-search>` | `assets/search.js` | `index-url`, `label` | Filters listings from the per-language `search-index.json`; same-origin fetch only; results announced via `aria-live` |
 
-Planned islands (reference theme, Milestone 4): background network effect,
-reveal-on-scroll, mobile menu toggle — each its own single-source module,
-honoring `prefers-reduced-motion`.
+The reference theme adds **no JavaScript**: its effects (aurora, grain,
+reveal-on-scroll) are modern CSS only — gradients, an inline-SVG noise data
+URI and scroll-driven animations behind `@supports`, all disabled under
+`prefers-reduced-motion` (ADR-0010's CSS-over-JS rule).
+
+### Reference theme section kinds (`cms-theme-ph7x-reference`)
+
+| Kind | Markup |
+| --- | --- |
+| `hero` | Aurora backdrop, serif display `h1` from the `heading` field, lead from the page description, hero image |
+| `story` | `h2` + prose paragraphs + images |
+| _any other_ | Generic field/image rendering (graceful fallback) |
 
 ## Admin panel (Milestone 3 — planned)
 

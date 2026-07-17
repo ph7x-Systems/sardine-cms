@@ -105,6 +105,7 @@ README promises. Grows one check per new guarded fact.
 | Backend conformance (PostgreSQL service container) | job `Backend conformance (PostgreSQL)` | in force |
 | Output integrity (HTML refs, CSS urls, theme assets) | `tests/test_output_integrity.py` | in force |
 | Backend conformance (SQL Server, MySQL) | same mold when implemented | planned |
+| Theme conformance (all shipped themes) | `tests/test_theme_conformance.py` | in force |
 | Accessibility (axe) + no-scroll checks | new job at M4 | planned |
 | Coverage floor (fail under threshold) | add with M2, target ≥90% on packages | planned |
 

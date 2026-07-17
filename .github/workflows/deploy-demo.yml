@@ -30,7 +30,7 @@ jobs:
           python-version: "3.12"
       - run: python -m pip install --upgrade pip
       - run: |
-          for pkg in packages/cms-core packages/cms-validation packages/cms-build packages/cms-cli; do
+          for pkg in packages/cms-core packages/cms-validation packages/cms-build packages/cms-theme-ph7x-reference packages/cms-cli; do
             python -m pip install -e "$pkg"
           done
       - name: Build the demo site (seeded SQLite content)

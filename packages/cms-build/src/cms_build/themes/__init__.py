@@ -37,9 +37,20 @@ def available_themes() -> tuple[str, ...]:
 def create_theme(name: str, overrides: Path | None = None) -> Theme:
     factory = _REGISTRY.get(name)
     if factory is None:
+        _load_entry_point(name)
+        factory = _REGISTRY.get(name)
+    if factory is None:
         known = ", ".join(available_themes())
         raise ValueError(f"unknown theme {name!r} (known themes: {known})")
     return factory(overrides)
+
+
+def _load_entry_point(name: str) -> None:
+    """Lazily resolve an installed theme package by name (ADR-0012)."""
+    from importlib.metadata import entry_points
+
+    for entry_point in entry_points(group="stillsite.themes", name=name):
+        register_theme(name, entry_point.load())
 
 
 def _register_builtin() -> None:
