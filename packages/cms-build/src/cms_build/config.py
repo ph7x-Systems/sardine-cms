@@ -19,6 +19,7 @@ class SiteConfig(BaseModel):
     theme: str = "default"
     page_size: int = Field(default=10, ge=1)
     categories: dict[str, dict[Language, str]] = Field(default_factory=dict)
+    labels: dict[str, dict[Language, str]] = Field(default_factory=dict)
     organization: dict[str, JsonValue] | None = None
 
     def category_label(self, slug: str, language: Language) -> str:

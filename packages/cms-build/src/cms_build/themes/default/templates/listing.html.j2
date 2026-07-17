@@ -2,6 +2,10 @@
 {% block main %}
 <section class="listing">
   <h1>{{ listing.title }}</h1>
+  {% if listing.search_index_url %}
+  <site-search index-url="{{ listing.search_index_url }}" label="{{ listing.search_label }}"></site-search>
+  <script type="module" src="{{ asset_urls['assets/search.js'] }}"></script>
+  {% endif %}
   <ul class="entries">
   {% for entry in listing.entries %}
     <li>
