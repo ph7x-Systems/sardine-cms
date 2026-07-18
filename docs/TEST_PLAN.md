@@ -68,10 +68,13 @@ Applies to the reference theme and any third-party theme:
 
 ### 1.6 Admin panel (`apps/admin`, M3)
 
-- AuthN/AuthZ: every endpoint denies anonymous by default; role matrix tested
-  endpoint-by-endpoint (editor/reviewer/publisher); privilege escalation
-  attempts fail.
-- CSRF protection on state-changing routes; session/token expiry.
+- AuthN/AuthZ — **in force** (`tests/test_admin_auth.py`): endpoints deny
+  anonymous by default (redirect to login); the role ladder
+  (editor/reviewer/publisher/admin) is enforced server-side and tested;
+  privilege escalation attempts fail.
+- CSRF protection on state-changing routes, session expiry and failed-login
+  rate limiting — **in force** (same suite). Accounts/sessions storage is
+  part of the backend conformance suite (both engines).
 - Upload validation: type, size, dimensions, SVG scripting rejected.
 - Workflow: draft→review→published→archived transitions, invalid transitions
   rejected; publishing blocked while validation fails.

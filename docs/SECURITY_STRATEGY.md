@@ -47,7 +47,14 @@ deliver. The public-facing policy (how to report vulnerabilities) lives in
 
 ### Admin panel (`apps/admin`, M3)
 
-| Threat | Control (planned) |
+Access control is **in force** since M3 phase 3 (argon2id hashes, server-side
+sessions with expiry, session cookies `HttpOnly`/`Secure`/`SameSite=Strict`,
+synchronizer + double-submit CSRF tokens, login rate limiting, roles enforced
+server-side, first account only via `cms admin create-user`) — exercised by
+`tests/test_admin_auth.py`. Upload controls arrive with the media library
+phase.
+
+| Threat | Control |
 | --- | --- |
 | Unauthorized access | Explicit authentication; sessions/tokens with expiry; no default credentials; rate limiting on login |
 | Privilege escalation | Role-based authorization (editor / reviewer / publisher at minimum), enforced server-side per endpoint |

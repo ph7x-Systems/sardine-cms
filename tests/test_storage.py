@@ -4,14 +4,19 @@ The `backend` fixture (tests/conftest.py) parameterizes these tests over all
 implemented engines — SQLite always, PostgreSQL when a server is available.
 """
 
+from datetime import datetime
+
 from cms_core import (
+    AdminSession,
     ArticleContent,
     ContentStatus,
     Language,
     MediaAsset,
     PageContent,
+    Role,
     Section,
     SectionContent,
+    User,
     new_article,
     new_page,
 )
@@ -131,3 +136,75 @@ def test_load_all_collections(backend: StorageBackend) -> None:
 def test_backend_is_a_context_manager(backend: StorageBackend) -> None:
     with backend as storage:
         storage.save_article(new_article("post", ArticleContent(title="Post")))
+
+
+# Admin accounts and sessions (never part of the export)
+
+
+def _user(username: str = "ana", role: Role = Role.EDITOR) -> User:
+    return User(
+        username=username,
+        password_hash="argon2-hash-placeholder",
+        role=role,
+        created_at=datetime(2026, 7, 18, 12, 0, 0),
+    )
+
+
+def test_user_round_trip_and_upsert(backend: StorageBackend) -> None:
+    backend.save_user(_user())
+    assert backend.load_user("ana") == _user()
+    backend.save_user(_user(role=Role.ADMIN))
+    loaded = backend.load_user("ana")
+    assert loaded is not None
+    assert loaded.role is Role.ADMIN
+    assert backend.list_usernames() == ["ana"]
+
+
+def test_user_delete_and_missing_user(backend: StorageBackend) -> None:
+    backend.save_user(_user())
+    assert backend.delete_user("ana")
+    assert not backend.delete_user("ana")
+    assert backend.load_user("ana") is None
+    assert backend.list_usernames() == []
+
+
+def test_users_do_not_count_as_content(backend: StorageBackend) -> None:
+    backend.save_user(_user())
+    assert not backend.has_content()
+
+
+def test_session_round_trip_and_cascade(backend: StorageBackend) -> None:
+    backend.save_user(_user())
+    session = AdminSession(
+        token_hash="digest-1",
+        username="ana",
+        csrf_token="csrf-1",
+        expires_at=datetime(2026, 7, 18, 23, 59, 59),
+    )
+    backend.save_session(session)
+    assert backend.load_session("digest-1") == session
+    backend.delete_user("ana")
+    assert backend.load_session("digest-1") is None
+
+
+def test_expired_sessions_are_purged(backend: StorageBackend) -> None:
+    backend.save_user(_user())
+    stale = AdminSession(
+        token_hash="digest-old",
+        username="ana",
+        csrf_token="csrf-old",
+        expires_at=datetime(2026, 7, 18, 1, 0, 0),
+    )
+    fresh = AdminSession(
+        token_hash="digest-new",
+        username="ana",
+        csrf_token="csrf-new",
+        expires_at=datetime(2026, 7, 18, 23, 0, 0),
+    )
+    backend.save_session(stale)
+    backend.save_session(fresh)
+    assert backend.delete_expired_sessions(datetime(2026, 7, 18, 12, 0, 0)) == 1
+    assert backend.load_session("digest-old") is None
+    assert backend.load_session("digest-new") == fresh
+    assert backend.delete_session("digest-new")
+    assert not backend.delete_session("digest-new")

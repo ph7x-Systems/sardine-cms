@@ -91,4 +91,18 @@ MIGRATIONS: tuple[str, ...] = (
     """
     ALTER TABLE articles ADD COLUMN cover TEXT;
     """,
+    """
+    CREATE TABLE users (
+        username TEXT PRIMARY KEY,
+        password_hash TEXT NOT NULL,
+        role TEXT NOT NULL,
+        created_at TEXT NOT NULL
+    );
+    CREATE TABLE admin_sessions (
+        token_hash TEXT PRIMARY KEY,
+        username TEXT NOT NULL REFERENCES users(username) ON DELETE CASCADE,
+        csrf_token TEXT NOT NULL,
+        expires_at TEXT NOT NULL
+    );
+    """,
 )

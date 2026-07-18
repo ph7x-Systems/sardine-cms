@@ -1,5 +1,6 @@
 """Content model, versioned schemas and translation states."""
 
+from cms_core.accounts import AdminSession, Role, User
 from cms_core.languages import SOURCE_LANGUAGE, TARGET_LANGUAGES, Language
 from cms_core.media import MediaAsset
 from cms_core.models import (
@@ -24,6 +25,7 @@ __all__ = [
     "SCHEMA_VERSION",
     "SOURCE_LANGUAGE",
     "TARGET_LANGUAGES",
+    "AdminSession",
     "Article",
     "ArticleContent",
     "ChecksummedContent",
@@ -32,12 +34,14 @@ __all__ = [
     "MediaAsset",
     "Page",
     "PageContent",
+    "Role",
     "Section",
     "SectionContent",
     "StorageBackend",
     "TranslatableModel",
     "Translation",
     "TranslationState",
+    "User",
     "create_storage",
     "new_article",
     "new_page",

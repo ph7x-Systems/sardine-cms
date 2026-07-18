@@ -174,5 +174,54 @@ def preview(
         server.serve_forever()
 
 
+admin_app = typer.Typer(add_completion=False, no_args_is_help=True)
+app.add_typer(admin_app, name="admin", help="Admin panel operations")
+
+
+@admin_app.command(name="create-user")
+def admin_create_user(
+    username: Annotated[str, typer.Argument(help="Account username (lowercase)")],
+    project_dir: ProjectDir = Path(),
+    role: Annotated[str, typer.Option(help="editor | reviewer | publisher | admin")] = "editor",
+    password: Annotated[
+        str,
+        typer.Option(prompt=True, confirmation_prompt=True, hide_input=True, help="Prompted"),
+    ] = "",
+    force: Annotated[
+        bool, typer.Option("--force", help="Replace the account if it already exists")
+    ] = False,
+) -> None:
+    """Create an admin account (there are no default credentials)."""
+    from datetime import UTC, datetime
+
+    from cms_core.accounts import Role, User
+
+    try:
+        from cms_admin.security import hash_password
+    except ImportError as error:
+        typer.echo("error: the admin package is not installed (pip install cms-admin)", err=True)
+        raise typer.Exit(code=2) from error
+
+    try:
+        account_role = Role(role)
+    except ValueError as error:
+        typer.echo(f"error: unknown role {role!r} (editor|reviewer|publisher|admin)", err=True)
+        raise typer.Exit(code=2) from error
+    project = _project(project_dir)
+    with project.open_storage() as storage:
+        if storage.load_user(username) is not None and not force:
+            typer.echo(f"error: user {username!r} already exists (use --force)", err=True)
+            raise typer.Exit(code=3)
+        storage.save_user(
+            User(
+                username=username,
+                password_hash=hash_password(password),
+                role=account_role,
+                created_at=datetime.now(UTC),
+            )
+        )
+    typer.echo(f"created user {username!r} with role {account_role.value}")
+
+
 def main() -> None:
     app()

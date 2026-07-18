@@ -95,14 +95,17 @@ with tests:
        reporting the migrated schema version, storage through
        `create_storage(url)` so any supported engine works unchanged;
        test scaffold and CI wiring (admin joins every job's PACKAGES).
-3. [ ] **Accounts and access control**: users with argon2 password hashes;
-       roles `editor / reviewer / publisher / admin` enforced server-side on
-       every endpoint; session cookies (HttpOnly, Secure, SameSite=Strict)
-       with expiry; anti-CSRF tokens on all state-changing requests; login
-       rate limiting; **no default credentials** — the first account is
-       created with `cms admin create-user`. Accounts live in the storage
-       database via new shared migrations but are **never exported**: the
-       portable source of truth stays content-only.
+3. [x] **Accounts and access control**: users with argon2id password
+       hashes; the role ladder `editor / reviewer / publisher / admin`
+       enforced server-side (`require_at_least`); server-side sessions
+       (only the token digest stored) with expiry, cookies HttpOnly +
+       Secure + SameSite=Strict; synchronizer CSRF tokens on authenticated
+       state-changing requests plus a double-submit token on the login
+       form; failed-login rate limiting; **no default credentials** — the
+       first account is created with `cms admin create-user`. Accounts
+       live in the storage database via shared migration 6 but are
+       **never exported**; the conformance suite covers them on every
+       engine.
 4. [ ] **Admin shell + dashboard**: hTWOo chrome (command bar, navigation,
        tables per the COMPONENTS.md mapping); dashboard shows content by
        status, the translation coverage matrix (missing/outdated/complete
