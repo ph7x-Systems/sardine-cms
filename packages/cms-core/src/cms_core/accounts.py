@@ -1,0 +1,48 @@
+"""Admin accounts and sessions (Milestone 3).
+
+Accounts are an operational concern of the admin panel: they live in the
+storage database (shared migration history) but are **never** part of the
+JSON/Markdown export — the portable source of truth stays content-only.
+The domain layer only defines the shapes; hashing and session issuance are
+the admin application's job.
+"""
+
+from datetime import datetime
+from enum import StrEnum
+
+from pydantic import BaseModel, ConfigDict, Field
+
+USERNAME_PATTERN = r"^[a-z0-9][a-z0-9._-]{0,63}$"
+
+
+class Role(StrEnum):
+    """Least-privilege ladder; each step includes the previous one's intent.
+
+    editor: create and edit drafts · reviewer: move drafts through review ·
+    publisher: publish and archive · admin: manage accounts and settings.
+    """
+
+    EDITOR = "editor"
+    REVIEWER = "reviewer"
+    PUBLISHER = "publisher"
+    ADMIN = "admin"
+
+
+class User(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    username: str = Field(pattern=USERNAME_PATTERN)
+    password_hash: str = Field(min_length=1)
+    role: Role
+    created_at: datetime
+
+
+class AdminSession(BaseModel):
+    """A server-side session row. Only the token's hash is stored."""
+
+    model_config = ConfigDict(frozen=True)
+
+    token_hash: str = Field(min_length=1)
+    username: str = Field(pattern=USERNAME_PATTERN)
+    csrf_token: str = Field(min_length=1)
+    expires_at: datetime

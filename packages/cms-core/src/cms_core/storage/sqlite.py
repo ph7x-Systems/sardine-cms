@@ -9,6 +9,7 @@ import sqlite3
 from datetime import datetime
 from pathlib import Path
 
+from cms_core.accounts import AdminSession, Role, User
 from cms_core.languages import Language
 from cms_core.media import MediaAsset
 from cms_core.models import Article, ArticleContent
@@ -340,3 +341,83 @@ class SQLiteBackend(StorageBackend):
     def list_media_ids(self) -> list[str]:
         rows = self._connection.execute("SELECT id FROM media_assets ORDER BY id").fetchall()
         return [str(row[0]) for row in rows]
+
+    # Admin accounts
+
+    def save_user(self, user: User) -> None:
+        with self._connection as connection:
+            connection.execute(
+                "INSERT INTO users (username, password_hash, role, created_at)"
+                " VALUES (?, ?, ?, ?)"
+                " ON CONFLICT(username) DO UPDATE SET"
+                " password_hash = excluded.password_hash, role = excluded.role",
+                (user.username, user.password_hash, user.role.value, user.created_at.isoformat()),
+            )
+
+    def load_user(self, username: str) -> User | None:
+        row = self._connection.execute(
+            "SELECT username, password_hash, role, created_at FROM users WHERE username = ?",
+            (username,),
+        ).fetchone()
+        if row is None:
+            return None
+        return User(
+            username=row[0],
+            password_hash=row[1],
+            role=Role(row[2]),
+            created_at=datetime.fromisoformat(row[3]),
+        )
+
+    def delete_user(self, username: str) -> bool:
+        with self._connection as connection:
+            cursor = connection.execute("DELETE FROM users WHERE username = ?", (username,))
+        return cursor.rowcount > 0
+
+    def list_usernames(self) -> list[str]:
+        rows = self._connection.execute("SELECT username FROM users ORDER BY username").fetchall()
+        return [str(row[0]) for row in rows]
+
+    # Admin sessions
+
+    def save_session(self, session: AdminSession) -> None:
+        with self._connection as connection:
+            connection.execute(
+                "INSERT INTO admin_sessions (token_hash, username, csrf_token, expires_at)"
+                " VALUES (?, ?, ?, ?)"
+                " ON CONFLICT(token_hash) DO UPDATE SET expires_at = excluded.expires_at",
+                (
+                    session.token_hash,
+                    session.username,
+                    session.csrf_token,
+                    session.expires_at.isoformat(),
+                ),
+            )
+
+    def load_session(self, token_hash: str) -> AdminSession | None:
+        row = self._connection.execute(
+            "SELECT token_hash, username, csrf_token, expires_at"
+            " FROM admin_sessions WHERE token_hash = ?",
+            (token_hash,),
+        ).fetchone()
+        if row is None:
+            return None
+        return AdminSession(
+            token_hash=row[0],
+            username=row[1],
+            csrf_token=row[2],
+            expires_at=datetime.fromisoformat(row[3]),
+        )
+
+    def delete_session(self, token_hash: str) -> bool:
+        with self._connection as connection:
+            cursor = connection.execute(
+                "DELETE FROM admin_sessions WHERE token_hash = ?", (token_hash,)
+            )
+        return cursor.rowcount > 0
+
+    def delete_expired_sessions(self, now: datetime) -> int:
+        with self._connection as connection:
+            cursor = connection.execute(
+                "DELETE FROM admin_sessions WHERE expires_at <= ?", (now.isoformat(),)
+            )
+        return cursor.rowcount

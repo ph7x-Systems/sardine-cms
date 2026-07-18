@@ -7,8 +7,10 @@ source of truth is the JSON/Markdown export (:mod:`cms_core.export`).
 """
 
 from abc import ABC, abstractmethod
+from datetime import datetime
 from types import TracebackType
 
+from cms_core.accounts import AdminSession, User
 from cms_core.media import MediaAsset
 from cms_core.models import Article
 from cms_core.pages import Page
@@ -81,6 +83,34 @@ class StorageBackend(ABC):
     def has_content(self) -> bool:
         """True when any article, page or media asset exists."""
         return bool(self.list_article_ids() or self.list_page_ids() or self.list_media_ids())
+
+    # Admin accounts (never exported — see cms_core.accounts)
+
+    @abstractmethod
+    def save_user(self, user: User) -> None: ...
+
+    @abstractmethod
+    def load_user(self, username: str) -> User | None: ...
+
+    @abstractmethod
+    def delete_user(self, username: str) -> bool: ...
+
+    @abstractmethod
+    def list_usernames(self) -> list[str]: ...
+
+    # Admin sessions
+
+    @abstractmethod
+    def save_session(self, session: AdminSession) -> None: ...
+
+    @abstractmethod
+    def load_session(self, token_hash: str) -> AdminSession | None: ...
+
+    @abstractmethod
+    def delete_session(self, token_hash: str) -> bool: ...
+
+    @abstractmethod
+    def delete_expired_sessions(self, now: datetime) -> int: ...
 
     # Context manager
 

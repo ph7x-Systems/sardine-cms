@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from cms_cli.app import app
+from cms_cli.project import load_project
 from typer.testing import CliRunner
 
 runner = CliRunner()
@@ -105,3 +106,28 @@ def test_build_is_reproducible_via_cli(tmp_path: Path) -> None:
         return output.rsplit("digest ", 1)[1]
 
     assert digest(first.output) == digest(second.output)
+
+
+def test_admin_create_user_provisions_an_account(tmp_path: Path) -> None:
+    runner.invoke(app, ["init", str(tmp_path), "--name", "Demo"])
+    result = runner.invoke(
+        app,
+        ["admin", "create-user", "chef", "-p", str(tmp_path), "--role", "publisher"],
+        input="tinned-fish-forever\ntinned-fish-forever\n",
+    )
+    assert result.exit_code == 0, result.output
+    from cms_admin.security import verify_password
+    from cms_core.accounts import Role
+
+    project = load_project(tmp_path)
+    with project.open_storage() as storage:
+        user = storage.load_user("chef")
+        assert user is not None
+        assert user.role is Role.PUBLISHER
+        assert verify_password(user.password_hash, "tinned-fish-forever")
+    duplicate = runner.invoke(
+        app,
+        ["admin", "create-user", "chef", "-p", str(tmp_path), "--role", "editor"],
+        input="x\nx\n",
+    )
+    assert duplicate.exit_code == 3

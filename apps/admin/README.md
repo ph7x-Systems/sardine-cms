@@ -10,11 +10,20 @@ pip install -e apps/admin
 STILLSITE_STORAGE_URL="sqlite:///content.db" uvicorn --factory cms_admin.app:create_app
 ```
 
+There are no default credentials — create the first account with the CLI,
+then sign in at `/login`:
+
+```bash
+cms admin create-user editor-in-chief -p my-project --role admin
+```
+
 Configuration is environment-only (no config files with secrets):
 
-| Variable                | Meaning                              | Default                |
-| ----------------------- | ------------------------------------ | ---------------------- |
-| `STILLSITE_STORAGE_URL` | Storage URL for `create_storage`     | `sqlite:///content.db` |
+| Variable                        | Meaning                                     | Default                |
+| ------------------------------- | ------------------------------------------- | ---------------------- |
+| `STILLSITE_STORAGE_URL`         | Storage URL for `create_storage`            | `sqlite:///content.db` |
+| `STILLSITE_ADMIN_SESSION_HOURS` | Session lifetime in hours                   | `12`                   |
+| `STILLSITE_ADMIN_COOKIE_SECURE` | Set `0` only for plain-http local dev       | `1`                    |
 
 Milestone 3 status and the phased plan live in
 [docs/PLAN.md](../../docs/PLAN.md).
