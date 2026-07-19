@@ -5,7 +5,7 @@
 # Sardine CMS
 
 [![CI](https://github.com/ph7x-Systems/sardine-cms/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ph7x-Systems/sardine-cms/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/sardine-cms-cli.svg?label=pypi)](https://pypi.org/project/sardine-cms-cli/)
+[![PyPI](https://img.shields.io/pypi/v/sardine-cms-cli?label=pypi&cacheSeconds=3600)](https://pypi.org/project/sardine-cms-cli/)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue.svg)](pyproject.toml)
 [![Checked with mypy (strict)](https://img.shields.io/badge/mypy-strict-blue.svg)](pyproject.toml)
@@ -46,7 +46,7 @@ tests/                          # unit and integration tests
 
 ## Status
 
-Developed in the open, released on PyPI (v0.1.0). The content core (models, translation states, four storage engines, deterministic export), the validator, the deterministic builder, the theme system, the `cms` CLI and the browser admin (the full editorial cycle, hardened and accessibility-gated) are implemented and tested — the live demo is built with them on every merge. See [docs/PLAN.md](docs/PLAN.md) for the execution plan, [docs/POC_PLAN.md](docs/POC_PLAN.md) for the proof-of-concept target and [docs/BRIEF.md](docs/BRIEF.md) for the full brief. No secrets, personal data or client content live in this repository.
+Developed in the open and released on PyPI (see the version badge above for the current release). The content core (models, translation states, four storage engines, deterministic export), the validator, the deterministic builder, the theme system, the `cms` CLI and the browser admin (the full editorial cycle, hardened and accessibility-gated) are implemented and tested — the live demo is built with them on every merge. See [docs/PLAN.md](docs/PLAN.md) for the execution plan, [docs/POC_PLAN.md](docs/POC_PLAN.md) for the proof-of-concept target and [docs/BRIEF.md](docs/BRIEF.md) for the full brief. No secrets, personal data or client content live in this repository.
 
 ## Install
 
