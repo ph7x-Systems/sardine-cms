@@ -13,6 +13,7 @@ from cms_admin.demo_export import export_demo, neutralize
 from cms_core import (
     ArticleContent,
     Language,
+    MediaAsset,
     PageContent,
     Section,
     SectionContent,
@@ -77,6 +78,31 @@ def test_the_source_database_never_gains_the_demo_user(tmp_path: Path) -> None:
     export_demo(db, tmp_path / "admin")
     with create_storage(f"sqlite:///{db}") as storage:
         assert storage.load_user("demo") is None
+
+
+def test_media_previews_are_prefixed_in_the_snapshot(tmp_path: Path) -> None:
+    """Regression: image sources must move under /admin/ like every link."""
+    db = tmp_path / "content.sqlite3"
+    with create_storage(f"sqlite:///{db}") as storage:
+        storage.save_media_asset(
+            MediaAsset(
+                id="tin",
+                path="tin.svg",
+                mime_type="image/svg+xml",
+                width=10,
+                height=10,
+                alt={Language.EN: "A tin"},
+            )
+        )
+    out = tmp_path / "admin"
+    media_dir = tmp_path / "media"
+    media_dir.mkdir()
+    (media_dir / "tin.svg").write_text('<svg xmlns="x" width="10" height="10"/>')
+    export_demo(db, out, media_dir=media_dir)
+    listing = (out / "media/index.html").read_text(encoding="utf-8")
+    assert 'src="/admin/media-files/tin.svg"' in listing
+    assert 'src="/media-files/' not in listing
+    assert (out / "media-files" / "tin.svg").is_file()
 
 
 def test_neutralize_rewrites_only_root_relative_links() -> None:

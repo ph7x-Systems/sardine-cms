@@ -45,6 +45,7 @@ BANNER_CSS = (
 def neutralize(html: str) -> str:
     """Make a captured page inert: prefixed links, no forms, no tokens."""
     html = html.replace('href="/', f'href="{PREFIX}/')
+    html = html.replace('src="/', f'src="{PREFIX}/')
     html = html.replace('action="/', f'action="{PREFIX}/')
     html = html.replace('method="post"', 'method="get"')
     html = re.sub(r'<input type="hidden" name="csrf_token" value="[^"]*">', "", html)
