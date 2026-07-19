@@ -47,23 +47,23 @@ jobs:
     name: Publish ${{ matrix.package }}
     needs: build
     runs-on: ubuntu-latest
-    environment: pypi
+    # One environment per package: with identical claims PyPI scopes the
+    # OIDC token to a single matching project, so sibling packages would
+    # 403. Distinct environments make each project's trusted publisher
+    # unambiguous.
+    environment: ${{ matrix.env }}
     permissions:
       id-token: write
     strategy:
-      # Publishers may come online in rounds (PyPI caps pending publishers
-      # per account): each package publishes independently, re-runs skip
-      # what already shipped, and one missing publisher fails only its own
-      # job.
       fail-fast: false
       matrix:
-        package:
-          - sardine_cms_core
-          - sardine_cms_validation
-          - sardine_cms_build
-          - sardine_cms_cli
-          - sardine_cms_admin
-          - sardine_cms_theme_ph7x_reference
+        include:
+          - { package: sardine_cms_core, env: pypi-core }
+          - { package: sardine_cms_validation, env: pypi-validation }
+          - { package: sardine_cms_build, env: pypi-build }
+          - { package: sardine_cms_cli, env: pypi-cli }
+          - { package: sardine_cms_admin, env: pypi-admin }
+          - { package: sardine_cms_theme_ph7x_reference, env: pypi-theme }
     steps:
       - uses: actions/download-artifact@v4
         with:
