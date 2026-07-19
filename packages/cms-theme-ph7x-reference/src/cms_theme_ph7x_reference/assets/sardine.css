@@ -63,6 +63,6 @@ main:has(#bv-list:checked) .b-card h3{margin-top:6px;font-size:1.26rem}
 @supports (animation-timeline: view()) {
   .b-card,.exp .row{animation:sar-rise linear both;animation-timeline:view();animation-range:entry 0% entry 45%}
 }
-@keyframes sar-rise{from{opacity:.2;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes sar-rise{from{transform:translateY(18px)}to{transform:none}}
 .hero::after{animation:sar-twinkle 8s ease-in-out infinite alternate}
 @keyframes sar-twinkle{from{opacity:.55}to{opacity:.95}}
