@@ -8,7 +8,6 @@ is checked against the settings code by the docs suite.
 """
 
 import re
-
 from datetime import UTC, datetime
 from pathlib import Path
 
