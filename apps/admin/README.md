@@ -24,7 +24,10 @@ content by workflow status, the translation coverage matrix and a live
 validation report. Articles and pages are edited in the browser: EN source
 plus a side-by-side editor per translation, with state indicators from the
 checksum model and a preview rendered by the builder's own Markdown
-renderer (raw HTML disabled).
+renderer (raw HTML disabled). The media library uploads with server-side
+validation (MIME sniffed from bytes, size limit, parsed image dimensions),
+manages mandatory EN + translatable alt text, and refuses to delete assets
+that articles or sections still reference.
 
 Configuration is environment-only (no config files with secrets):
 
@@ -33,6 +36,8 @@ Configuration is environment-only (no config files with secrets):
 | `SARDINE_STORAGE_URL`         | Storage URL for `create_storage`            | `sqlite:///content.db` |
 | `SARDINE_ADMIN_SESSION_HOURS` | Session lifetime in hours                   | `12`                   |
 | `SARDINE_ADMIN_COOKIE_SECURE` | Set `0` only for plain-http local dev       | `1`                    |
+| `SARDINE_MEDIA_DIR`             | Media upload directory (the project's)      | `media`                |
+| `SARDINE_ADMIN_UPLOAD_MAX_MB`   | Upload size limit in MB                     | `10`                   |
 
 Milestone 3 status and the phased plan live in
 [docs/PLAN.md](../../docs/PLAN.md).

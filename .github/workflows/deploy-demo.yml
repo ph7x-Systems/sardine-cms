@@ -43,7 +43,8 @@ jobs:
         run: |
           python -m cms_admin.demo_export \
             --storage examples/multilingual-company-site/content.sqlite3 \
-            --out examples/multilingual-company-site/_site/admin
+            --out examples/multilingual-company-site/_site/admin \
+            --media-dir examples/multilingual-company-site/media
       - name: Deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
