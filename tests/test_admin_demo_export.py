@@ -133,11 +133,17 @@ def test_snapshot_publishing_page_shows_the_full_report(tmp_path: Path) -> None:
         assert rule in publishing
 
 
-def test_snapshot_preview_link_points_at_the_public_site(tmp_path: Path) -> None:
+def test_snapshot_preview_links_point_at_the_public_site(tmp_path: Path) -> None:
     """The static snapshot cannot serve /preview/ — the public site is the
-    preview, so the navbar link goes to the site root instead of a 404."""
+    preview, so every preview link (navbar and per-entry) maps onto it."""
     db = _storage_file(tmp_path)
+    (tmp_path / "sardine.toml").write_text(
+        '[site]\nname = "T"\nbase_url = "https://t.example"\nlanguages = []\n',
+        encoding="utf-8",
+    )
     out = tmp_path / "admin"
-    export_demo(db, out)
-    dashboard = (out / "index.html").read_text(encoding="utf-8")
-    assert 'href="/admin/preview/"' not in dashboard
+    export_demo(db, out, project_dir=tmp_path)
+    editor = (out / "articles/hello-orbit/index.html").read_text(encoding="utf-8")
+    assert 'href="/blog/hello-orbit/"' in editor  # per-entry preview -> the site itself
+    for page in out.rglob("index.html"):
+        assert "/admin/preview/" not in page.read_text(encoding="utf-8"), page
