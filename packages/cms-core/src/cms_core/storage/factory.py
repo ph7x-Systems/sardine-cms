@@ -7,9 +7,10 @@ backend. Third parties can plug their own engines with
 Built-in schemes:
 
 - ``sqlite`` — implemented (development default; a bare file path also works)
-- ``postgresql`` (alias ``postgres``) — planned
-- ``mssql`` (alias ``sqlserver``) — planned
-- ``mysql`` (alias ``mariadb``; MariaDB is protocol-compatible) — planned
+- ``postgresql`` (alias ``postgres``) — implemented (psycopg 3, optional extra)
+- ``mssql`` (alias ``sqlserver``) — implemented (pymssql, optional extra)
+- ``mysql`` (alias ``mariadb``; MariaDB is protocol-compatible) — implemented
+  (PyMySQL, optional extra)
 """
 
 from collections.abc import Callable
@@ -48,16 +49,6 @@ def create_storage(url: str) -> StorageBackend:
     return factory(location)
 
 
-def _planned(engine: str) -> BackendFactory:
-    def factory(location: str) -> StorageBackend:
-        raise NotImplementedError(
-            f"the {engine} backend is planned but not implemented yet (see docs/PLAN.md);"
-            " use sqlite for now or register a custom backend"
-        )
-
-    return factory
-
-
 def _sqlite_factory(location: str) -> StorageBackend:
     return SQLiteBackend(sqlite_path_from_location(location))
 
@@ -68,7 +59,19 @@ def _postgres_factory(location: str) -> StorageBackend:
     return PostgresBackend(f"postgresql://{location}")
 
 
+def _mysql_factory(location: str) -> StorageBackend:
+    from cms_core.storage.mysql import MySQLBackend
+
+    return MySQLBackend(location)
+
+
+def _mssql_factory(location: str) -> StorageBackend:
+    from cms_core.storage.mssql import MssqlBackend
+
+    return MssqlBackend(location)
+
+
 register_backend("sqlite", _sqlite_factory)
 register_backend("postgresql", _postgres_factory)
-register_backend("mssql", _planned("SQL Server"))
-register_backend("mysql", _planned("MySQL/MariaDB"))
+register_backend("mysql", _mysql_factory)
+register_backend("mssql", _mssql_factory)

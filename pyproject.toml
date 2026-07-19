@@ -7,6 +7,7 @@ dev = [
     "mypy>=1.13",
     "pytest>=8.3",
     "httpx>=0.27",  # fastapi.testclient transport
+    "types-PyMySQL>=1.1",  # stubs for the mysql backend
 ]
 
 [tool.ruff]
@@ -33,6 +34,12 @@ strict = true
 files = ["apps", "packages", "tests"]
 exclude = ["build", "dist"]
 plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+# pymssql ships no type stubs; the backend guards the import and types its
+# own surface, so the missing stub is acceptable.
+module = "pymssql"
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "packages", "apps"]
