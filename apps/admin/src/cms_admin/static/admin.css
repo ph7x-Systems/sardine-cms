@@ -412,6 +412,16 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 
 .admin-source dd { margin: .15rem 0 .9rem; color: var(--ink); }
 
+.admin-thumb {
+  display: block;
+  object-fit: cover;
+  border-radius: 2px;
+  border: 1px solid var(--line-2);
+  background: var(--bg);
+}
+
+.admin-media-preview img { max-width: 100%; height: auto; display: block; margin: .4rem 0; }
+
 .admin-breadcrumb { margin-bottom: 1.2rem; }
 .admin-breadcrumb a { color: var(--muted); font-size: .88rem; }
 .admin-breadcrumb a:hover { color: var(--accent); }

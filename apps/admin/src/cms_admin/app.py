@@ -20,6 +20,7 @@ from cms_admin.auth import get_db
 from cms_admin.auth import router as auth_router
 from cms_admin.dashboard import router as dashboard_router
 from cms_admin.db import StorageExecutor
+from cms_admin.media import router as media_router
 from cms_admin.pages import router as pages_router
 from cms_admin.settings import AdminSettings
 
@@ -52,7 +53,13 @@ def create_app(settings: AdminSettings | None = None) -> FastAPI:
     app.include_router(dashboard_router)
     app.include_router(articles_router)
     app.include_router(pages_router)
+    app.include_router(media_router)
     app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")
+    app.mount(
+        "/media-files",
+        StaticFiles(directory=app.state.settings.media_dir, check_dir=False),
+        name="media-files",
+    )
 
     @app.get("/healthz")
     async def healthz(request: Request) -> dict[str, str | int]:

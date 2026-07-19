@@ -56,8 +56,18 @@ def neutralize(html: str) -> str:
 
 def _demo_paths(storage_path: Path) -> list[str]:
     """Every page worth capturing, enumerated from the content itself."""
-    paths = ["/login", "/", "/articles", "/articles/new", "/pages", "/pages/new"]
+    paths = [
+        "/login",
+        "/",
+        "/articles",
+        "/articles/new",
+        "/pages",
+        "/pages/new",
+        "/media",
+        "/media/new",
+    ]
     with create_storage(f"sqlite:///{storage_path}") as storage:
+        paths.extend(f"/media/{asset_id}" for asset_id in storage.list_media_ids())
         for article_id in storage.list_article_ids():
             paths.append(f"/articles/{article_id}")
             paths.extend(
@@ -79,7 +89,7 @@ def _demo_paths(storage_path: Path) -> list[str]:
     return paths
 
 
-def export_demo(storage_file: Path, out_dir: Path) -> int:
+def export_demo(storage_file: Path, out_dir: Path, media_dir: Path | None = None) -> int:
     """Write the static admin snapshot; returns the number of pages."""
     from fastapi.testclient import TestClient
 
@@ -99,7 +109,11 @@ def export_demo(storage_file: Path, out_dir: Path) -> int:
                     created_at=datetime.now(UTC),
                 )
             )
-        settings = AdminSettings(storage_url=f"sqlite:///{db_copy}", cookie_secure=False)
+        settings = AdminSettings(
+            storage_url=f"sqlite:///{db_copy}",
+            cookie_secure=False,
+            media_dir=media_dir if media_dir is not None else Path(scratch) / "media",
+        )
         app = create_app(settings)
         pages = 0
         with TestClient(app) as client:
@@ -122,6 +136,8 @@ def export_demo(storage_file: Path, out_dir: Path) -> int:
                 pages += 1
     static_src = Path(__file__).parent / "static"
     shutil.copytree(static_src, out_dir / "static", dirs_exist_ok=True)
+    if media_dir is not None and media_dir.is_dir():
+        shutil.copytree(media_dir, out_dir / "media-files", dirs_exist_ok=True)
     return pages
 
 
@@ -129,8 +145,9 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--storage", type=Path, required=True, help="SQLite content database")
     parser.add_argument("--out", type=Path, required=True, help="output directory (…/admin)")
+    parser.add_argument("--media-dir", type=Path, default=None, help="project media directory")
     arguments = parser.parse_args(argv)
-    pages = export_demo(arguments.storage, arguments.out)
+    pages = export_demo(arguments.storage, arguments.out, arguments.media_dir)
     print(f"captured {pages} admin page(s) into {arguments.out}")
     return 0
 

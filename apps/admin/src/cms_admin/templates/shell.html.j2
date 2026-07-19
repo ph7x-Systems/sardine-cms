@@ -23,7 +23,7 @@
       <li><a href="/" {% if active_section == "dashboard" %}aria-current="page"{% endif %}>Dashboard</a></li>
       <li><a href="/articles" {% if active_section == "articles" %}aria-current="page"{% endif %}>Articles</a></li>
       <li><a href="/pages" {% if active_section == "pages" %}aria-current="page"{% endif %}>Pages</a></li>
-      {# Media joins this list when its phase lands. #}
+      <li><a href="/media" {% if active_section == "media" %}aria-current="page"{% endif %}>Media</a></li>
     </ul>
   </nav>
   <main id="main" class="admin-main">
