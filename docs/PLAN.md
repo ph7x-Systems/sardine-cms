@@ -147,10 +147,13 @@ gate green in CI.
       `v*` tags via PyPI OIDC (no long-lived tokens), with a tag-vs-version
       consistency check; semantic versioning from `0.1.0` in lockstep;
       hand-written `CHANGELOG.md`; one single-sourced version per package.
-- [ ] **Remaining backends**: SQL Server and MySQL/MariaDB, same mold as
-      [ADR-0009](adr/0009-postgres-backend.md) — own ADR each, optional
-      extra, shared ANSI migrations with engine-specific version tracking,
-      the storage conformance suite green in CI (service containers).
+- [x] **Remaining backends**: MySQL/MariaDB
+      ([ADR-0018](adr/0018-mysql-backend.md), PyMySQL) and SQL Server
+      ([ADR-0019](adr/0019-mssql-backend.md), pymssql) — optional extras,
+      the shared migrations with mechanical dialect adaptations, one shared
+      DB-API implementation, and the conformance suite green in CI against
+      real service containers. Every engine promised by ADR-0004 is now
+      implemented.
 
 ## Milestone 4 — Reference theme and example (detailed plan)
 

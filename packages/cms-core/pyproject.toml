@@ -9,6 +9,8 @@ dependencies = ["pydantic>=2.9"]
 
 [project.optional-dependencies]
 postgres = ["psycopg[binary]>=3.2"]
+mysql = ["PyMySQL>=1.1"]
+mssql = ["pymssql>=2.3"]
 
 [build-system]
 requires = ["hatchling"]

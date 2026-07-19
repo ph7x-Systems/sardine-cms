@@ -81,8 +81,37 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: ci-only
+          MYSQL_DATABASE: sardine
+          MYSQL_USER: sardine
+          MYSQL_PASSWORD: ci-only
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h localhost -pci-only --silent"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_SA_PASSWORD: "CiOnly!Passw0rd"
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P 'CiOnly!Passw0rd' -Q 'SELECT 1' -b"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 30
+          --health-start-period 30s
     env:
       SARDINE_POSTGRES_URL: postgresql://sardine:ci-only@127.0.0.1:5432/sardine
+      SARDINE_MYSQL_URL: mysql://sardine:ci-only@127.0.0.1:3306/sardine
+      SARDINE_MSSQL_URL: mssql://sa:CiOnly%21Passw0rd@127.0.0.1:1433/sardine
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -91,7 +120,7 @@ jobs:
       - run: python -m pip install --upgrade pip
       - run: |
           python -m pip install --group dev
-          python -m pip install -e "packages/cms-core[postgres]"
+          python -m pip install -e "packages/cms-core[postgres,mysql,mssql]"
           for pkg in packages/cms-validation packages/cms-build packages/cms-cli; do
             python -m pip install -e "$pkg"
           done

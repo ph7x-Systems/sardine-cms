@@ -33,15 +33,19 @@ def test_all_planned_backends_are_registered() -> None:
 @pytest.mark.parametrize(
     "url",
     [
-        "mssql://cms:secret@localhost/cms",
-        "sqlserver://cms:secret@localhost/cms",
-        "mysql://cms:secret@localhost/cms",
-        "mariadb://cms:secret@localhost/cms",
+        "mssql://cms:secret@127.0.0.1:1/cms",
+        "sqlserver://cms:secret@127.0.0.1:1/cms",
+        "mysql://cms:secret@127.0.0.1:1/cms",
+        "mariadb://cms:secret@127.0.0.1:1/cms",
     ],
 )
-def test_planned_backends_fail_loudly(url: str) -> None:
-    with pytest.raises(NotImplementedError, match="planned"):
+def test_every_promised_engine_is_implemented(url: str) -> None:
+    """ADR-0018/0019: resolving the scheme must reach the driver (which
+    raises its own connection error against an unreachable host), never a
+    NotImplementedError."""
+    with pytest.raises(Exception) as excinfo:
         create_storage(url)
+    assert not isinstance(excinfo.value, NotImplementedError)
 
 
 def test_postgresql_is_implemented_not_planned() -> None:
