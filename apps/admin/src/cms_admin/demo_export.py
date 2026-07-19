@@ -46,8 +46,9 @@ def neutralize(html: str) -> str:
     """Make a captured page inert: prefixed links, no forms, no tokens."""
     html = html.replace('href="/', f'href="{PREFIX}/')
     # The live admin serves /preview/ itself; in the static snapshot the
-    # public site *is* the preview, so that link points at the site root.
-    html = html.replace(f'href="{PREFIX}/preview/"', 'href="/"')
+    # public site *is* the preview, so every preview link maps onto the
+    # site: /preview/ -> /, /preview/blog/x/ -> /blog/x/.
+    html = html.replace(f'href="{PREFIX}/preview/', 'href="/')
     html = html.replace('src="/', f'src="{PREFIX}/')
     html = html.replace('action="/', f'action="{PREFIX}/')
     html = html.replace('method="post"', 'method="get"')
