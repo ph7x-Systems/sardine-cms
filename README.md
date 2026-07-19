@@ -46,7 +46,7 @@ tests/                          # unit and integration tests
 
 ## Status
 
-Developed in the open, released on PyPI (v0.1.0). The content core (models, translation states, four storage engines, deterministic export), the validator, the deterministic builder, the theme system, the `cms` CLI and the browser admin (the full editorial cycle, hardened and accessibility-gated) are implemented and tested — the live demo is built with them on every merge. See [docs/PLAN.md](docs/PLAN.md) for the execution plan, [docs/POC_PLAN.md](docs/POC_PLAN.md) for the proof-of-concept target and [docs/BRIEF.md](docs/BRIEF.md) for the full brief. No secrets, personal data or client content live in this repository.
+Developed in the open and released on PyPI (see the version badge above for the current release). The content core (models, translation states, four storage engines, deterministic export), the validator, the deterministic builder, the theme system, the `cms` CLI and the browser admin (the full editorial cycle, hardened and accessibility-gated) are implemented and tested — the live demo is built with them on every merge. See [docs/PLAN.md](docs/PLAN.md) for the execution plan, [docs/POC_PLAN.md](docs/POC_PLAN.md) for the proof-of-concept target and [docs/BRIEF.md](docs/BRIEF.md) for the full brief. No secrets, personal data or client content live in this repository.
 
 ## Install
 
