@@ -80,7 +80,7 @@ content header with `breadcrumb`, `app-footer` with copyright. Surfaces:
 | Editorial notes (editors) | comment trail card with inline add form, author-or-admin removal |
 | List quick actions | per-row Bootstrap dropdown (bi-three-dots): workflow transitions + trash |
 | Trash | sidebar entry, per-kind tables with Restore / admin-only Delete forever |
-| Design preview (editors) | card with a same-origin iframe onto `/preview/<entry>`, pointer to Publishing when no build exists |
+| Design preview + autosave (article/page source editors) | accessible save-state line + debounced scoped real-theme render into a same-origin `/preview/<entry>` iframe; explicit Save owns revisions |
 | Revisions (editors) | history card + detail page with unified diff in `admin-preview`, restore button |
 | Menu manager | items table + add/update card (per-language labels), publisher-gated writes |
 | Users screen (admin) | accounts table with inline role select, new-account card |

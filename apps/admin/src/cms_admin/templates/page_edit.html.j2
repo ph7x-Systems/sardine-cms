@@ -33,7 +33,8 @@
 {% endif %}
 <div class="row admin-sbs">
   <div class="col-lg-6">
-    <form method="post" action="/pages/{{ page.id }}" class="admin-form">
+    <form method="post" action="/pages/{{ page.id }}" class="admin-form"
+          data-autosave data-autosave-url="/pages/{{ page.id }}/autosave">
       <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
       <div class="card mb-3">
         <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Content (EN)") }}</h2></div>
@@ -45,6 +46,9 @@
                             hint=_("empty publishes immediately once published; a future moment keeps the entry out of builds until a build runs after it")) }}
         </div>
       </div>
+      <p class="form-text" role="status" aria-live="polite" data-autosave-status
+         data-saving="{{ _('Saving…') }}" data-saved="{{ _('Saved') }}"
+         data-invalid="{{ _('Autosave paused — fix invalid fields.') }}"></p>
       <button type="submit" class="btn btn-primary mb-3">{{ _("Save") }}</button>
     </form>
   </div>

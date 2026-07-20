@@ -12,9 +12,9 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Annotated
 
-from cms_build import build_site, create_target
+from cms_build import build_entry_preview, build_site, create_target, urls
 from cms_cli.project import Project, load_project
-from cms_core import Role, StorageBackend, User
+from cms_core import SOURCE_LANGUAGE, Article, Page, Role, StorageBackend, User
 from cms_core.accounts import AdminSession
 from cms_core.languages import TARGET_LANGUAGES
 from cms_validation import SiteContent
@@ -75,6 +75,41 @@ def _write_artifact(files: dict[str, bytes], output: Path) -> int:
     return len(files)
 
 
+async def refresh_entry_preview(request: Request, entry: Article | Page) -> str | None:
+    """Render one saved entry into /preview/ through the active theme.
+
+    The lock makes overlapping debounced requests converge on the newest
+    stored value. Content is loaded after acquiring it for that reason.
+    """
+    project = _project(request)
+    if project is None:
+        return None
+    async with request.app.state.preview_lock:
+        content = await _site_content(request)
+        if isinstance(entry, Article):
+            current_article = next(
+                (item for item in content.articles if item.id == entry.id), entry
+            )
+            preview_path = "/preview" + urls.article_path(
+                project.site, current_article, SOURCE_LANGUAGE
+            )
+            preview_entry: Article | Page = current_article
+        else:
+            current_page = next((item for item in content.pages if item.id == entry.id), entry)
+            preview_path = "/preview" + urls.page_path(current_page, SOURCE_LANGUAGE)
+            preview_entry = current_page
+        artifact = await asyncio.to_thread(
+            build_entry_preview,
+            project.site,
+            content,
+            preview_entry,
+            media_files=project.collect_media_files(),
+            now=datetime.now(UTC),
+        )
+        _write_artifact(artifact.files, Path(request.app.state.preview_dir))
+        return preview_path
+
+
 @router.get("")
 async def publishing_home(
     request: Request,
@@ -114,16 +149,17 @@ async def run_preview(
     if project is None:
         _record(request, "preview", ok=False, detail="no sardine.toml in the project directory")
         return _redirect()
-    content = await _site_content(request)
-    artifact = await asyncio.to_thread(
-        build_site,
-        project.site,
-        content,
-        media_files=project.collect_media_files(),
-        now=datetime.now(UTC),
-    )
-    preview_dir = Path(request.app.state.preview_dir)
-    pages = _write_artifact(artifact.files, preview_dir)
+    async with request.app.state.preview_lock:
+        content = await _site_content(request)
+        artifact = await asyncio.to_thread(
+            build_site,
+            project.site,
+            content,
+            media_files=project.collect_media_files(),
+            now=datetime.now(UTC),
+        )
+        preview_dir = Path(request.app.state.preview_dir)
+        pages = _write_artifact(artifact.files, preview_dir)
     _record(
         request,
         "preview",

@@ -835,3 +835,12 @@ msgstr "Guardar elemento"
 
 msgid "menu: id is lowercase-with-dashes, url and position are required"
 msgstr "menu: el id es minúsculas-con-guiones; url y posición son obligatorios"
+
+msgid "Saving…"
+msgstr "Guardando…"
+
+msgid "Saved"
+msgstr "Guardado"
+
+msgid "Autosave paused — fix invalid fields."
+msgstr "Guardado automático en pausa — corrige los campos no válidos."

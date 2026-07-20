@@ -3,7 +3,7 @@
 from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as _dist_version
 
-from cms_build.builder import Artifact, build_site
+from cms_build.builder import Artifact, build_entry_preview, build_site
 from cms_build.config import SiteConfig
 from cms_build.head import Head, build_head
 from cms_build.markdown import render_markdown
@@ -23,6 +23,7 @@ __all__ = [
     "Theme",
     "available_targets",
     "available_themes",
+    "build_entry_preview",
     "build_head",
     "build_site",
     "create_target",

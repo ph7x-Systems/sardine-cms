@@ -6,6 +6,7 @@ thread-affine ``StorageExecutor``) and closed on shutdown; handlers reach it
 through ``get_db``.
 """
 
+import asyncio
 import tempfile
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -36,6 +37,9 @@ from cms_admin.users import router as users_router
 async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings: AdminSettings = app.state.settings
     app.state.db = StorageExecutor(settings.storage_url)
+    # Autosaves and manual preview builds serialize writes into /preview/ so
+    # overlapping requests cannot leave a mixed artifact behind.
+    app.state.preview_lock = asyncio.Lock()
     try:
         yield
     finally:
@@ -52,6 +56,7 @@ async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
 SECURITY_HEADERS = {
     "Content-Security-Policy": (
         "default-src 'none'; script-src 'self'; "
+        "connect-src 'self'; "
         "style-src 'self' 'unsafe-inline'; "
         "font-src 'self'; img-src 'self' data:; form-action 'self'; "
         "base-uri 'none'; frame-ancestors 'none'"

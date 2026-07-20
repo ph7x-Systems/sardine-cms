@@ -835,3 +835,12 @@ msgstr "Enregistrer l'élément"
 
 msgid "menu: id is lowercase-with-dashes, url and position are required"
 msgstr "menu : l'id est en minuscules-avec-tirets ; url et position sont requis"
+
+msgid "Saving…"
+msgstr "Enregistrement…"
+
+msgid "Saved"
+msgstr "Enregistré"
+
+msgid "Autosave paused — fix invalid fields."
+msgstr "Enregistrement automatique en pause — corrigez les champs invalides."

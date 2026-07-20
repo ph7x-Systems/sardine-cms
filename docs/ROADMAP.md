@@ -51,7 +51,7 @@ Legend: ✅ shipped · 🟡 partial · 🔜 scheduled (milestone in brackets) ·
 | Quick actions from the list | ✅ per-row dropdown: workflow transitions + trash | — |
 | Featured / pinned content | ✅ featured flag: leads the home highlight; listings stay recency | — |
 | Editorial notes on entries | ✅ note trail per article/page (author-or-admin removal); never published | — |
-| Autosave while editing | ❌ | 🔜 with ADR-0027 live refresh (M6) |
+| Autosave while editing | ✅ valid article/page source edits persist on a debounce without flooding revisions | — |
 
 ### Content model
 
@@ -63,7 +63,7 @@ Legend: ✅ shipped · 🟡 partial · 🔜 scheduled (milestone in brackets) ·
 | Custom fields | ✅ free-form fields on articles (editable, exported, themed) and sections | — |
 | Navigation menus | ✅ explicit menu manager (per-language labels, ordering, external links) with automatic-menu fallback | — |
 | Reusable blocks | 🟡 section kinds are the block library | 🔜 grow the kind gallery; document authoring (M6) |
-| Design-aware editing | ✅ themed side-preview in the editors (ADR-0027); live refresh arrives with the autosave layer | — |
+| Design-aware editing | ✅ themed side-preview plus debounced live refresh through the scoped real builder (ADR-0027) | — |
 | Multilingual | ✅ **core strength**: EN source + per-language states, parity gates | — |
 | Authors / bylines | ✅ editorial byline on articles, rendered by the themes | — |
 

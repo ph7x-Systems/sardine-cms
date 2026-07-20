@@ -835,3 +835,12 @@ msgstr "Gravar item"
 
 msgid "menu: id is lowercase-with-dashes, url and position are required"
 msgstr "menu: o id é minúsculas-com-hífens; url e posição são obrigatórios"
+
+msgid "Saving…"
+msgstr "A gravar…"
+
+msgid "Saved"
+msgstr "Gravado"
+
+msgid "Autosave paused — fix invalid fields."
+msgstr "Gravação automática em pausa — corrija os campos inválidos."

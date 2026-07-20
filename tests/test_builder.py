@@ -4,7 +4,7 @@ import json
 import re
 from datetime import UTC, datetime
 
-from cms_build import SiteConfig, build_site
+from cms_build import SiteConfig, build_entry_preview, build_site
 from cms_core import (
     ArticleContent,
     ContentStatus,
@@ -58,6 +58,25 @@ def test_build_is_deterministic() -> None:
     second = build_site(CONFIG, make_content())
     assert first.digest() == second.digest()
     assert first.paths() == second.paths()
+
+
+def test_entry_preview_renders_a_draft_without_building_the_site() -> None:
+    content = make_content()
+    draft = content.articles[0]
+    draft.status = ContentStatus.DRAFT
+    draft.source = ArticleContent(
+        title="Unsaved direction", summary="Preview only", body_markdown="Fresh **body**"
+    )
+
+    artifact = build_entry_preview(CONFIG, content, draft, now=NOW)
+
+    assert "blog/first-post/index.html" in artifact.paths()
+    assert "assets/site.css" in artifact.paths()
+    assert "sitemap.xml" not in artifact.paths()
+    assert "blog/index.html" not in artifact.paths()
+    html = artifact.files["blog/first-post/index.html"].decode()
+    assert "Unsaved direction" in html
+    assert "<strong>body</strong>" in html
 
 
 def test_url_tree_uses_localized_slugs() -> None:

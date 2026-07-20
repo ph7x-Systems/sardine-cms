@@ -62,9 +62,12 @@ with that entity's errors listed (the publish gate; disable only with
 
 - **Design preview** (ADR-0027): each article and page editor frames the
   entry rendered by the real builder and the real theme (from
-  `/preview/`), refreshed on every save — run a preview build from the
-  Publishing panel first. Only `/preview/` allows same-origin framing;
-  the admin itself can never be framed.
+  `/preview/`). Valid source edits autosave after a short debounce and
+  refresh a scoped entry artifact — drafts included, with no whole-site
+  build. Invalid intermediate values stay in the form and pause autosave.
+  Autosaves do not consume the newest-20 revision history; the explicit
+  **Save** remains the revision point. Only `/preview/` allows same-origin
+  framing; the admin itself can never be framed.
 - **Articles**: EN source with metadata (per-language slug, category, tags,
   cover, editorial byline, Featured flag — featured articles lead the home
   highlight — and free-form custom fields carried to themes and

@@ -28,15 +28,14 @@ design* converge, before any implementation.
 
 ## Decision
 
-Owner-confirmed 2026-07-19. Adopt **option 2 now, option 3 later**: a split editor view — form on
+Owner-confirmed 2026-07-19. Adopt **option 2, then option 3**: a split editor view — form on
 the left, the themed entry in an iframe on the right, rendered by the
 existing preview pipeline on every save. It reuses what exists (builder,
 theme discovery, `/preview/` mount), keeps themes fully sovereign over
-markup, and works with the CSP unchanged (`frame-ancestors` stays
+markup, and in phase 1 works with the CSP unchanged (`frame-ancestors` stays
 `'none'` for the admin itself; the iframe is same-origin `/preview/`).
-Option 3 becomes attractive once the autosave layer (M5, after
-ADR-0020) exists — the same debounce that autosaves can refresh the
-render.
+Option 3 landed on 2026-07-20 with the autosave layer: the same debounce
+that persists a valid article/page source refreshes the render.
 
 ## Consequences
 
@@ -46,6 +45,13 @@ render.
 - **CSP nuance**: the admin document keeps `frame-ancestors 'none'`;
   responses under `/preview/` alone move to `frame-ancestors 'self'`
   (with `X-Frame-Options SAMEORIGIN`) so the same-origin editor can
-  frame them — nothing external ever can.
-- Live refresh (option 3) lands together with the autosave layer.
+  frame them — nothing external ever can. Phase 2 adds only
+  `connect-src 'self'` for the autosave request.
+- Live refresh (option 3) and autosave share one scoped render request.
+  Drafts render through the real theme without a whole-site build; theme
+  assets and media accompany the entry artifact.
+- Autosaves do not append revision snapshots: a debounce must not exhaust
+  the bounded history. The explicit Save button remains the revision point.
+- Invalid intermediate forms are neither persisted nor rendered. The
+  accessible status line reports saving, saved or paused states.
 - The theme contract gains nothing to implement — that is the point.
