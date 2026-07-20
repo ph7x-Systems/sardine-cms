@@ -170,6 +170,29 @@ def test_editing_the_page_content_marks_its_translation_outdated(tmp_path: Path)
     assert "admin-state-outdated" in editor
 
 
+def test_page_autosave_persists_without_consuming_revision_history(tmp_path: Path) -> None:
+    app = _app(tmp_path, _page("home"))
+    with _client(app) as client:
+        csrf = _sign_in(client)
+        editor = client.get("/pages/home").text
+        assert 'data-autosave-url="/pages/home/autosave"' in editor
+        saved = client.post(
+            "/pages/home/autosave",
+            data={
+                "csrf_token": csrf,
+                "title": "Autosaved home",
+                "description": "Still a draft",
+                "slug": "home",
+            },
+        )
+        assert saved.status_code == 200
+        assert saved.json() == {"ok": True, "preview_path": None}
+    stored = _stored_page(tmp_path, "home")
+    assert stored.source.title == "Autosaved home"
+    with create_storage(f"sqlite:///{tmp_path / 'content.db'}") as storage:
+        assert storage.list_revisions("page", "home") == []
+
+
 def test_page_translation_save_completes_the_own_state(tmp_path: Path) -> None:
     app = _app(tmp_path, _page("home", _hero()))
     with _client(app) as client:

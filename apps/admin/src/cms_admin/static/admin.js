@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
       element: area,
       autoDownloadFontAwesome: false,
       spellChecker: false,
+      forceSync: true,
       status: false,
       toolbar: [
         named('bold'), named('italic'), named('heading'), '|',
@@ -79,5 +80,103 @@ document.addEventListener('DOMContentLoaded', function () {
     const label = document.querySelector('label[for="' + area.id + '"]');
     const input = mde.codemirror.getInputField();
     if (label && input) input.setAttribute('aria-label', label.textContent.trim());
+    // CodeMirror edits outside the original textarea. Mirror its change as
+    // a bubbling input event so the generic autosave form sees it.
+    mde.codemirror.on('change', function () {
+      area.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  });
+});
+
+/* ADR-0027 phase 2: valid source edits autosave after a short debounce and
+   refresh the iframe with the server-rendered real theme. Requests are
+   serialized; a manual Save waits for any active autosave, then remains the
+   revision-producing final write. Forms still work normally without JS. */
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('form[data-autosave]').forEach(function (form) {
+    const status = form.querySelector('[data-autosave-status]');
+    let timer = null;
+    let inFlight = false;
+    let queued = false;
+    let submitAfter = false;
+    let submitter = null;
+
+    const showStatus = function (kind) {
+      if (!status) return;
+      status.textContent = status.dataset[kind] || '';
+      status.classList.toggle('text-success', kind === 'saved');
+      status.classList.toggle('text-danger', kind === 'invalid');
+    };
+
+    const refreshPreview = function (previewPath) {
+      if (!previewPath) return;
+      const container = document.querySelector('[data-design-preview-container]');
+      if (!container) return;
+      let frame = container.querySelector('[data-design-preview]');
+      if (!frame) {
+        frame = document.createElement('iframe');
+        frame.className = 'admin-design-preview';
+        frame.title = container.dataset.previewTitle || 'Design preview';
+        frame.loading = 'lazy';
+        frame.setAttribute('data-design-preview', '');
+        container.querySelector('[data-preview-empty]')?.remove();
+        container.appendChild(frame);
+      }
+      const url = new URL(previewPath, window.location.origin);
+      url.searchParams.set('autosave', Date.now().toString());
+      frame.src = url.pathname + url.search;
+    };
+
+    const save = async function () {
+      if (inFlight) {
+        queued = true;
+        return;
+      }
+      inFlight = true;
+      queued = false;
+      showStatus('saving');
+      try {
+        const response = await fetch(form.dataset.autosaveUrl, {
+          method: 'POST',
+          body: new FormData(form),
+          credentials: 'same-origin',
+          headers: { 'Accept': 'application/json' },
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) {
+          showStatus('invalid');
+        } else {
+          showStatus('saved');
+          refreshPreview(result.preview_path);
+        }
+      } catch {
+        showStatus('invalid');
+      } finally {
+        inFlight = false;
+        if (submitAfter) {
+          submitAfter = false;
+          form.requestSubmit(submitter);
+        } else if (queued) {
+          window.clearTimeout(timer);
+          timer = window.setTimeout(save, 0);
+        }
+      }
+    };
+
+    const schedule = function () {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(save, 1200);
+    };
+    form.addEventListener('input', schedule);
+    form.addEventListener('change', schedule);
+    form.addEventListener('submit', function (event) {
+      window.clearTimeout(timer);
+      queued = false;
+      if (inFlight) {
+        event.preventDefault();
+        submitAfter = true;
+        submitter = event.submitter;
+      }
+    });
   });
 });

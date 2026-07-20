@@ -835,3 +835,12 @@ msgstr "Eintrag speichern"
 
 msgid "menu: id is lowercase-with-dashes, url and position are required"
 msgstr "menu: die ID ist kleinbuchstaben-mit-bindestrichen; URL und Position sind erforderlich"
+
+msgid "Saving…"
+msgstr "Wird gespeichert…"
+
+msgid "Saved"
+msgstr "Gespeichert"
+
+msgid "Autosave paused — fix invalid fields."
+msgstr "Automatisches Speichern pausiert — ungültige Felder korrigieren."

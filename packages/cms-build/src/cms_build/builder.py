@@ -137,12 +137,14 @@ class _SiteBuilder:
 
     # Orchestration
 
-    def build(self) -> Artifact:
+    def _add_assets(self) -> None:
         for path, data in sorted(self.theme_assets.items()):
             self.artifact.add(path, data)
         for path, data in sorted(self.media_files.items()):
             self.artifact.add(f"{MEDIA_PREFIX}/{path}", data)
 
+    def build(self) -> Artifact:
+        self._add_assets()
         for language in self.config.all_languages:
             self._build_pages(language)
             self._build_articles(language)
@@ -154,6 +156,20 @@ class _SiteBuilder:
         self._build_not_found()
         self.artifact.add("sitemap.xml", _sitemap(sorted(self.sitemap_urls)))
         self.artifact.add("robots.txt", _robots(self.config))
+        return self.artifact
+
+    def preview_entry(self, entry: Article | Page, language: Language) -> Artifact:
+        """Render one entry through the real theme, regardless of workflow.
+
+        The admin uses this for draft/autosave preview. Theme assets and
+        referenced media accompany the HTML, but listings, feeds and utility
+        pages are deliberately not rebuilt on every keystroke.
+        """
+        self._add_assets()
+        if isinstance(entry, Article):
+            self._render_article(entry, language)
+        else:
+            self._render_page(entry, language)
         return self.artifact
 
     # Rendering helpers
@@ -217,18 +233,19 @@ class _SiteBuilder:
         for page in self.pages:
             if not _available(page, language):
                 continue
-            path = urls.page_path(page, language)
-            head = self._page_head(page, language)
-            context = self._base_context(language, head)
-            context["page"] = _page_context(page, language)
-            context["sections"] = self._section_contexts(page, language)
-            # Featured articles lead the home highlight; recency breaks ties
-            # (M5). Listings, feeds and pagination keep pure recency.
-            highlight = sorted(
-                self.articles_by_language[language], key=lambda a: (not a.featured,)
-            )[:3]
-            context["latest"] = self._listing_entries(highlight, language)
-            self._render("page", path, context)
+            self._render_page(page, language)
+
+    def _render_page(self, page: Page, language: Language) -> None:
+        path = urls.page_path(page, language)
+        head = self._page_head(page, language)
+        context = self._base_context(language, head)
+        context["page"] = _page_context(page, language)
+        context["sections"] = self._section_contexts(page, language)
+        # Featured articles lead the home highlight; recency breaks ties
+        # (M5). Listings, feeds and pagination keep pure recency.
+        highlight = sorted(self.articles_by_language[language], key=lambda a: (not a.featured,))[:3]
+        context["latest"] = self._listing_entries(highlight, language)
+        self._render("page", path, context)
 
     def _page_head(self, page: Page, language: Language) -> Head:
         paths = {
@@ -278,35 +295,38 @@ class _SiteBuilder:
 
     def _build_articles(self, language: Language) -> None:
         for article in self.articles_by_language[language]:
-            path = urls.article_path(self.config, article, language)
-            body = _article_content(article, language)
-            head = self._article_head(article, language)
-            context = self._base_context(language, head)
-            context["article"] = {
-                "title": body.title,
-                "summary": body.summary,
-                "date_iso": article.created_at.date().isoformat(),
-                "back_url": urls.blog_index_path(self.config, language),
-                "back_label": ui_label(self.config, "back", language),
-                "date_human": format_date(
-                    article.created_at.day,
-                    article.created_at.month,
-                    article.created_at.year,
-                    language,
-                ),
-                "minutes": _reading_minutes(body.body_markdown),
-                "min_read_label": ui_label(self.config, "min-read", language),
-                "category": self._category_context(article, language),
-                "tags": [
-                    {"slug": tag, "url": urls.tag_path(self.config, tag, language)}
-                    for tag in article.tags
-                ],
-                "body_html": _SafeHtml(render_markdown(body.body_markdown)),
-                "author": article.author,
-                "featured": article.featured,
-                "fields": dict(sorted(article.fields.items())),
-            }
-            self._render("article", path, context)
+            self._render_article(article, language)
+
+    def _render_article(self, article: Article, language: Language) -> None:
+        path = urls.article_path(self.config, article, language)
+        body = _article_content(article, language)
+        head = self._article_head(article, language)
+        context = self._base_context(language, head)
+        context["article"] = {
+            "title": body.title,
+            "summary": body.summary,
+            "date_iso": article.created_at.date().isoformat(),
+            "back_url": urls.blog_index_path(self.config, language),
+            "back_label": ui_label(self.config, "back", language),
+            "date_human": format_date(
+                article.created_at.day,
+                article.created_at.month,
+                article.created_at.year,
+                language,
+            ),
+            "minutes": _reading_minutes(body.body_markdown),
+            "min_read_label": ui_label(self.config, "min-read", language),
+            "category": self._category_context(article, language),
+            "tags": [
+                {"slug": tag, "url": urls.tag_path(self.config, tag, language)}
+                for tag in article.tags
+            ],
+            "body_html": _SafeHtml(render_markdown(body.body_markdown)),
+            "author": article.author,
+            "featured": article.featured,
+            "fields": dict(sorted(article.fields.items())),
+        }
+        self._render("article", path, context)
 
     def _category_context(self, article: Article, language: Language) -> dict[str, str] | None:
         if article.category is None:
@@ -603,6 +623,29 @@ def build_site(
     active_theme = theme or create_theme(config.theme)
     moment = now or datetime.now(tz=UTC)
     return _SiteBuilder(config, content, active_theme, media_files or {}, moment).build()
+
+
+def build_entry_preview(
+    config: SiteConfig,
+    content: SiteContent,
+    entry: Article | Page,
+    *,
+    language: Language = SOURCE_LANGUAGE,
+    theme: Theme | None = None,
+    media_files: Mapping[str, bytes] | None = None,
+    now: datetime | None = None,
+) -> Artifact:
+    """Render one saved or unsaved entry through the active real theme.
+
+    Unlike a publish build, editorial preview intentionally includes drafts
+    and future entries. Surrounding navigation/highlights still derive only
+    from live content, preserving the site's real context.
+    """
+    active_theme = theme or create_theme(config.theme)
+    moment = now or datetime.now(tz=UTC)
+    return _SiteBuilder(config, content, active_theme, media_files or {}, moment).preview_entry(
+        entry, language
+    )
 
 
 def _reading_minutes(markdown: str) -> int:

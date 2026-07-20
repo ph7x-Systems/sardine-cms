@@ -5,6 +5,14 @@ from `0.1.0`; the six packages release in lockstep under one `vX.Y.Z` tag.
 
 ## Unreleased
 
+- **Live themed refresh + autosave** (M6, ADR-0027 phase 2): valid
+  article/page source edits persist after a short debounce and refresh a
+  scoped entry artifact through the real builder and theme, drafts included.
+  Invalid intermediate forms pause without overwriting content; autosaves do
+  not consume the bounded revision history, while explicit Save still does.
+  Requests are serialized, CSRF-protected and announced through an accessible
+  localized status line.
+
 - **WordPress blog import** (M6, ADR-0030):
   `cms import export.xml --format wordpress` converts WXR 1.2 posts into
   Sardine articles — common HTML becomes Markdown; workflow status, dates,

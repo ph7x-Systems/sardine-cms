@@ -53,6 +53,8 @@ def test_the_csp_allows_only_same_origin_scripts() -> None:
     assert "script-src 'self';" in csp
     assert "script-src 'self' 'unsafe-inline'" not in csp
     assert "unsafe-eval" not in csp
+    # ADR-0027 phase 2: autosave POSTs only to this admin origin.
+    assert "connect-src 'self';" in csp
     # ADR-0023: runtime style *attributes* only (CodeMirror, Popper);
     # templates themselves stay attribute-free (test below).
     assert "style-src 'self' 'unsafe-inline'" in csp

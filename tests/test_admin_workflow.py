@@ -221,6 +221,54 @@ def test_preview_builds_into_the_served_directory(tmp_path: Path) -> None:
     assert "Test Site" in preview.text
 
 
+def test_article_autosave_refreshes_a_draft_preview_without_a_revision(tmp_path: Path) -> None:
+    app = _app(
+        tmp_path,
+        _article("draft-flight", ContentStatus.DRAFT),
+        with_project=True,
+    )
+    with _client(app) as client:
+        csrf = _sign_in(client)
+        editor = client.get("/articles/draft-flight").text
+        assert 'data-autosave-url="/articles/draft-flight/autosave"' in editor
+        saved = client.post(
+            "/articles/draft-flight/autosave",
+            data={
+                "csrf_token": csrf,
+                "title": "Live draft title",
+                "summary": "Fresh summary",
+                "body_markdown": "Themed **immediately**.",
+                "slug": "draft-flight",
+            },
+        )
+        assert saved.status_code == 200
+        assert saved.json() == {
+            "ok": True,
+            "preview_path": "/preview/blog/draft-flight/",
+        }
+        preview = client.get("/preview/blog/draft-flight/")
+        assert "Live draft title" in preview.text
+        assert "<strong>immediately</strong>" in preview.text
+    with create_storage(f"sqlite:///{tmp_path / 'content.db'}") as storage:
+        assert storage.list_revisions("article", "draft-flight") == []
+
+
+def test_article_autosave_rejects_invalid_content_without_overwriting(tmp_path: Path) -> None:
+    app = _app(tmp_path, _article("safe-draft", ContentStatus.DRAFT))
+    with _client(app) as client:
+        csrf = _sign_in(client)
+        rejected = client.post(
+            "/articles/safe-draft/autosave",
+            data={"csrf_token": csrf, "title": "", "slug": "bad slug"},
+        )
+        assert rejected.status_code == 422
+        assert rejected.json()["ok"] is False
+    with create_storage(f"sqlite:///{tmp_path / 'content.db'}") as storage:
+        stored = storage.load_article("safe-draft")
+    assert stored is not None
+    assert stored.source.title == "Safe-Draft"
+
+
 def test_build_writes_the_output_with_target_extras(tmp_path: Path) -> None:
     app = _app(
         tmp_path,

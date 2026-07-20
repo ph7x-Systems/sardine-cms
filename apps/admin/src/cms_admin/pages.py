@@ -32,7 +32,7 @@ from cms_core.languages import TARGET_LANGUAGES
 from cms_core.translatable import TranslatableModel
 from cms_validation import SiteContent
 from fastapi import APIRouter, Depends, Form, HTTPException, Request, status
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from pydantic import ValidationError
 
 from cms_admin.articles import (
@@ -43,7 +43,7 @@ from cms_admin.articles import (
     publish_at_form,
 )
 from cms_admin.auth import current_session, enforce_csrf, get_db
-from cms_admin.publishing import _project
+from cms_admin.publishing import _project, refresh_entry_preview
 from cms_admin.workflow import (
     allowed,
     available_transitions,
@@ -101,7 +101,7 @@ def _section_or_404(page: Page, key: str) -> Section:
     return section
 
 
-async def _save_page(request: Request, page: Page, author: str) -> None:
+async def _save_page(request: Request, page: Page, author: str, *, revision: bool = True) -> None:
     """Persist and append the revision snapshot (ADR-0025)."""
     page.updated_at = datetime.now(UTC)
     payload = page.model_dump_json()
@@ -109,7 +109,8 @@ async def _save_page(request: Request, page: Page, author: str) -> None:
 
     def run(storage: StorageBackend) -> None:
         storage.save_page(page)
-        storage.save_revision("page", page.id, author, payload, when)
+        if revision:
+            storage.save_revision("page", page.id, author, payload, when)
 
     await get_db(request).run(run)
 
@@ -283,6 +284,29 @@ async def page_edit_save(
         )
     await _save_page(request, page, user.username)
     return RedirectResponse(f"/pages/{page.id}", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@router.post("/{page_id}/autosave")
+async def page_autosave(
+    request: Request,
+    page_id: str,
+    user_session: tuple[User, AdminSession] = Depends(enforce_csrf),
+    title: str = Form(""),
+    description: str = Form(""),
+    slug: str = Form(""),
+    publish_at: str = Form(""),
+) -> object:
+    """Persist valid page metadata and refresh its scoped themed preview."""
+    user, _ = user_session
+    page = await _load_page(request, page_id)
+    try:
+        page.publish_at = parse_publish_at(publish_at)
+        page.source = PageContent(title=title, description=description, slug=slug)
+    except ValueError as error:
+        return JSONResponse({"ok": False, "errors": _form_error_list(error)}, status_code=HTTP_422)
+    await _save_page(request, page, user.username, revision=False)
+    preview_path = await refresh_entry_preview(request, page)
+    return {"ok": True, "preview_path": preview_path}
 
 
 @router.post("/{page_id}/sections")

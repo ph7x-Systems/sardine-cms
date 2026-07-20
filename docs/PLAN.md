@@ -227,7 +227,7 @@ tests, docs and wiki updates, per the standing gates.
       free-form custom fields on articles (migration 13)
 - [x] **Design-aware editing** (ADR-0027, accepted): themed side-preview
       in the editors via the real preview pipeline
-- [ ] **Live refresh + autosave** (ADR-0027 phase 2): one debounced save
+- [x] **Live refresh + autosave** (ADR-0027 phase 2): one debounced save
       refreshes the real themed preview without flooding bounded revisions
 - [x] Explicit menu manager (migration 14): per-language labels,
       ordering, external links; defined items replace the derived menu,

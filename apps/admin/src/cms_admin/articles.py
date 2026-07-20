@@ -27,11 +27,11 @@ from cms_core import (
 from cms_core.languages import TARGET_LANGUAGES
 from cms_validation import SiteContent
 from fastapi import APIRouter, Depends, Form, HTTPException, Request, status
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from pydantic import ValidationError
 
 from cms_admin.auth import current_session, enforce_csrf, get_db
-from cms_admin.publishing import _project
+from cms_admin.publishing import _project, refresh_entry_preview
 from cms_admin.workflow import (
     allowed,
     available_transitions,
@@ -100,7 +100,9 @@ def _target_language(code: str) -> Language:
     return language
 
 
-async def _save_article(request: Request, article: Article, author: str) -> None:
+async def _save_article(
+    request: Request, article: Article, author: str, *, revision: bool = True
+) -> None:
     """Persist and append the revision snapshot (ADR-0025) atomically-ish:
     the snapshot records exactly what was saved."""
     payload = article.model_dump_json()
@@ -108,7 +110,8 @@ async def _save_article(request: Request, article: Article, author: str) -> None
 
     def run(storage: StorageBackend) -> None:
         storage.save_article(article)
-        storage.save_revision("article", article.id, author, payload, when)
+        if revision:
+            storage.save_revision("article", article.id, author, payload, when)
 
     await get_db(request).run(run)
 
@@ -370,6 +373,55 @@ async def article_edit_save(
         )
     await _save_article(request, article, user.username)
     return RedirectResponse(f"/articles/{article.id}", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@router.post("/{article_id}/autosave")
+async def article_autosave(
+    request: Request,
+    article_id: str,
+    user_session: tuple[User, AdminSession] = Depends(enforce_csrf),
+    title: str = Form(""),
+    summary: str = Form(""),
+    body_markdown: str = Form(""),
+    slug: str = Form(""),
+    category: str = Form(""),
+    tags: str = Form(""),
+    cover: str = Form(""),
+    publish_at: str = Form(""),
+    author: str = Form(""),
+    featured: str = Form(""),
+) -> object:
+    """Persist a valid debounced draft without consuming revision history."""
+    user, _ = user_session
+    article = await _load_article(request, article_id)
+    raw = await request.form()
+    names = [str(value) for value in raw.getlist("custom_name")]
+    values = [str(value) for value in raw.getlist("custom_value")]
+    custom_fields = {
+        name.strip(): value
+        for name, value in zip(names, values, strict=False)
+        if name.strip() and value
+    }
+    form = {
+        "title": title,
+        "summary": summary,
+        "body_markdown": body_markdown,
+        "slug": slug,
+        "category": category,
+        "tags": tags,
+        "cover": cover,
+        "publish_at": publish_at,
+        "author": author,
+        "featured": featured,
+    }
+    try:
+        article = _validated_article(article, form)
+        article = article.model_copy(update={"fields": custom_fields})
+    except ValueError as error:
+        return JSONResponse({"ok": False, "errors": _form_error_list(error)}, status_code=HTTP_422)
+    await _save_article(request, article, user.username, revision=False)
+    preview_path = await refresh_entry_preview(request, article)
+    return {"ok": True, "preview_path": preview_path}
 
 
 def _translation_context(
