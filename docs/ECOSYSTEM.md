@@ -34,6 +34,7 @@ grant — see ADR-0011):
 sardine-theme-<name>        sardine-target-<name>
 sardine-backend-<engine>    sardine-plugin-<name>
 sardine-lang-<tag>          sardine-deploy-<name>
+sardine-forms-<name>
 ```
 
 Not permitted: the Sardine CMS logos, "official" claims, or names implying

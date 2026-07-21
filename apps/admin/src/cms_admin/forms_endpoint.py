@@ -170,7 +170,7 @@ async def submit(request: Request) -> HTMLResponse:
     # Storage first (a consumer of the accepted submission, never part
     # of the HTTP decision), then notification — each contained, each
     # audited on failure, neither ever visitor-facing (ADR-0039).
-    if project.forms_store:
+    if project.forms_store and project.forms_provider == "reference":
         import uuid
         from datetime import UTC, datetime
 
@@ -193,7 +193,7 @@ async def submit(request: Request) -> HTMLResponse:
             )
 
     delivered = False
-    if project.forms_notify:
+    if project.forms_notify and project.forms_provider == "reference":
         try:
             mailer = request.app.state.mailer
             if mailer is not None:
@@ -205,6 +205,52 @@ async def submit(request: Request) -> HTMLResponse:
                 delivered = True
         except Exception:
             logger.exception("form notification failed")
+    # A configured non-reference provider owns this stage instead
+    # (ADR-0040): resolved through the registry, contract validated at
+    # selection, contained exactly like the bundled legs.
+    if project.forms_provider != "reference":
+        import uuid as _uuid
+        from datetime import UTC as _UTC
+        from datetime import datetime as _datetime
+
+        from cms_core.forms import FormContext, FormSubmission, create_forms_provider
+
+        try:
+            provider = create_forms_provider(project.forms_provider)
+            accepted = FormSubmission(
+                id=str(_uuid.uuid4()),
+                received_at=_datetime.now(tz=_UTC),
+                page_id=page_id,
+                section_key=section_key,
+                language=lang,
+                values=values,
+            )
+            context = FormContext(
+                heading=str(section.source.fields.get("heading", "")),
+                notify=project.forms_notify,
+                store=project.forms_store,
+            )
+            await asyncio.to_thread(provider.handle, accepted, context)
+        except Exception:
+            logger.exception("forms provider failed")
+            await audit_record(
+                request,
+                "visitor",
+                "form-provider-failed",
+                "form",
+                f"{page_id}/{section_key}",
+                project.forms_provider,
+            )
+        else:
+            await audit_record(
+                request, "visitor", "form-received", "form", f"{page_id}/{section_key}", ""
+            )
+        heading = section.source.fields.get("success_heading", "") or _label(lang, "form-received")
+        text = section.source.fields.get("success_text", "") or _label(lang, "form-thanks")
+        return _response(
+            heading, f"<p>{escape(text)}</p>", back_url, back, status.HTTP_200_OK, lang
+        )
+
     mail_ok = delivered or not project.forms_notify
     # A storage failure was already audited above on its own record.
     await audit_record(

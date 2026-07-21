@@ -378,6 +378,7 @@ endpoint = "https://panel.example.com/forms/submit"  # where forms submit
 notify = "owner@example.com"                          # notification address
 store = true                                          # optional: keep submissions
 retention_days = 90                                   # optional: prune at startup
+provider = "reference"                                # optional: who handles submissions
 ```
 
 The published form submits to the panel's endpoint, which validates
@@ -401,6 +402,11 @@ filtered by form (`page/section`) and date window; the visitor's
 values display as an opaque payload; deletion is definitive; and
 `retention_days` prunes older submissions at panel startup (0 keeps
 everything until deleted).
+
+`provider` selects who handles accepted submissions. The default,
+`reference`, is the behaviour above (notification and optional
+storage); extensions can offer other destinations — see
+[Writing a Forms Provider](WRITING_A_FORMS_PROVIDER.md).
 
 With `[deploy]` configured (DEPLOYMENT.md), the flow goes further —
 **editorial actions end on the public site**: publishing or

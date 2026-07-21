@@ -8,6 +8,7 @@ from cms_build import CommentsSettings, SiteConfig, register_target, register_th
 from cms_build.deploy import register_deploy_provider
 from cms_core import Language
 from cms_core.extensions import CommentsProvider, Extension, ExtensionError, load_extensions
+from cms_core.forms import register_forms_provider
 from cms_core.language_packs import register_language_pack
 from cms_core.storage import StorageBackend, create_storage, register_backend
 from cms_validation import SiteContent
@@ -41,6 +42,8 @@ class Project:
     deploy_timeout: int = 300
     deploy_settings: dict[str, str] = field(default_factory=dict)
     """The raw ``[deploy]`` table — providers read their own keys."""
+    forms_provider: str = "reference"
+    """``[forms] provider``: who handles accepted submissions."""
     forms_notify: str = ""
     """``[forms] notify``: where submission notifications go; empty
     disables the mail leg (the endpoint still validates and answers)."""
@@ -66,6 +69,8 @@ class Project:
                 register_language_pack(pack)  # type: ignore[arg-type]
             for name, factory in extension.deploy_providers.items():
                 register_deploy_provider(name, factory)
+            for name, factory in extension.forms_providers.items():
+                register_forms_provider(name, factory)
         return extensions
 
     def resolve_comments_provider(self) -> CommentsProvider | None:
@@ -192,6 +197,7 @@ def load_project(directory: Path) -> Project:
         deploy_url=str(deploy_data.get("deploy_url", "")),
         deploy_timeout=int(deploy_data.get("timeout", 300)),
         deploy_settings={str(k): str(v) for k, v in deploy_data.items()},
+        forms_provider=str(data.get("forms", {}).get("provider", "reference")),
         forms_notify=str(data.get("forms", {}).get("notify", "")),
         forms_store=bool(data.get("forms", {}).get("store", False)),
         forms_retention_days=int(data.get("forms", {}).get("retention_days", 0)),
