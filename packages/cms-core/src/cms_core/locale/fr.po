@@ -1463,3 +1463,33 @@ msgstr "Supprimer la soumission"
 
 msgid "No submissions in this window."
 msgstr "Aucune soumission dans cet intervalle."
+
+msgid "Search and social (optional)"
+msgstr "Recherche et réseaux sociaux (facultatif)"
+
+msgid "SEO title"
+msgstr "Titre SEO"
+
+msgid "overrides the page title for search and social; empty derives from the content"
+msgstr "remplace le titre de la page pour la recherche et les réseaux ; vide dérive du contenu"
+
+msgid "SEO description"
+msgstr "Description SEO"
+
+msgid "the snippet under the title; empty derives from the summary"
+msgstr "l'extrait sous le titre ; vide dérive du résumé"
+
+msgid "Ask search engines not to index this entry"
+msgstr "Demander aux moteurs de recherche de ne pas indexer cette entrée"
+
+msgid "Canonical URL"
+msgstr "URL canonique"
+
+msgid "only when this content originally lives at another address"
+msgstr "seulement quand ce contenu vit à l'origine à une autre adresse"
+
+msgid "Social image"
+msgstr "Image sociale"
+
+msgid "a media asset id; the published rendition becomes the card image"
+msgstr "un ID de ressource média ; la version publiée devient l'image de la carte"

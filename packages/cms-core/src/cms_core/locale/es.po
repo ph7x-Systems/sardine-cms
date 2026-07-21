@@ -1463,3 +1463,33 @@ msgstr "Eliminar envío"
 
 msgid "No submissions in this window."
 msgstr "Sin envíos en este intervalo."
+
+msgid "Search and social (optional)"
+msgstr "Búsqueda y redes sociales (opcional)"
+
+msgid "SEO title"
+msgstr "Título SEO"
+
+msgid "overrides the page title for search and social; empty derives from the content"
+msgstr "sustituye el título de la página para búsqueda y redes; vacío deriva del contenido"
+
+msgid "SEO description"
+msgstr "Descripción SEO"
+
+msgid "the snippet under the title; empty derives from the summary"
+msgstr "el fragmento bajo el título; vacío deriva del resumen"
+
+msgid "Ask search engines not to index this entry"
+msgstr "Pedir a los buscadores que no indexen esta entrada"
+
+msgid "Canonical URL"
+msgstr "URL canónica"
+
+msgid "only when this content originally lives at another address"
+msgstr "solo cuando este contenido vive originalmente en otra dirección"
+
+msgid "Social image"
+msgstr "Imagen social"
+
+msgid "a media asset id; the published rendition becomes the card image"
+msgstr "un ID de recurso multimedia; la versión publicada se convierte en la imagen de la tarjeta"

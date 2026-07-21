@@ -181,3 +181,27 @@
   </ul>
 </div>
 {% endmacro %}
+
+{% macro seo_fields(form, image_assets=[]) %}
+<details class="mb-2"{% if form.seo_title or form.seo_description or form.noindex or form.canonical or form.og_image %} open{% endif %}>
+  <summary class="form-text">{{ _("Search and social (optional)") }}</summary>
+  <div class="mt-2">
+    {{ text_field("seo_title", _("SEO title"), form.seo_title, hint=_("overrides the page title for search and social; empty derives from the content")) }}
+    {{ text_field("seo_description", _("SEO description"), form.seo_description, hint=_("the snippet under the title; empty derives from the summary")) }}
+    <div class="mb-1 form-check admin-field">
+      <input class="form-check-input" type="checkbox" id="noindex" name="noindex" value="1"
+             {% if form.noindex %}checked{% endif %}>
+      <label class="form-check-label" for="noindex">{{ _("Ask search engines not to index this entry") }}</label>
+    </div>
+    {{ text_field("canonical", _("Canonical URL"), form.canonical, hint=_("only when this content originally lives at another address")) }}
+    {{ text_field("og_image", _("Social image"), form.og_image, hint=_("a media asset id; the published rendition becomes the card image")) }}
+    <div class="card admin-social-preview" aria-hidden="true">
+      <div class="card-body py-2">
+        <span class="form-text d-block">{{ _("Preview") }}</span>
+        <strong class="d-block">{{ form.seo_title or form.title }}</strong>
+        <span class="d-block">{{ form.seo_description or form.summary or form.description or "" }}</span>
+      </div>
+    </div>
+  </div>
+</details>
+{% endmacro %}

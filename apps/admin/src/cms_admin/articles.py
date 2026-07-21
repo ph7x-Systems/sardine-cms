@@ -24,6 +24,7 @@ from cms_core import (
     User,
     new_article,
 )
+from cms_core.translatable import Seo
 from cms_validation import SiteContent
 from fastapi import APIRouter, Depends, Form, HTTPException, Query, Request, status
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -81,13 +82,17 @@ def publish_at_form(value: datetime | None) -> str:
 
 
 def content_form(content: ArticleContent | None) -> dict[str, str]:
-    if content is None:
-        return {"title": "", "summary": "", "body_markdown": "", "slug": ""}
+    seo = content.seo if content else None
     return {
-        "title": content.title,
-        "summary": content.summary,
-        "body_markdown": content.body_markdown,
-        "slug": content.slug or "",
+        "title": content.title if content else "",
+        "summary": content.summary if content else "",
+        "body_markdown": content.body_markdown if content else "",
+        "slug": (content.slug or "") if content else "",
+        "seo_title": seo.seo_title if seo else "",
+        "seo_description": seo.seo_description if seo else "",
+        "noindex": "1" if (seo and seo.noindex) else "",
+        "canonical": seo.canonical if seo else "",
+        "og_image": seo.og_image if seo else "",
     }
 
 
@@ -204,6 +209,17 @@ async def article_new_form(
     )
 
 
+def _seo_from_form(form: dict[str, str]) -> Seo:
+    """The editor's SEO card (ADR-0041); absent fields mean derived."""
+    return Seo(
+        seo_title=form.get("seo_title", "").strip(),
+        seo_description=form.get("seo_description", "").strip(),
+        noindex=bool(form.get("noindex", "").strip()),
+        canonical=form.get("canonical", "").strip(),
+        og_image=form.get("og_image", "").strip(),
+    )
+
+
 def _validated_article(base: Article, form: dict[str, str]) -> Article:
     """Rebuild the article from the form and run every model validator once."""
     payload = base.model_dump()
@@ -213,6 +229,7 @@ def _validated_article(base: Article, form: dict[str, str]) -> Article:
             summary=form["summary"],
             body_markdown=form["body_markdown"],
             slug=form["slug"] or None,
+            seo=_seo_from_form(form),
         ).model_dump(),
         category=form["category"] or None,
         cover=form["cover"] or None,
@@ -239,6 +256,11 @@ async def article_create(
     tags: str = Form(""),
     cover: str = Form(""),
     cover_pick: str = Form("__keep__"),
+    seo_title: str = Form(""),
+    seo_description: str = Form(""),
+    noindex: str = Form(""),
+    canonical: str = Form(""),
+    og_image: str = Form(""),
     publish_at: str = Form(""),
     unpublish_at: str = Form(""),
     author: str = Form(""),
@@ -263,6 +285,11 @@ async def article_create(
         "unpublish_at": unpublish_at,
         "author": author,
         "featured": featured,
+        "seo_title": seo_title,
+        "seo_description": seo_description,
+        "noindex": noindex,
+        "canonical": canonical,
+        "og_image": og_image,
     }
     try:
         base = new_article(article_id, ArticleContent(title=title or "-"))
@@ -383,6 +410,11 @@ async def article_edit_save(
     tags: str = Form(""),
     cover: str = Form(""),
     cover_pick: str = Form("__keep__"),
+    seo_title: str = Form(""),
+    seo_description: str = Form(""),
+    noindex: str = Form(""),
+    canonical: str = Form(""),
+    og_image: str = Form(""),
     publish_at: str = Form(""),
     unpublish_at: str = Form(""),
     author: str = Form(""),
@@ -414,6 +446,11 @@ async def article_edit_save(
         "unpublish_at": unpublish_at,
         "author": author,
         "featured": featured,
+        "seo_title": seo_title,
+        "seo_description": seo_description,
+        "noindex": noindex,
+        "canonical": canonical,
+        "og_image": og_image,
     }
     try:
         article = _validated_article(article, form)
@@ -450,6 +487,11 @@ async def article_autosave(
     tags: str = Form(""),
     cover: str = Form(""),
     cover_pick: str = Form("__keep__"),
+    seo_title: str = Form(""),
+    seo_description: str = Form(""),
+    noindex: str = Form(""),
+    canonical: str = Form(""),
+    og_image: str = Form(""),
     publish_at: str = Form(""),
     unpublish_at: str = Form(""),
     author: str = Form(""),
@@ -482,6 +524,11 @@ async def article_autosave(
         "unpublish_at": unpublish_at,
         "author": author,
         "featured": featured,
+        "seo_title": seo_title,
+        "seo_description": seo_description,
+        "noindex": noindex,
+        "canonical": canonical,
+        "og_image": og_image,
     }
     try:
         article = _validated_article(article, form)
