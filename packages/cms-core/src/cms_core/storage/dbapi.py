@@ -464,6 +464,8 @@ class DbApiBackend(StorageBackend):
                     "mime_type": asset.mime_type,
                     "width": asset.width,
                     "height": asset.height,
+                    "collection": asset.collection,
+                    "content_hash": asset.content_hash,
                 },
             )
             self._execute("DELETE FROM media_alt_texts WHERE media_id = %s", (asset.id,))
@@ -475,7 +477,8 @@ class DbApiBackend(StorageBackend):
 
     def load_media_asset(self, asset_id: str) -> MediaAsset | None:
         row = self._fetchone(
-            "SELECT id, path, mime_type, width, height FROM media_assets WHERE id = %s",
+            "SELECT id, path, mime_type, width, height, collection, content_hash"
+            " FROM media_assets WHERE id = %s",
             (asset_id,),
         )
         if row is None:
@@ -488,7 +491,14 @@ class DbApiBackend(StorageBackend):
             )
         }
         return MediaAsset(
-            id=row[0], path=row[1], mime_type=row[2], width=row[3], height=row[4], alt=alt
+            id=row[0],
+            path=row[1],
+            mime_type=row[2],
+            width=row[3],
+            height=row[4],
+            alt=alt,
+            collection=str(row[5] or ""),
+            content_hash=str(row[6] or ""),
         )
 
     def delete_media_asset(self, asset_id: str) -> bool:

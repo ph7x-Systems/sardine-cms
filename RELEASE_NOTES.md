@@ -8,6 +8,15 @@ changes live in [CHANGELOG.md](CHANGELOG.md); the product map in
 
 ## Unreleased (towards 0.3.0)
 
+- **The media library gets folders, honesty and a memory** (#136):
+  assets take an optional collection — set at upload, editable later,
+  filterable in the library — and the list says how many entries use
+  each asset, with the full reference list on the asset page. Every
+  upload records the file's SHA-256; bytes identical to an existing
+  asset are refused with the existing asset's name. Storage migration
+  22 (additive) on all four engines; the portable format round-trips
+  both fields; five new panel strings in the four bundled catalogs.
+
 - **Any destination, one contract** (#156): the deployment
   provider framework. Providers register by name
   (`register_deploy_provider`), read their own keys from the raw

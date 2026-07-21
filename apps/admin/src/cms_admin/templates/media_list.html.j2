@@ -22,8 +22,19 @@
         <option value="missing-alt" {% if show == "missing-alt" %}selected{% endif %}>{{ _("Missing translated alt") }}</option>
       </select>
     </div>
+    {% if collections %}
+    <div class="admin-field">
+      <label class="form-label mb-1" for="media-collection">{{ _("Collection") }}</label>
+      <select class="form-select form-select-sm" id="media-collection" name="collection">
+        <option value="" {% if not collection %}selected{% endif %}>{{ _("All collections") }}</option>
+        {% for name in collections %}
+        <option value="{{ name }}" {% if collection == name %}selected{% endif %}>{{ name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {% endif %}
     <button type="submit" class="btn btn-outline-secondary btn-sm">{{ _("Filter") }}</button>
-    {% if q or show != "all" %}
+    {% if q or show != "all" or collection %}
     <a class="btn btn-link btn-sm" href="/media">{{ _("Clear") }}</a>
     <span class="form-text mb-1">{{ _("%(shown)s of %(total)s assets") | format(shown=assets | length, total=total) }}</span>
     {% endif %}
@@ -40,6 +51,8 @@
           <th scope="col">{{ _("ID") }}</th>
           <th scope="col">{{ _("Type") }}</th>
           <th scope="col">{{ _("Size") }}</th>
+          <th scope="col">{{ _("Collection") }}</th>
+          <th scope="col">{{ _("In use") }}</th>
           <th scope="col">{{ _("Alt (EN)") }}</th>
           <th scope="col">{{ _("Translated alt") }}</th>
         </tr>
@@ -54,6 +67,9 @@
           <th scope="row"><a href="/media/{{ asset.id }}">{{ asset.id }}</a></th>
           <td>{{ asset.mime_type }}</td>
           <td>{% if asset.width %}{{ asset.width }}×{{ asset.height }}{% endif %}</td>
+          <td>{% if asset.collection %}<a href="/media?collection={{ asset.collection }}">{{ asset.collection }}</a>{% endif %}</td>
+          <td>{% if usage.get(asset.id) %}<span class="badge text-bg-secondary">{{ usage[asset.id] }}</span>
+            {% else %}<span class="form-text">{{ _("unused") }}</span>{% endif %}</td>
           <td>{{ asset.alt.get(source_language, "") }}</td>
           <td>
             {% set missing = asset.missing_alt_languages() %}

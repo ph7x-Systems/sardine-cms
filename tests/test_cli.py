@@ -270,7 +270,9 @@ def test_doctor_passes_on_a_healthy_project(tmp_path: Path) -> None:
     result = runner.invoke(app, ["doctor", "-p", str(project)])
     assert result.exit_code == 0, result.output
     assert "all checks passed" in result.output
-    assert "schema 21/21" in result.output
+    from cms_core.storage import MIGRATIONS
+
+    assert f"schema {len(MIGRATIONS)}/{len(MIGRATIONS)}" in result.output
     assert "13 article(s), 2 page(s)" in result.output
 
 

@@ -2,6 +2,7 @@
 
 import pytest
 from cms_core import Language, MediaAsset
+from pydantic import ValidationError
 
 
 def make_image(**overrides: object) -> MediaAsset:
@@ -66,3 +67,49 @@ def test_translated_alt_counts_only_when_non_blank() -> None:
     )
     assert Language.PT_PT not in asset.missing_alt_languages()
     assert Language.ES in asset.missing_alt_languages()
+
+
+def test_collection_is_a_slug_or_empty() -> None:
+    ok = MediaAsset(
+        id="pic",
+        path="pic.png",
+        mime_type="image/png",
+        width=1,
+        height=1,
+        alt={Language.EN: "A pic"},
+        collection="press-kit",
+    )
+    assert ok.collection == "press-kit"
+    with pytest.raises(ValidationError):
+        MediaAsset(
+            id="pic",
+            path="pic.png",
+            mime_type="image/png",
+            width=1,
+            height=1,
+            alt={Language.EN: "A pic"},
+            collection="Press Kit",
+        )
+
+
+def test_content_hash_is_sha256_hex_or_empty() -> None:
+    ok = MediaAsset(
+        id="pic",
+        path="pic.png",
+        mime_type="image/png",
+        width=1,
+        height=1,
+        alt={Language.EN: "A pic"},
+        content_hash="0" * 64,
+    )
+    assert ok.content_hash == "0" * 64
+    with pytest.raises(ValidationError):
+        MediaAsset(
+            id="pic",
+            path="pic.png",
+            mime_type="image/png",
+            width=1,
+            height=1,
+            alt={Language.EN: "A pic"},
+            content_hash="not-a-hash",
+        )

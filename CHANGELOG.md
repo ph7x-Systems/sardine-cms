@@ -10,6 +10,12 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Added
 
+- Media collections, usage counts and duplicate prevention: assets
+  carry an optional collection (filterable in the library) and the
+  SHA-256 of their bytes — identical uploads are refused naming the
+  existing asset; the list shows how many entries use each asset
+  (#136; migration 22).
+
 - Deployment provider framework: a versioned `DeployProvider` contract
   with a registry (`register_deploy_provider`), per-provider settings
   from the raw `[deploy]` table, capability declaration the panel

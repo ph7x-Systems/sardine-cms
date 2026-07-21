@@ -21,6 +21,7 @@
         <dl class="admin-source">
           <dt>{{ _("Path") }}</dt><dd><code>{{ asset.path }}</code></dd>
           {% if asset.width %}<dt>{{ _("Dimensions") }}</dt><dd>{{ asset.width }}×{{ asset.height }}</dd>{% endif %}
+          {% if asset.collection %}<dt>{{ _("Collection") }}</dt><dd><a href="/media?collection={{ asset.collection }}">{{ asset.collection }}</a></dd>{% endif %}
         </dl>
         <h3 class="h6">{{ _("Used by") }}</h3>
         {% if references %}
@@ -53,6 +54,16 @@
                    name="alt_{{ language.value }}" value="{{ form["alt_" + language.value] }}">
           </div>
           {% endfor %}
+        </div>
+      </div>
+      <div class="card mb-3">
+        <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Collection") }}</h2></div>
+        <div class="card-body">
+          <div class="mb-1 admin-field">
+            <label class="form-label" for="collection">{{ _("Collection") }}</label>
+            <input class="form-control admin-input" id="collection" name="collection" value="{{ form.collection }}">
+            <div class="form-text admin-hint">{{ _("optional folder, lowercase-with-dashes — group related assets") }}</div>
+          </div>
         </div>
       </div>
       <button type="submit" class="btn btn-primary">{{ _("Save alt text") }}</button>
