@@ -137,18 +137,27 @@ with that entity's errors listed (the publish gate; disable only with
   what publishes), and a side-by-side editor per translation. Editing the
   source marks its translations `outdated` automatically — states derive
   from content checksums, never from flags.
-- **Pages**: metadata plus ordered typed sections; each section is a
-  free-form field map the theme interprets, translated side by side. The
-  editor suggests the fields each bundled kind consumes (the gallery in
-  THEME_GUIDE.md) and merges kinds advertised by activated extensions
-  (ADR-0028) — suggestions only, never validation.
+- **Pages**: metadata, an optional long-form Markdown body (rendered
+  between the header and the sections — a page can be a document, a
+  zone composition, or both), plus ordered typed sections translated
+  side by side. A section editor has three parts (ADR-0037): the flat
+  name/value fields the theme interprets (suggestions from the kind's
+  spec — the gallery in THEME_GUIDE.md — merged with kinds advertised
+  by activated extensions, ADR-0028; suggestions only, never
+  validation), the kind's declared **Markdown fields** with the same
+  editor widget as article bodies, and the unbounded **items table**
+  (one column per item column; blank trailing rows add an item, fully
+  clearing a row removes it). The translation editor mirrors all three
+  with the source read-only beside each input.
 - **Media**: the library filters server-side — text search over id,
   path, type and alt texts, plus quick views (images only, missing
   translated alt). Uploads validated server-side — the MIME type is sniffed from
   raster bytes (png, jpeg, gif, webp), dimensions parsed, byte and pixel
   limits enforced. Active SVG is rejected and an existing filesystem path is
   never replaced.
-  EN alt text is mandatory; alt is translatable per language. Assets
+  Alt text in at least one language is mandatory (the source's, in
+  practice — validation checks the configured source); alt is
+  translatable per language. Assets
   referenced by covers or sections refuse deletion.
 
 ## Publishing panel

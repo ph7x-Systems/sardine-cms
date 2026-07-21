@@ -24,7 +24,9 @@ SECTION_KIND_SPECS: dict[str, SectionKindSpec] = {
     "hero": SectionKindSpec(fields=("kicker", "lead", "heading", "accent")),
     "latest-articles": SectionKindSpec(fields=("kicker", "heading")),
     "quote": SectionKindSpec(fields=("quote", "attribution", "role")),
-    "story": SectionKindSpec(fields=("kicker", "heading", "body"), markdown=("body",)),
+    "story": SectionKindSpec(
+        fields=("kicker", "heading", "body"), markdown=("body",), items=("label", "value")
+    ),
 }
 """The bundled section-kind gallery: kind -> its spec (ADR-0037 v2).
 

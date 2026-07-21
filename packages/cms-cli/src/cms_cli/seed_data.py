@@ -201,75 +201,116 @@ HOME_FAQ: dict[Language, SectionContent] = {
         fields={
             "kicker": "Questions",
             "heading": "What everyone asks",
-            "q1": "Why a sardine?",
-            "a1": "Small payload, big story. She fits the capsule, and the tin "
-            "doubles as a heat shield.",
-            "q2": "Is the olive oil really rocket fuel?",
-            "a2": "No. It is for the salad. The rocket burns the usual mixture, checked twice.",
-            "q3": "When is the launch?",
-            "a3": "When the validation report is green in every language. The "
-            "countdown respects the publish gate.",
-        }
+        },
+        items=[
+            {
+                "question": "Why a sardine?",
+                "answer": "Small payload, big story. She fits the capsule, and the tin doubles as "
+                "a heat shield.",
+            },
+            {
+                "question": "Is the olive oil really rocket fuel?",
+                "answer": "No. It is for the salad. The rocket burns the usual mixture, checked "
+                "twice.",
+            },
+            {
+                "question": "When is the launch?",
+                "answer": "When the validation report is green in every language. The countdown "
+                "respects the publish gate.",
+            },
+        ],
     ),
     PT: SectionContent(
         fields={
             "kicker": "Perguntas",
             "heading": "O que todos perguntam",
-            "q1": "Porque uma sardinha?",
-            "a1": "Carga pequena, historia grande. Cabe na capsula, e a lata "
-            "serve de escudo termico.",
-            "q2": "O azeite e mesmo combustivel?",
-            "a2": "Nao. E para a salada. O foguetao queima a mistura habitual, "
-            "verificada duas vezes.",
-            "q3": "Quando e o lancamento?",
-            "a3": "Quando o relatorio de validacao estiver verde em todas as "
-            "linguas. A contagem respeita o portao de publicacao.",
-        }
+        },
+        items=[
+            {
+                "question": "Porque uma sardinha?",
+                "answer": "Carga pequena, historia grande. Cabe na capsula, e a lata serve de "
+                "escudo termico.",
+            },
+            {
+                "question": "O azeite e mesmo combustivel?",
+                "answer": "Nao. E para a salada. O foguetao queima a mistura habitual, verificada "
+                "duas vezes.",
+            },
+            {
+                "question": "Quando e o lancamento?",
+                "answer": "Quando o relatorio de validacao estiver verde em todas as linguas. A "
+                "contagem respeita o portao de publicacao.",
+            },
+        ],
     ),
     ES: SectionContent(
         fields={
             "kicker": "Preguntas",
             "heading": "Lo que todos preguntan",
-            "q1": "Por que una sardina?",
-            "a1": "Carga pequena, gran historia. Cabe en la capsula, y la lata "
-            "sirve de escudo termico.",
-            "q2": "El aceite de oliva es de verdad combustible?",
-            "a2": "No. Es para la ensalada. El cohete quema la mezcla habitual, "
-            "comprobada dos veces.",
-            "q3": "Cuando es el lanzamiento?",
-            "a3": "Cuando el informe de validacion este en verde en todos los "
-            "idiomas. La cuenta atras respeta la puerta de publicacion.",
-        }
+        },
+        items=[
+            {
+                "question": "Por que una sardina?",
+                "answer": "Carga pequena, gran historia. Cabe en la capsula, y la lata sirve de "
+                "escudo termico.",
+            },
+            {
+                "question": "El aceite de oliva es de verdad combustible?",
+                "answer": "No. Es para la ensalada. El cohete quema la mezcla habitual, comprobada "
+                "dos veces.",
+            },
+            {
+                "question": "Cuando es el lanzamiento?",
+                "answer": "Cuando el informe de validacion este en verde en todos los idiomas. La "
+                "cuenta atras respeta la puerta de publicacion.",
+            },
+        ],
     ),
     FR: SectionContent(
         fields={
             "kicker": "Questions",
             "heading": "Ce que tout le monde demande",
-            "q1": "Pourquoi une sardine ?",
-            "a1": "Petite charge utile, grande histoire. Elle tient dans la "
-            "capsule, et la boite sert de bouclier thermique.",
-            "q2": "L'huile d'olive est-elle vraiment du carburant ?",
-            "a2": "Non. C'est pour la salade. La fusee brule le melange "
-            "habituel, verifie deux fois.",
-            "q3": "Quand a lieu le lancement ?",
-            "a3": "Quand le rapport de validation est vert dans toutes les "
-            "langues. Le compte a rebours respecte la porte de publication.",
-        }
+        },
+        items=[
+            {
+                "question": "Pourquoi une sardine ?",
+                "answer": "Petite charge utile, grande histoire. Elle tient dans la capsule, et la "
+                "boite sert de bouclier thermique.",
+            },
+            {
+                "question": "L'huile d'olive est-elle vraiment du carburant ?",
+                "answer": "Non. C'est pour la salade. La fusee brule le melange habituel, verifie "
+                "deux fois.",
+            },
+            {
+                "question": "Quand a lieu le lancement ?",
+                "answer": "Quand le rapport de validation est vert dans toutes les langues. Le "
+                "compte a rebours respecte la porte de publication.",
+            },
+        ],
     ),
     DE: SectionContent(
         fields={
             "kicker": "Fragen",
             "heading": "Was alle fragen",
-            "q1": "Warum eine Sardine?",
-            "a1": "Kleine Nutzlast, grosse Geschichte. Sie passt in die Kapsel, "
-            "und die Dose dient als Hitzeschild.",
-            "q2": "Ist das Olivenoel wirklich Treibstoff?",
-            "a2": "Nein. Es ist fuer den Salat. Die Rakete verbrennt die "
-            "uebliche Mischung, zweimal geprueft.",
-            "q3": "Wann ist der Start?",
-            "a3": "Wenn der Validierungsbericht in allen Sprachen gruen ist. "
-            "Der Countdown respektiert das Publikationsgate.",
-        }
+        },
+        items=[
+            {
+                "question": "Warum eine Sardine?",
+                "answer": "Kleine Nutzlast, grosse Geschichte. Sie passt in die Kapsel, und die "
+                "Dose dient als Hitzeschild.",
+            },
+            {
+                "question": "Ist das Olivenoel wirklich Treibstoff?",
+                "answer": "Nein. Es ist fuer den Salat. Die Rakete verbrennt die uebliche "
+                "Mischung, zweimal geprueft.",
+            },
+            {
+                "question": "Wann ist der Start?",
+                "answer": "Wenn der Validierungsbericht in allen Sprachen gruen ist. Der Countdown "
+                "respektiert das Publikationsgate.",
+            },
+        ],
     ),
 }
 
@@ -1630,96 +1671,140 @@ HOME_ABOUT: dict[Language, SectionContent] = {
             "kicker": "01 · Who we are",
             "menu": "About",
             "heading": "A space programme born in a cannery",
-            "body": "Commander Sardinha graduated top of her shoal and now leads the only "
-            "space agency with a fish at the helm. Mission control fits in a fish crate, "
-            "the countdown is sung, and every launch smells faintly of the Atlantic.",
-            "meta1k": "1 sardine",
-            "meta1v": "at the controls",
-            "meta2k": "400 tins",
-            "meta2v": "drop-tested",
-            "meta3k": "12% more thrust",
-            "meta3v": "on extra virgin",
-            "meta4k": "0 crew eaten",
-            "meta4v": "this month",
+            "body": "Commander Sardinha graduated top of her shoal and now leads the only space "
+            "agency with a fish at the helm. Mission control fits in a fish crate, the countdown "
+            "is sung, and every launch smells faintly of the Atlantic.",
         },
-        media=["rocket"],
+        items=[
+            {
+                "label": "1 sardine",
+                "value": "at the controls",
+            },
+            {
+                "label": "400 tins",
+                "value": "drop-tested",
+            },
+            {
+                "label": "12% more thrust",
+                "value": "on extra virgin",
+            },
+            {
+                "label": "0 crew eaten",
+                "value": "this month",
+            },
+        ],
     ),
     PT: SectionContent(
         fields={
             "kicker": "01 · Quem somos",
             "menu": "Quem somos",
             "heading": "Um programa espacial nascido numa conserveira",
-            "body": "A Comandante Sardinha formou-se no topo do cardume e lidera a unica "
-            "agencia espacial com um peixe ao leme. O controlo de missao cabe numa caixa "
-            "de peixe, a contagem e cantada, e cada lancamento cheira ao Atlantico.",
-            "meta1k": "1 sardinha",
-            "meta1v": "aos comandos",
-            "meta2k": "400 latas",
-            "meta2v": "testadas em queda",
-            "meta3k": "12% mais impulso",
-            "meta3v": "com extra virgem",
-            "meta4k": "0 tripulantes comidos",
-            "meta4v": "este mes",
+            "body": "A Comandante Sardinha formou-se no topo do cardume e lidera a unica agencia "
+            "espacial com um peixe ao leme. O controlo de missao cabe numa caixa de peixe, a "
+            "contagem e cantada, e cada lancamento cheira ao Atlantico.",
         },
-        media=["rocket"],
+        items=[
+            {
+                "label": "1 sardinha",
+                "value": "aos comandos",
+            },
+            {
+                "label": "400 latas",
+                "value": "testadas em queda",
+            },
+            {
+                "label": "12% mais impulso",
+                "value": "com extra virgem",
+            },
+            {
+                "label": "0 tripulantes comidos",
+                "value": "este mes",
+            },
+        ],
     ),
     ES: SectionContent(
         fields={
             "kicker": "01 · Quienes somos",
             "menu": "Quienes somos",
             "heading": "Un programa espacial nacido en una conservera",
-            "body": "La Comandante Sardina se graduo la primera de su banco y dirige la "
-            "unica agencia espacial con un pez al timon. El control de mision cabe en una "
-            "caja de pescado, la cuenta atras se canta y cada lanzamiento huele al Atlantico.",
-            "meta1k": "1 sardina",
-            "meta1v": "a los mandos",
-            "meta2k": "400 latas",
-            "meta2v": "probadas en caida",
-            "meta3k": "12% mas empuje",
-            "meta3v": "con virgen extra",
-            "meta4k": "0 tripulantes comidos",
-            "meta4v": "este mes",
+            "body": "La Comandante Sardina se graduo la primera de su banco y dirige la unica "
+            "agencia espacial con un pez al timon. El control de mision cabe en una caja de "
+            "pescado, la cuenta atras se canta y cada lanzamiento huele al Atlantico.",
         },
-        media=["rocket"],
+        items=[
+            {
+                "label": "1 sardina",
+                "value": "a los mandos",
+            },
+            {
+                "label": "400 latas",
+                "value": "probadas en caida",
+            },
+            {
+                "label": "12% mas empuje",
+                "value": "con virgen extra",
+            },
+            {
+                "label": "0 tripulantes comidos",
+                "value": "este mes",
+            },
+        ],
     ),
     FR: SectionContent(
         fields={
             "kicker": "01 · Qui nous sommes",
             "menu": "Qui sommes-nous",
             "heading": "Un programme spatial ne dans une conserverie",
-            "body": "La Commandante Sardine a fini premiere de son banc et dirige la seule "
-            "agence spatiale avec un poisson a la barre. Le controle de mission tient dans "
-            "une caisse, le compte a rebours est chante, chaque lancement sent l'Atlantique.",
-            "meta1k": "1 sardine",
-            "meta1v": "aux commandes",
-            "meta2k": "400 boites",
-            "meta2v": "testees en chute",
-            "meta3k": "12% de poussee en plus",
-            "meta3v": "a l'extra vierge",
-            "meta4k": "0 membre d'equipage mange",
-            "meta4v": "ce mois-ci",
+            "body": "La Commandante Sardine a fini premiere de son banc et dirige la seule agence "
+            "spatiale avec un poisson a la barre. Le controle de mission tient dans une caisse, le "
+            "compte a rebours est chante, chaque lancement sent l'Atlantique.",
         },
-        media=["rocket"],
+        items=[
+            {
+                "label": "1 sardine",
+                "value": "aux commandes",
+            },
+            {
+                "label": "400 boites",
+                "value": "testees en chute",
+            },
+            {
+                "label": "12% de poussee en plus",
+                "value": "a l'extra vierge",
+            },
+            {
+                "label": "0 membre d'equipage mange",
+                "value": "ce mois-ci",
+            },
+        ],
     ),
     DE: SectionContent(
         fields={
             "kicker": "01 · Wer wir sind",
             "menu": "Wer wir sind",
             "heading": "Ein Raumfahrtprogramm aus der Konservenfabrik",
-            "body": "Kommandantin Sardine schloss als Beste ihres Schwarms ab und fuehrt "
-            "die einzige Raumfahrtagentur mit einem Fisch am Ruder. Die Missionskontrolle "
-            "passt in eine Fischkiste, der Countdown wird gesungen, jeder Start riecht "
-            "nach Atlantik.",
-            "meta1k": "1 Sardine",
-            "meta1v": "am Steuer",
-            "meta2k": "400 Dosen",
-            "meta2v": "im Falltest",
-            "meta3k": "12% mehr Schub",
-            "meta3v": "mit extra vergine",
-            "meta4k": "0 Crewmitglieder gegessen",
-            "meta4v": "diesen Monat",
+            "body": "Kommandantin Sardine schloss als Beste ihres Schwarms ab und fuehrt die "
+            "einzige Raumfahrtagentur mit einem Fisch am Ruder. Die Missionskontrolle passt in "
+            "eine Fischkiste, der Countdown wird gesungen, jeder Start riecht nach Atlantik.",
         },
-        media=["rocket"],
+        items=[
+            {
+                "label": "1 Sardine",
+                "value": "am Steuer",
+            },
+            {
+                "label": "400 Dosen",
+                "value": "im Falltest",
+            },
+            {
+                "label": "12% mehr Schub",
+                "value": "mit extra vergine",
+            },
+            {
+                "label": "0 Crewmitglieder gegessen",
+                "value": "diesen Monat",
+            },
+        ],
     ),
 }
 
@@ -1729,96 +1814,148 @@ HOME_EXPERTISE: dict[Language, SectionContent] = {
             "menu": "Capabilities",
             "kicker": "02 · What we do",
             "heading": "Capabilities",
-            "row1no": "01",
-            "row1t": "Tinned launches",
-            "row1d": "Vessels sealed to survive vacuum, rain and curious seagulls.",
-            "row2no": "02",
-            "row2t": "Olive-oil propulsion",
-            "row2d": "Renewable, fragrant, and the neighbours applaud every ignition.",
-            "row3no": "03",
-            "row3t": "Echo communications",
-            "row3d": "If you shout into a tin, Mars hears you eventually.",
-            "row4no": "04",
-            "row4t": "Stylish re-entry",
-            "row4d": "Any fish can fall. Ours falls with intention.",
-        }
+        },
+        items=[
+            {
+                "no": "01",
+                "title": "Tinned launches",
+                "detail": "Vessels sealed to survive vacuum, rain and curious seagulls.",
+            },
+            {
+                "no": "02",
+                "title": "Olive-oil propulsion",
+                "detail": "Renewable, fragrant, and the neighbours applaud every ignition.",
+            },
+            {
+                "no": "03",
+                "title": "Echo communications",
+                "detail": "If you shout into a tin, Mars hears you eventually.",
+            },
+            {
+                "no": "04",
+                "title": "Stylish re-entry",
+                "detail": "Any fish can fall. Ours falls with intention.",
+            },
+        ],
     ),
     PT: SectionContent(
         fields={
             "menu": "Capacidades",
             "kicker": "02 · O que fazemos",
             "heading": "Capacidades",
-            "row1no": "01",
-            "row1t": "Lancamentos em lata",
-            "row1d": "Veiculos selados para sobreviver ao vacuo, a chuva e a gaivotas curiosas.",
-            "row2no": "02",
-            "row2t": "Propulsao a azeite",
-            "row2d": "Renovavel, perfumada, e os vizinhos aplaudem cada ignicao.",
-            "row3no": "03",
-            "row3t": "Comunicacoes por eco",
-            "row3d": "Se gritares para uma lata, Marte acaba por ouvir.",
-            "row4no": "04",
-            "row4t": "Reentrada com estilo",
-            "row4d": "Qualquer peixe cai. O nosso cai com intencao.",
-        }
+        },
+        items=[
+            {
+                "no": "01",
+                "title": "Lancamentos em lata",
+                "detail": "Veiculos selados para sobreviver ao vacuo, a chuva e a gaivotas "
+                "curiosas.",
+            },
+            {
+                "no": "02",
+                "title": "Propulsao a azeite",
+                "detail": "Renovavel, perfumada, e os vizinhos aplaudem cada ignicao.",
+            },
+            {
+                "no": "03",
+                "title": "Comunicacoes por eco",
+                "detail": "Se gritares para uma lata, Marte acaba por ouvir.",
+            },
+            {
+                "no": "04",
+                "title": "Reentrada com estilo",
+                "detail": "Qualquer peixe cai. O nosso cai com intencao.",
+            },
+        ],
     ),
     ES: SectionContent(
         fields={
             "menu": "Capacidades",
             "kicker": "02 · Que hacemos",
             "heading": "Capacidades",
-            "row1no": "01",
-            "row1t": "Lanzamientos en lata",
-            "row1d": "Vehiculos sellados para sobrevivir al vacio, la lluvia y gaviotas curiosas.",
-            "row2no": "02",
-            "row2t": "Propulsion de aceite de oliva",
-            "row2d": "Renovable, fragante, y los vecinos aplauden cada ignicion.",
-            "row3no": "03",
-            "row3t": "Comunicaciones por eco",
-            "row3d": "Si gritas a una lata, Marte acaba oyendote.",
-            "row4no": "04",
-            "row4t": "Reentrada con estilo",
-            "row4d": "Cualquier pez cae. El nuestro cae con intencion.",
-        }
+        },
+        items=[
+            {
+                "no": "01",
+                "title": "Lanzamientos en lata",
+                "detail": "Vehiculos sellados para sobrevivir al vacio, la lluvia y gaviotas "
+                "curiosas.",
+            },
+            {
+                "no": "02",
+                "title": "Propulsion de aceite de oliva",
+                "detail": "Renovable, fragante, y los vecinos aplauden cada ignicion.",
+            },
+            {
+                "no": "03",
+                "title": "Comunicaciones por eco",
+                "detail": "Si gritas a una lata, Marte acaba oyendote.",
+            },
+            {
+                "no": "04",
+                "title": "Reentrada con estilo",
+                "detail": "Cualquier pez cae. El nuestro cae con intencion.",
+            },
+        ],
     ),
     FR: SectionContent(
         fields={
             "menu": "Capacites",
             "kicker": "02 · Ce que nous faisons",
             "heading": "Capacites",
-            "row1no": "01",
-            "row1t": "Lancements en boite",
-            "row1d": "Des vaisseaux scelles pour survivre au vide, a la pluie et aux mouettes "
-            "curieuses.",
-            "row2no": "02",
-            "row2t": "Propulsion a l'huile d'olive",
-            "row2d": "Renouvelable, parfumee, et les voisins applaudissent chaque allumage.",
-            "row3no": "03",
-            "row3t": "Communications par echo",
-            "row3d": "Criez dans une boite : Mars finit par entendre.",
-            "row4no": "04",
-            "row4t": "Rentree avec style",
-            "row4d": "N'importe quel poisson tombe. Le notre tombe avec intention.",
-        }
+        },
+        items=[
+            {
+                "no": "01",
+                "title": "Lancements en boite",
+                "detail": "Des vaisseaux scelles pour survivre au vide, a la pluie et aux mouettes "
+                "curieuses.",
+            },
+            {
+                "no": "02",
+                "title": "Propulsion a l'huile d'olive",
+                "detail": "Renouvelable, parfumee, et les voisins applaudissent chaque allumage.",
+            },
+            {
+                "no": "03",
+                "title": "Communications par echo",
+                "detail": "Criez dans une boite : Mars finit par entendre.",
+            },
+            {
+                "no": "04",
+                "title": "Rentree avec style",
+                "detail": "N'importe quel poisson tombe. Le notre tombe avec intention.",
+            },
+        ],
     ),
     DE: SectionContent(
         fields={
             "menu": "Faehigkeiten",
             "kicker": "02 · Was wir tun",
             "heading": "Faehigkeiten",
-            "row1no": "01",
-            "row1t": "Dosenstarts",
-            "row1d": "Versiegelte Gefaehrte fuer Vakuum, Regen und neugierige Moewen.",
-            "row2no": "02",
-            "row2t": "Olivenoel-Antrieb",
-            "row2d": "Erneuerbar, duftend, und die Nachbarn applaudieren jeder Zuendung.",
-            "row3no": "03",
-            "row3t": "Echo-Kommunikation",
-            "row3d": "Ruf in eine Dose, und der Mars hoert dich irgendwann.",
-            "row4no": "04",
-            "row4t": "Wiedereintritt mit Stil",
-            "row4d": "Jeder Fisch faellt. Unserer faellt mit Absicht.",
-        }
+        },
+        items=[
+            {
+                "no": "01",
+                "title": "Dosenstarts",
+                "detail": "Versiegelte Gefaehrte fuer Vakuum, Regen und neugierige Moewen.",
+            },
+            {
+                "no": "02",
+                "title": "Olivenoel-Antrieb",
+                "detail": "Erneuerbar, duftend, und die Nachbarn applaudieren jeder Zuendung.",
+            },
+            {
+                "no": "03",
+                "title": "Echo-Kommunikation",
+                "detail": "Ruf in eine Dose, und der Mars hoert dich irgendwann.",
+            },
+            {
+                "no": "04",
+                "title": "Wiedereintritt mit Stil",
+                "detail": "Jeder Fisch faellt. Unserer faellt mit Absicht.",
+            },
+        ],
     ),
 }
 
