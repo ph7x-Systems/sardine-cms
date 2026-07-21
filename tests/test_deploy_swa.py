@@ -50,7 +50,10 @@ class MockSwa(http.server.BaseHTTPRequestHandler):
             self.end_headers()
             return
         self.send_response(202)
-        self.send_header("Location", f"http://{self.headers['Host']}/status")
+        # Build the URL from the server's own bound address, never from
+        # request headers (CodeQL: response splitting via Host).
+        host, port = self.server.server_address[:2]
+        self.send_header("Location", f"http://{host}:{port}/status")
         self.send_header("Content-Type", "application/json")
         self.end_headers()
         self.wfile.write(b'{"status": "running"}')
