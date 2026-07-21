@@ -5,6 +5,18 @@ from `0.1.0`; the six packages release in lockstep under one `vX.Y.Z` tag.
 
 ## Unreleased
 
+- **The editorial-flow check joins the repository and CI** (#127):
+  `scripts/editor_flow_check.py` is self-contained and reproducible by
+  anyone — it creates a fresh monolingual project and admin account in
+  a temporary directory, serves the real admin, drives the complete
+  landing-page scenario through the real UI with headless Chromium
+  (block gallery, fields, the Markdown widget's editing surface, three
+  FAQ items, workflow to published) and asserts every block — Markdown
+  rendered — in the final built HTML. CI runs it on every push.
+  Evidence lives in the repository, never in session state; the script
+  is the mechanical proof that no step blocks — the 15-minute
+  usability metric still requires a real non-technical tester.
+
 - **The page editor speaks editor, not framework** (#127): sections
   add from a visual block gallery (a card per kind with a plain-words
   description; extension kinds included), keys derive from the kind —
