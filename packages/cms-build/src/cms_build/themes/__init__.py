@@ -1,9 +1,10 @@
 """Theme contract and registry.
 
-A theme renders template kinds ("page", "article", "listing") from contexts
-the builder prepares, and contributes static assets. Themes plug in via
-:func:`register_theme`; the built-in ``default`` theme is intentionally
-minimal (the polished reference theme is Milestone 4).
+A theme renders template kinds ("page", "article", "listing",
+"not_found") from contexts the builder prepares, and contributes static
+assets. Themes plug in via :func:`register_theme`; the built-in
+``default`` theme is intentionally minimal — the polished
+``ph7x-reference`` theme ships as its own package.
 """
 
 from collections.abc import Callable, Mapping

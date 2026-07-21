@@ -28,8 +28,8 @@ WP_NS = "http://wordpress.org/export/1.2/"
 
 
 @dataclass(frozen=True)
-class WordPressImport:
-    """The supported part of a WordPress eXtended RSS export."""
+class WxrImport:
+    """The supported part of a WXR 1.2 blog export."""
 
     articles: tuple[Article, ...]
     skipped: int
@@ -113,10 +113,10 @@ def _slug(value: str, fallback: str) -> str:
 
 
 def _date(item: Any) -> datetime:
-    wordpress_date = (item.findtext(f"{{{WP_NS}}}post_date_gmt") or "").strip()
-    if wordpress_date and wordpress_date != "0000-00-00 00:00:00":
+    foreign_date = (item.findtext(f"{{{WP_NS}}}post_date_gmt") or "").strip()
+    if foreign_date and foreign_date != "0000-00-00 00:00:00":
         try:
-            return datetime.strptime(wordpress_date, "%Y-%m-%d %H:%M:%S").replace(tzinfo=UTC)
+            return datetime.strptime(foreign_date, "%Y-%m-%d %H:%M:%S").replace(tzinfo=UTC)
         except ValueError:
             pass
     published = (item.findtext("pubDate") or "").strip()
@@ -139,8 +139,8 @@ def _status(value: str) -> ContentStatus:
     }.get(value, ContentStatus.DRAFT)
 
 
-def import_wordpress_wxr(payload: bytes | str) -> WordPressImport:
-    """Convert WordPress posts from a WXR 1.2 document into articles.
+def import_wxr(payload: bytes | str) -> WxrImport:
+    """Convert posts from a WXR 1.2 document into articles.
 
     Pages, attachments, navigation items and comments are intentionally
     skipped: this is a blog importer, and silently inventing page-section or
@@ -172,7 +172,7 @@ def import_wordpress_wxr(payload: bytes | str) -> WordPressImport:
         foreign_id = (item.findtext(f"{{{WP_NS}}}post_id") or str(position)).strip()
         base_id = _slug(
             (item.findtext(f"{{{WP_NS}}}post_name") or title).strip(),
-            f"wordpress-{_slug(foreign_id, str(position))}",
+            f"wxr-{_slug(foreign_id, str(position))}",
         )
         article_id = base_id
         suffix = 2
@@ -182,7 +182,7 @@ def import_wordpress_wxr(payload: bytes | str) -> WordPressImport:
         used_ids.add(article_id)
 
         created_at = _date(item)
-        wordpress_status = (item.findtext(f"{{{WP_NS}}}status") or "draft").strip()
+        foreign_status = (item.findtext(f"{{{WP_NS}}}status") or "draft").strip()
         body = _markdown(item.findtext(f"{{{CONTENT_NS}}}encoded") or "")
         summary = _markdown(item.findtext(f"{{{EXCERPT_NS}}}encoded") or "")
         categories: list[str] = []
@@ -202,13 +202,13 @@ def import_wordpress_wxr(payload: bytes | str) -> WordPressImport:
             ArticleContent(title=title, summary=summary, body_markdown=body, slug=article_id),
             now=created_at,
         )
-        article.status = _status(wordpress_status)
+        article.status = _status(foreign_status)
         article.category = categories[0] if categories else None
         article.tags = tuple(sorted(set(tags)))
         article.author = (item.findtext(f"{{{DC_NS}}}creator") or "").strip() or None
-        article.fields = {"wordpress_post_id": foreign_id}
-        if wordpress_status == "future":
+        article.fields = {"wxr_post_id": foreign_id}
+        if foreign_status == "future":
             article.publish_at = created_at
         articles.append(article)
 
-    return WordPressImport(articles=tuple(articles), skipped=skipped)
+    return WxrImport(articles=tuple(articles), skipped=skipped)

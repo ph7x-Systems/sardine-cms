@@ -362,7 +362,7 @@ def import_command(
         str,
         typer.Option(
             "--format",
-            help="Input format: portable (cms dump) or wordpress (WXR 1.2)",
+            help="Input format: portable (cms dump) or wxr (WXR 1.2 blog export)",
         ),
     ] = "portable",
     replace: Annotated[
@@ -370,21 +370,21 @@ def import_command(
     ] = False,
 ) -> None:
     """Import a portable dump or a supported foreign blog export."""
-    from cms_core import import_content_json, import_wordpress_wxr
+    from cms_core import import_content_json, import_wxr
 
     project = _project(project_dir)
-    if source_format not in {"portable", "wordpress"}:
+    if source_format not in {"portable", "wxr"}:
         typer.echo(
-            f"error: unknown import format {source_format!r} (use portable or wordpress)",
+            f"error: unknown import format {source_format!r} (use portable or wxr)",
             err=True,
         )
         raise typer.Exit(code=2)
-    if source_format == "wordpress":
+    if source_format == "wxr":
         if not source.is_file():
             typer.echo(f"error: {source} not found", err=True)
             raise typer.Exit(code=2)
         try:
-            imported = import_wordpress_wxr(source.read_bytes())
+            imported = import_wxr(source.read_bytes())
         except ValueError as error:
             typer.echo(f"error: {error}", err=True)
             raise typer.Exit(code=2) from error
@@ -398,7 +398,7 @@ def import_command(
             for article in imported.articles:
                 storage.save_article(article)
         typer.echo(
-            f"imported {len(imported.articles)} WordPress article(s); "
+            f"imported {len(imported.articles)} WXR article(s); "
             f"skipped {imported.skipped} unsupported item(s)"
         )
         return

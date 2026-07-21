@@ -60,9 +60,9 @@ contains `head`, `nav`, `footer` and `asset_urls`; each kind adds its own:
 
 | Kind | Extra context |
 | --- | --- |
-| `page` | `page` (title, description), `sections` (key, kind, fields, images) |
-| `article` | `article` (title, summary, date_iso, category, tags, body_html) |
-| `listing` | `listing` (title, entries, page, pages, previous_url, next_url) |
+| `page` | `page` (title, description), `sections` (key, kind, fields, data, images), `latest` (recent articles, for `latest-articles` sections) |
+| `article` | `article` (title, summary, body_html, date_iso, date_human, minutes, min_read_label, back_url, back_label, category, tags, author, featured, fields); optional top-level `comments` (ADR-0031) |
+| `listing` | `listing` (title, eyebrow, sub, entries, filters, page, pages, previous_url, next_url, search_index_url, search_label, view_cards_label, view_list_label) |
 | `not_found` | `not_found` (home_url) |
 
 Contracts to respect:
@@ -125,15 +125,23 @@ modules, no framework). Example: a search island consuming the per-language
 The page must remain complete without it (progressive enhancement — see
 DESIGN_RULES §5).
 
-## Conformance checklist (what CI will assert)
+## Conformance checklist
+
+Mechanically asserted by `tests/test_theme_conformance.py`:
 
 - [ ] `[hidden]{display:none!important}` first in the base stylesheet
 - [ ] Zero inline styles; all assets referenced through `asset_urls`
 - [ ] Local fonts/scripts only; no external requests
 - [ ] Images rendered with `width`/`height`
-- [ ] No horizontal scroll at 360/820/1280px; `prefers-reduced-motion` honored
+- [ ] `prefers-reduced-motion` honored wherever animations exist
+- [ ] JavaScript budget respected (≤ 20 KB)
+- [ ] Renders all four kinds; every gallery kind's fields reach the page;
+      unknown section kinds degrade gracefully
+
+Authoring requirements the accessibility gate and review enforce:
+
+- [ ] No horizontal scroll at 360/820/1280px
 - [ ] Autoescape on; `body_html` is the only safe-injected value
-- [ ] Renders all four kinds; unknown section kinds degrade gracefully
 
 Run the output-integrity suite against a build with your theme
 (`tests/test_output_integrity.py` shows how): every local reference in your
