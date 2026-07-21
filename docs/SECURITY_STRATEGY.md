@@ -155,3 +155,13 @@ tokens, configurable timeouts, concurrent-deployment protection, every
 operation audited, and no editor-supplied command execution under any
 circumstance. The demo pipeline already models the separation: the job
 holding the deployment token never executes project code.
+
+## Audit trail (#134)
+
+Every security-relevant panel operation appends one activity record —
+sign-ins and failures, workflow transitions, trash and purge, media,
+user/role/2FA changes, builds. Records are append-only, survive the
+deletion of their subject, never block the action they observe, and
+are readable only by admins; retention is configurable and pruned at
+startup. This is the auditing layer the automated-deployment work
+(#156) plugs into.

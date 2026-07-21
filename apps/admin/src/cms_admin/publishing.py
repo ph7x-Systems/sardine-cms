@@ -22,6 +22,7 @@ from cms_validation import SiteContent
 from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import RedirectResponse
 
+from cms_admin.audit import record as audit_record
 from cms_admin.auth import current_session, enforce_csrf, get_db, require_at_least
 from cms_admin.validation_report import report_context, run_report
 
@@ -268,6 +269,8 @@ async def run_build(
     if target != project.target:
         # An explicit choice is remembered — the CLI shares it.
         persist_target(project.directory / "sardine.toml", target)
+    actor, _session = user_session
+    await audit_record(request, actor.username, "built", "site", target, f"{pages} file(s)")
     _record(
         request,
         f"build ({target})",

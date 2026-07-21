@@ -21,6 +21,9 @@ DEFAULT_UPLOAD_MAX_PIXELS = 40_000_000
 class AdminSettings:
     storage_url: str = DEFAULT_STORAGE_URL
     session_ttl: timedelta = timedelta(hours=DEFAULT_SESSION_HOURS)
+    activity_retention_days: int = 365
+    """Audit records older than this are pruned at startup (#134);
+    0 keeps everything forever."""
     # Secure cookies are the default; set SARDINE_ADMIN_COOKIE_SECURE=0
     # only for plain-http local development.
     cookie_secure: bool = True
@@ -78,6 +81,7 @@ class AdminSettings:
                 os.environ.get("SARDINE_ADMIN_UPLOAD_MAX_PIXELS", str(DEFAULT_UPLOAD_MAX_PIXELS))
             ),
             project_dir=Path(os.environ.get("SARDINE_PROJECT_DIR", ".")),
+            activity_retention_days=int(os.environ.get("SARDINE_ACTIVITY_RETENTION_DAYS", "365")),
             publish_gate=os.environ.get("SARDINE_ADMIN_PUBLISH_GATE", "1") != "0",
             mail_transport=os.environ.get("SARDINE_MAIL_TRANSPORT", "smtp"),
             smtp_url=os.environ.get("SARDINE_SMTP_URL"),

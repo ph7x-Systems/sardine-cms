@@ -484,3 +484,42 @@ def test_search_finds_content_across_kinds(backend: StorageBackend) -> None:
     # translated text matches too, and LIKE wildcards stay literal
     assert any(hit.id == "voyage" for hit in backend.search_content("viagem da lata"))
     assert backend.search_content("%") == []
+
+
+def test_activity_records_append_filter_and_prune(backend: StorageBackend) -> None:
+    """#134: append-only activity — recorded, filtered, pruned; records
+    survive the deletion of what they describe."""
+    from datetime import timedelta
+
+    from cms_core.activity import ActivityRecord
+
+    base = datetime(2026, 7, 21, 12, 0, tzinfo=UTC)
+    for offset, (actor, action, kind, subject) in enumerate(
+        [
+            ("ana", "published", "article", "voyage"),
+            ("maria", "trashed", "page", "old-promo"),
+            ("ana", "signed-in", "session", "ana"),
+        ]
+    ):
+        backend.record_activity(
+            ActivityRecord(
+                at=base + timedelta(minutes=offset),
+                actor=actor,
+                action=action,
+                subject_kind=kind,
+                subject_id=subject,
+            )
+        )
+
+    everything = backend.list_activity()
+    assert [record.action for record in everything] == ["signed-in", "trashed", "published"]
+    only_ana = backend.list_activity(actor="ana")
+    assert {record.actor for record in only_ana} == {"ana"}
+    windowed = backend.list_activity(
+        since=base + timedelta(minutes=1), until=base + timedelta(minutes=2)
+    )
+    assert [record.action for record in windowed] == ["trashed"]
+
+    pruned = backend.prune_activity(before=base + timedelta(minutes=1))
+    assert pruned == 1
+    assert len(backend.list_activity()) == 2

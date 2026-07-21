@@ -345,6 +345,18 @@ republish to the same destination
 the transport leg, status, failure preservation and rollback fully
 into the panel).
 
+## Activity (#134)
+
+**Activity** (admin role only) is the audit trail, readable: who did
+what, when — sign-ins (successes and failures), workflow transitions,
+trash/restore/purge, media uploads and deletions, user and role
+changes, two-factor changes, reschedules and site builds. Filter by
+actor and date window; newest first, 100 at a time. Records are
+append-only, survive the deletion of what they describe, and never
+block the action they record. Retention:
+`SARDINE_ACTIVITY_RETENTION_DAYS` (default 365; `0` keeps everything),
+pruned at startup.
+
 ## Scheduled unpublish (#133)
 
 Entries carry an optional **Unpublish at (UTC)** next to the publish

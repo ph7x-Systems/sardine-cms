@@ -11,6 +11,7 @@ from datetime import datetime
 from types import TracebackType
 
 from cms_core.accounts import AdminSession, PasswordReset, User
+from cms_core.activity import ActivityRecord
 from cms_core.media import MediaAsset
 from cms_core.menus import MenuItem
 from cms_core.models import Article
@@ -41,6 +42,21 @@ class StorageBackend(ABC):
 
     @abstractmethod
     def list_article_ids(self) -> list[str]: ...
+
+    @abstractmethod
+    def record_activity(self, record: ActivityRecord) -> None: ...
+
+    @abstractmethod
+    def list_activity(
+        self,
+        limit: int = 100,
+        actor: str | None = None,
+        since: datetime | None = None,
+        until: datetime | None = None,
+    ) -> list[ActivityRecord]: ...
+
+    @abstractmethod
+    def prune_activity(self, before: datetime) -> int: ...
 
     def search_content(self, needle: str, limit: int = 20) -> list[SearchHit]:
         """Find articles, pages, sections and media whose text contains

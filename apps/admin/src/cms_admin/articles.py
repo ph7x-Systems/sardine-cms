@@ -29,6 +29,7 @@ from fastapi import APIRouter, Depends, Form, HTTPException, Query, Request, sta
 from fastapi.responses import JSONResponse, RedirectResponse
 from pydantic import ValidationError
 
+from cms_admin.audit import record as audit_record
 from cms_admin.auth import current_session, enforce_csrf, get_db
 from cms_admin.notifications import notify_transition
 from cms_admin.publishing import _project, _site_source, _site_targets, refresh_entry_preview
@@ -589,6 +590,9 @@ async def article_status(
     article.updated_at = datetime.now(UTC)
     await _save_article(request, article, user.username)
     emit_transition(request, kind="article", entity_id=article.id, before=previous, after=target)
+    await audit_record(
+        request, user.username, target.value, "article", article.id, f"from {previous.value}"
+    )
     await notify_transition(
         request,
         section="articles",

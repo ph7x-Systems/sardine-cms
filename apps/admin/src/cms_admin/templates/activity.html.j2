@@ -1,0 +1,53 @@
+{% extends "shell.html.j2" %}
+{% block title %}{{ _("Activity") }} — Sardine CMS admin{% endblock %}
+{% block header %}<h1 class="h3 mb-0">{{ _("Activity") }}</h1>{% endblock %}
+{% block content %}
+<form method="get" action="/activity" class="card mb-3">
+  <div class="card-body d-flex flex-wrap gap-2 align-items-center">
+    <label class="mb-0">
+      <span class="visually-hidden admin-visually-hidden">{{ _("Actor") }}</span>
+      <input class="form-control admin-input" name="actor" value="{{ actor }}" placeholder="{{ _('anyone') }}">
+    </label>
+    <label class="mb-0">
+      <span class="visually-hidden admin-visually-hidden">{{ _("From") }}</span>
+      <input class="form-control admin-input" type="date" name="since" value="{{ since }}">
+    </label>
+    <label class="mb-0">
+      <span class="visually-hidden admin-visually-hidden">{{ _("Until") }}</span>
+      <input class="form-control admin-input" type="date" name="until" value="{{ until }}">
+    </label>
+    <button type="submit" class="btn btn-outline-primary">{{ _("Filter") }}</button>
+    <span class="form-text mb-0">{{ _("Newest first, 100 at a time. Records survive the deletion of what they describe.") }}</span>
+  </div>
+</form>
+{% if records %}
+<div class="card">
+  <div class="card-body p-0 table-responsive admin-table-wrap">
+    <table class="table table-striped mb-0 admin-table">
+      <thead>
+        <tr>
+          <th scope="col">{{ _("When") }}</th>
+          <th scope="col">{{ _("Actor") }}</th>
+          <th scope="col">{{ _("Action") }}</th>
+          <th scope="col">{{ _("Subject") }}</th>
+          <th scope="col">{{ _("Detail") }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in records %}
+        <tr>
+          <td>{{ record.at.strftime("%Y-%m-%d %H:%M") }} UTC</td>
+          <th scope="row">{{ record.actor }}</th>
+          <td><span class="badge text-bg-light border admin-tag">{{ record.action }}</span></td>
+          <td>{{ record.subject_kind }}: {{ record.subject_id }}</td>
+          <td>{{ record.detail }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<p class="admin-empty">{{ _("No activity in this window.") }}</p>
+{% endif %}
+{% endblock %}

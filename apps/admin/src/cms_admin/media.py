@@ -17,6 +17,7 @@ from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
 
 from cms_admin.articles import form_errors
+from cms_admin.audit import record as audit_record
 from cms_admin.auth import current_session, enforce_csrf, get_db
 from cms_admin.publishing import _project, _site_source, _site_targets
 from cms_admin.security import admin_path
@@ -263,6 +264,7 @@ async def media_upload(
     except BaseException:
         file_path.unlink(missing_ok=True)
         raise
+    await audit_record(request, user.username, "uploaded", "media", asset.id)
     return RedirectResponse(admin_path("media", asset.id), status_code=status.HTTP_303_SEE_OTHER)
 
 
@@ -362,6 +364,7 @@ async def media_delete(
             status_code=HTTP_422,
         )
     await db.run(lambda storage: storage.delete_media_asset(asset_id))
+    await audit_record(request, user.username, "deleted", "media", asset_id)
     file_path = request.app.state.settings.media_dir / asset.path
     if file_path.is_file():
         file_path.unlink()

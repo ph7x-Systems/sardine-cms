@@ -14,6 +14,7 @@ from cms_core.accounts import USERNAME_PATTERN, AdminSession
 from fastapi import APIRouter, Depends, Form, HTTPException, Request, status
 from fastapi.responses import RedirectResponse
 
+from cms_admin.audit import record as audit_record
 from cms_admin.auth import ROLE_ORDER, current_session, enforce_csrf, get_db, require_at_least
 from cms_admin.security import MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH, hash_password
 
@@ -109,6 +110,9 @@ async def user_create(
         email=address,
     )
     await db.run(lambda storage: storage.save_user(account))
+    await audit_record(
+        request, user.username, "user-created", "user", account.username, account.role.value
+    )
     return RedirectResponse("/users", status_code=status.HTTP_303_SEE_OTHER)
 
 
@@ -144,6 +148,9 @@ async def user_role(
         )
     updated = account.model_copy(update={"role": new_role})
     await db.run(lambda storage: storage.save_user(updated))
+    await audit_record(
+        request, user.username, "role-changed", "user", updated.username, updated.role.value
+    )
     return RedirectResponse("/users", status_code=status.HTTP_303_SEE_OTHER)
 
 
@@ -172,4 +179,5 @@ async def user_delete(
             status_code=HTTP_422,
         )
     await db.run(lambda storage: storage.delete_user(username))
+    await audit_record(request, user.username, "user-deleted", "user", username)
     return RedirectResponse("/users", status_code=status.HTTP_303_SEE_OTHER)

@@ -64,7 +64,7 @@ References point at the ADR, issue or document that owns the detail.
 | Admin-wide search | ✅ | #129, ADR-0038 |
 | Editorial calendar | ✅ | #132 |
 | Automated deployment: publish, unpublish, rollback from the admin (P0) | 🟡 generation + guided target choice ship; release/transport/activation/health/rollback | #156, DEPLOYMENT.md |
-| Audit log | 🔜 | #134 |
+| Audit log | ✅ | #134, ADMIN_GUIDE.md |
 | Needs-attention dashboard | 🔜 | #135 |
 
 ### Content model
