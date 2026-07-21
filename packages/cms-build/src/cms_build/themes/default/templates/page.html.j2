@@ -59,7 +59,7 @@
     {% if section.data.heading %}<h2>{{ section.data.heading }}</h2>{% endif %}
     <div class="gallery-grid">
       {% for image in section.images %}
-      <figure><img src="{{ image.url }}"{% if image.srcset %} srcset="{{ image.srcset }}" sizes="(max-width: 820px) 100vw, 50vw"{% endif %} alt="{{ image.alt }}" width="{{ image.width }}" height="{{ image.height }}" loading="lazy"></figure>
+      <figure><picture>{% for source in image.sources %}<source type="{{ source.type }}" srcset="{{ source.srcset }}" sizes="(max-width: 820px) 100vw, 50vw">{% endfor %}<img src="{{ image.url }}"{% if image.srcset %} srcset="{{ image.srcset }}" sizes="(max-width: 820px) 100vw, 50vw"{% endif %} alt="{{ image.alt }}" width="{{ image.width }}" height="{{ image.height }}" loading="lazy"></picture></figure>
       {% endfor %}
     </div>
   </section>
@@ -76,7 +76,7 @@
     </div>
     {% endfor %}
     {% for image in section.images %}
-    <img src="{{ image.url }}"{% if image.srcset %} srcset="{{ image.srcset }}" sizes="100vw"{% endif %} alt="{{ image.alt }}" width="{{ image.width }}" height="{{ image.height }}">
+    <picture>{% for source in image.sources %}<source type="{{ source.type }}" srcset="{{ source.srcset }}" sizes="100vw">{% endfor %}<img src="{{ image.url }}"{% if image.srcset %} srcset="{{ image.srcset }}" sizes="100vw"{% endif %} alt="{{ image.alt }}" width="{{ image.width }}" height="{{ image.height }}"></picture>
     {% endfor %}
   </section>
   {% endif %}

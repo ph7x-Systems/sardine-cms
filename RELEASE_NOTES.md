@@ -8,6 +8,18 @@ changes live in [CHANGELOG.md](CHANGELOG.md); the product map in
 
 ## Unreleased (towards 0.3.0)
 
+- **Modern image formats without asking** (#136): builds now emit
+  WebP and AVIF variants of every raster image — the base rendition
+  and each configured responsive width — whenever the build
+  environment can encode them, with fixed encoder parameters so the
+  output stays reproducible. Both bundled themes serve them through
+  `<picture>` sources (browsers pick the best format they support;
+  the plain `img` remains the fallback), and the Content API carries
+  the same alternatives in an additive `sources` field. One switch
+  (`[build] modern_image_formats = false`) restores the previous
+  behaviour; environments without the encoders simply skip the
+  variants — never an error.
+
 - **Images crop where the editor says, not where the file ends**
   (#136): an image's asset page takes an optional crop (pixels of the
   original) and focal point (fractions). The crop is data — applied

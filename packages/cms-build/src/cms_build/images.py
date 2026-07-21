@@ -11,6 +11,74 @@ from pathlib import PurePosixPath
 
 RESIZABLE_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp"}
 
+MODERN_SAVE_PARAMS: dict[str, dict[str, object]] = {
+    "image/avif": {"format": "AVIF", "quality": 75, "speed": 6},
+    "image/webp": {"format": "WEBP", "quality": 80, "method": 6},
+}
+"""Fixed encoder parameters: same input, same Pillow, same bytes."""
+
+MODERN_SUFFIXES = {"image/avif": ".avif", "image/webp": ".webp"}
+
+
+def available_modern_formats() -> tuple[str, ...]:
+    """The modern formats this environment can encode, best first.
+    Without Pillow (or without a codec) the answer shrinks — never an
+    error: modern formats are an enhancement."""
+    try:
+        from PIL import features
+    except ImportError:
+        return ()
+    found: list[str] = []
+    if features.check("avif"):
+        found.append("image/avif")
+    if features.check("webp"):
+        found.append("image/webp")
+    return tuple(found)
+
+
+def generate_modern_variants(
+    media_files: dict[str, bytes], widths: tuple[int, ...]
+) -> dict[str, dict[str, dict[int, str]]]:
+    """Encode WebP/AVIF variants of every raster image (#136): one per
+    emitted size — the responsive widths plus the base size (key 0).
+    Extends ``media_files`` in place; returns
+    ``{original_path: {mime: {width: variant_path}}}``. Skips webp
+    sources for the webp target (already that format)."""
+    formats = available_modern_formats()
+    if not formats:
+        return {}
+    from PIL import Image
+
+    variants: dict[str, dict[str, dict[int, str]]] = {}
+    for path in sorted(media_files):
+        pure = PurePosixPath(path)
+        suffix = pure.suffix.lower()
+        if suffix not in RESIZABLE_SUFFIXES or "@" in pure.stem:
+            continue
+        with Image.open(BytesIO(media_files[path])) as image:
+            for mime in formats:
+                if MODERN_SUFFIXES[mime] == suffix:
+                    continue
+                sizes: list[int] = [0] + [w for w in sorted(widths) if w < image.width]
+                for width in sizes:
+                    if width:
+                        ratio = width / image.width
+                        frame = image.resize(
+                            (width, max(1, round(image.height * ratio))),
+                            Image.Resampling.LANCZOS,
+                        )
+                    else:
+                        frame = image.copy()
+                    if frame.mode not in ("RGB", "RGBA"):
+                        frame = frame.convert("RGBA" if "A" in frame.getbands() else "RGB")
+                    buffer = BytesIO()
+                    frame.save(buffer, **MODERN_SAVE_PARAMS[mime])  # type: ignore[arg-type]
+                    name = pure.stem if not width else f"{pure.stem}@{width}"
+                    target = str(pure.with_name(f"{name}{MODERN_SUFFIXES[mime]}"))
+                    media_files[target] = buffer.getvalue()
+                    variants.setdefault(path, {}).setdefault(mime, {})[width] = target
+    return variants
+
 
 def derivative_path(path: str, width: int) -> str:
     pure = PurePosixPath(path)

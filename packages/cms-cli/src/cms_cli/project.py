@@ -158,6 +158,8 @@ def load_project(directory: Path) -> Project:
         build_updates["image_widths"] = tuple(int(w) for w in build_data["image_widths"])
     if build_data.get("content_api"):
         build_updates["content_api"] = bool(build_data["content_api"])
+    if "modern_image_formats" in build_data:
+        build_updates["modern_image_formats"] = bool(build_data["modern_image_formats"])
     site = site.model_copy(update=build_updates) if build_updates else site
     output = directory / build_data.get("output", "_site")
     return Project(

@@ -49,6 +49,11 @@ class SiteConfig(BaseModel):
     admin_url: str | None = None
     image_widths: tuple[int, ...] = ()
     """Responsive derivative widths (ADR-0029); empty disables."""
+    modern_image_formats: bool = True
+    """Emit WebP/AVIF variants of raster images when Pillow supports
+    them (#136). On by default; without Pillow nothing is emitted and
+    the build proceeds — modern formats are an enhancement, never a
+    requirement."""
     redirects: dict[str, str] = Field(default_factory=dict)
     """Old path -> new URL (M6): targets emit real 301s, the builder
     ships meta-refresh fallback pages so every host redirects."""
