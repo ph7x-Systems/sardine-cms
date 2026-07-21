@@ -66,9 +66,13 @@ language is ever schema, enumeration or hardcoded string.**
 
 ## Execution (phased, each phase its own PR)
 
-1. **Core**: tag-based `Language`, configurable source, bundled packs
-   carrying what `cms_build/ui.py` and the admin catalogs hardcode
-   today; deprecation shims for the enum members.
+1. **Core** — *executed (phase 1a)*: `Language` is now an interned,
+   validated tag type with the enum's exact surface (identity, `.value`,
+   class iteration, ValueError on unregistered tags) plus
+   `Language.register(tag)` — the entry point packs will use. The whole
+   suite passed unchanged, which is the compatibility proof. Still ahead
+   in this phase: configurable source language and the bundled packs
+   carrying what `cms_build/ui.py` and the admin catalogs hardcode.
 2. **Builder + themes**: labels/dates resolved from packs; `dir`
    attribute; logical-properties migration with conformance coverage.
 3. **Admin**: catalogs loaded from bundled + extension packs; panel
