@@ -332,6 +332,19 @@ what the build includes. The choice is remembered in `sardine.toml`
 successful build answers *what now*: where the files are and the one
 action that puts them live for the chosen target.
 
+"Publish" here means: validate, build deterministically, apply the
+destination's extras and write the output directory — the public site
+itself is served by external infrastructure (DEPLOYMENT.md documents
+every model). The **Last run** card is the publication's state: kind,
+time, file count, digest, and the failure detail when something
+refused — validation errors block the build before anything is
+written, so a failed publish never leaves a half-updated output. The
+editorial flow ends here and starts again here: further changes
+republish to the same destination
+([#152](https://github.com/ph7x-Systems/sardine-cms/issues/152) brings
+the transport leg, status, failure preservation and rollback fully
+into the panel).
+
 ## Calendar (#132)
 
 **Calendar** shows the month as the panel sees time: published entries
