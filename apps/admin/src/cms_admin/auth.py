@@ -162,6 +162,12 @@ def _account_key(username: str) -> str:
 
 @router.get("/login")
 async def login_form(request: Request) -> object:
+    # First run (#128): an instance without accounts sets itself up in
+    # the browser instead of asking for credentials that cannot exist.
+    from cms_admin.setup import setup_pending
+
+    if await setup_pending(request):
+        return RedirectResponse("/setup", status_code=status.HTTP_303_SEE_OTHER)
     csrf = new_token()
     response = request.app.state.templates.TemplateResponse(
         request,

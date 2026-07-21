@@ -2,6 +2,18 @@
 {% block title %}{{ _("Dashboard") }} — Sardine CMS admin{% endblock %}
 {% block header %}<h1 class="h3 mb-0">{{ _("Dashboard") }}</h1>{% endblock %}
 {% block content %}
+{% if totals.articles == 0 and totals.pages == 0 %}
+<div class="card mb-3">
+  <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("First steps") }}</h2></div>
+  <div class="card-body">
+    <ol class="mb-0">
+      <li><a href="/pages/new">{{ _("Create your first page") }}</a> — {{ _("pick blocks from the gallery and fill them in.") }}</li>
+      <li>{{ _("Use the preview link on the page editor to see it with your theme.") }}</li>
+      <li><a href="/publishing">{{ _("Publish") }}</a> — {{ _("the validation report tells you if anything is missing.") }}</li>
+    </ol>
+  </div>
+</div>
+{% endif %}
 {% set tones = {"draft": "text-bg-secondary", "review": "text-bg-warning", "published": "text-bg-success", "archived": "text-bg-dark"} %}
 {% set icons = {"draft": "bi-pencil", "review": "bi-hourglass-split", "published": "bi-check2-circle", "archived": "bi-archive"} %}
 <section aria-labelledby="content-status">

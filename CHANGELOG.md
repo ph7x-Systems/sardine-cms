@@ -5,6 +5,18 @@ from `0.1.0`; the six packages release in lockstep under one `vX.Y.Z` tag.
 
 ## Unreleased
 
+- **The browser sets up the site** (#128, first slice): an instance
+  with zero accounts lands every visitor on `/setup` — first admin
+  account (always `admin`; an instance can never be left without one),
+  site identity (name, address, main language and targets from the
+  registered packs, theme — written to `sardine.toml` only when the
+  project has none; an existing file is never touched) and optional
+  example content — then signs the new admin in and opens the
+  dashboard's first-steps checklist. The wizard disappears permanently
+  once any account exists. This answers the strongest friction class
+  recorded on #127: starting, understanding and completing the first
+  site. The deployment wizard is the issue's next slice.
+
 - **The editorial-flow check joins the repository and CI** (#127):
   `scripts/editor_flow_check.py` is self-contained and reproducible by
   anyone — it creates a fresh monolingual project and admin account in

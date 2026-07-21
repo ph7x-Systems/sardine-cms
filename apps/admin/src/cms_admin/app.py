@@ -147,6 +147,9 @@ def create_app(settings: AdminSettings | None = None) -> FastAPI:
     # Argon2 is deliberately expensive. Bound concurrent work so a burst of
     # login attempts cannot exhaust every worker thread/CPU core.
     app.state.password_slots = asyncio.Semaphore(4)
+    from cms_admin.setup import router as setup_router
+
+    app.include_router(setup_router)
     app.include_router(auth_router)
     app.include_router(dashboard_router)
     app.include_router(articles_router)
