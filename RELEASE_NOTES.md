@@ -15,7 +15,7 @@ editors #125 · roadmap-as-product #142 · ADR-0037 vertical close #143
 · page editor UX #144 (migration 19) · editorial-flow check #145 ·
 setup wizard #146 · deployment wizard #147 · global search #148 ·
 bulk actions #149 · translation queue #150 · editorial calendar #151 ·
-operational-model docs #153 · scheduled unpublish #154 (migration 20).
+operational-model docs #153 · scheduled unpublish #154 (migration 20) · audit trail #159 (migration 21).
 Storage migrations this cycle: 18 (section items + page body), 19
 (section visibility), 20 (unpublish windows) — all additive, no
 breaking changes; old portable exports import unchanged.

@@ -1298,3 +1298,27 @@ msgstr "Despublicar en (UTC)"
 
 msgid "optional end of the window — after this moment the next build drops the entry; must fall after the publish moment"
 msgstr "fin opcional de la ventana — después de este momento la siguiente build retira la entrada; debe ser posterior al momento de publicación"
+
+msgid "Action"
+msgstr "Acción"
+
+msgid "Activity"
+msgstr "Actividad"
+
+msgid "Actor"
+msgstr "Autor de la acción"
+
+msgid "From"
+msgstr "Desde"
+
+msgid "Newest first, 100 at a time. Records survive the deletion of what they describe."
+msgstr "Más recientes primero, 100 cada vez. Los registros sobreviven a la eliminación de lo que describen."
+
+msgid "No activity in this window."
+msgstr "Sin actividad en esta ventana."
+
+msgid "Until"
+msgstr "Hasta"
+
+msgid "anyone"
+msgstr "cualquier persona"

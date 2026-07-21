@@ -39,6 +39,9 @@ from cms_admin.users import router as users_router
 async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings: AdminSettings = app.state.settings
     app.state.db = StorageExecutor(settings.storage_url)
+    from cms_admin.audit import prune_on_startup
+
+    await prune_on_startup(app.state.db, settings.activity_retention_days)
     # Autosaves and manual preview builds serialize writes into /preview/ so
     # overlapping requests cannot leave a mixed artifact behind.
     app.state.preview_lock = asyncio.Lock()
@@ -169,6 +172,9 @@ def create_app(settings: AdminSettings | None = None) -> FastAPI:
     from cms_admin.calendar_view import router as calendar_router
 
     app.include_router(calendar_router)
+    from cms_admin.activity_view import router as activity_router
+
+    app.include_router(activity_router)
     app.include_router(trash_router)
     app.include_router(users_router)
     app.include_router(notes_router)

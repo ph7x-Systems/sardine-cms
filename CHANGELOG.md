@@ -10,6 +10,11 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Added
 
+- Audit trail: append-only activity records for sign-ins, transitions,
+  trash/purge, media, user/role/2FA changes and builds, with an
+  admin-only Activity screen and startup retention pruning (#134;
+  migration 21).
+
 - Configurable source language (`[site] source_language`, ADR-0034).
 - Language packs carry everything: site labels, dates, admin catalogs,
   `native_name`; data-only packs; authoring guide and `sardine-lang-<tag>`

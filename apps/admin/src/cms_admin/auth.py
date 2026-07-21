@@ -234,6 +234,9 @@ async def login_submit(
     if user is None or not password_valid:
         limiter.record_failure(client_key, now)
         limiter.record_failure(account_key, now)
+        from cms_admin.audit import record as audit_record
+
+        await audit_record(request, username[:64], "sign-in-failed", "session", username[:64])
         response = request.app.state.templates.TemplateResponse(
             request,
             "login.html.j2",
@@ -295,6 +298,9 @@ async def login_submit(
     )
     await db.run(lambda storage: storage.save_session(session))
     await db.run(lambda storage: storage.delete_expired_sessions(now))
+    from cms_admin.audit import record as audit_record
+
+    await audit_record(request, user.username, "signed-in", "session", user.username)
     response = RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
     response.set_cookie(
         session_cookie_name(request),
@@ -584,6 +590,9 @@ async def two_factor_enable(
         )
     updated = user.model_copy(update={"totp_secret": secret, "totp_step": accepted})
     await get_db(request).run(lambda storage: storage.save_user(updated))
+    from cms_admin.audit import record as audit_record
+
+    await audit_record(request, user.username, "2fa-enabled", "user", user.username)
     return RedirectResponse("/profile/2fa", status_code=status.HTTP_303_SEE_OTHER)
 
 
@@ -622,6 +631,9 @@ async def two_factor_disable(
         )
     updated = user.model_copy(update={"totp_secret": None, "totp_step": None})
     await get_db(request).run(lambda storage: storage.save_user(updated))
+    from cms_admin.audit import record as audit_record
+
+    await audit_record(request, user.username, "2fa-disabled", "user", user.username)
     return RedirectResponse("/profile/2fa", status_code=status.HTTP_303_SEE_OTHER)
 
 

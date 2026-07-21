@@ -1298,3 +1298,27 @@ msgstr "Zurückziehen am (UTC)"
 
 msgid "optional end of the window — after this moment the next build drops the entry; must fall after the publish moment"
 msgstr "optionales Fensterende — nach diesem Moment entfernt der nächste Build den Eintrag; muss nach dem Veröffentlichungszeitpunkt liegen"
+
+msgid "Action"
+msgstr "Aktion"
+
+msgid "Activity"
+msgstr "Aktivität"
+
+msgid "Actor"
+msgstr "Handelnde Person"
+
+msgid "From"
+msgstr "Von"
+
+msgid "Newest first, 100 at a time. Records survive the deletion of what they describe."
+msgstr "Neueste zuerst, 100 auf einmal. Einträge überleben die Löschung dessen, was sie beschreiben."
+
+msgid "No activity in this window."
+msgstr "Keine Aktivität in diesem Zeitraum."
+
+msgid "Until"
+msgstr "Bis"
+
+msgid "anyone"
+msgstr "beliebige Person"

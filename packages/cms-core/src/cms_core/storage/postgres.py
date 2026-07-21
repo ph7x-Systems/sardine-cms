@@ -11,6 +11,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
 from cms_core.accounts import AdminSession, PasswordReset, Role, User
+from cms_core.activity import ActivityRecord
 from cms_core.languages import Language
 from cms_core.media import MediaAsset
 from cms_core.menus import MenuItem
@@ -650,6 +651,68 @@ class PostgresBackend(StorageBackend):
                 "DELETE FROM admin_sessions WHERE token_hash = %s", (token_hash,)
             )
         return cursor.rowcount > 0
+
+    def record_activity(self, record: ActivityRecord) -> None:
+        with self._connection.transaction():
+            self._connection.execute(
+                "INSERT INTO activity (at, actor, action, subject_kind, subject_id, detail)"
+                " VALUES (%s, %s, %s, %s, %s, %s)",
+                (
+                    record.at.isoformat(),
+                    record.actor,
+                    record.action,
+                    record.subject_kind,
+                    record.subject_id,
+                    record.detail,
+                ),
+            )
+
+    def list_activity(
+        self,
+        limit: int = 100,
+        actor: str | None = None,
+        since: datetime | None = None,
+        until: datetime | None = None,
+    ) -> list[ActivityRecord]:
+        clauses = []
+        params: list[str] = []
+        if actor:
+            clauses.append("actor = %s")
+            params.append(actor)
+        if since:
+            clauses.append("at >= %s")
+            params.append(since.isoformat())
+        if until:
+            clauses.append("at < %s")
+            params.append(until.isoformat())
+        where = f" WHERE {' AND '.join(clauses)}" if clauses else ""
+        rows = self._connection.execute(
+            # The concatenated fragments are all literals above; every
+            # value is bound. nosec B608: no user data reaches the SQL text.
+            "SELECT at, actor, action, subject_kind, subject_id, detail FROM activity"  # nosec B608
+            + where
+            + " ORDER BY at DESC",
+            tuple(params),
+        )
+        records = [
+            ActivityRecord(
+                at=datetime.fromisoformat(row[0]),
+                actor=row[1],
+                action=row[2],
+                subject_kind=row[3],
+                subject_id=row[4],
+                detail=row[5],
+            )
+            for row in rows
+        ]
+        return records[:limit]
+
+    def prune_activity(self, before: datetime) -> int:
+        with self._connection.transaction():
+            cursor = self._connection.execute(
+                "DELETE FROM activity WHERE at < %s", (before.isoformat(),)
+            )
+        return cursor.rowcount
 
     def delete_expired_sessions(self, now: datetime) -> int:
         with self._connection.transaction():

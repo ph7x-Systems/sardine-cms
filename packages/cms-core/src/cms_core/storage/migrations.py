@@ -180,4 +180,14 @@ MIGRATIONS: tuple[str, ...] = (
     ALTER TABLE articles ADD COLUMN unpublish_at TEXT;
     ALTER TABLE pages ADD COLUMN unpublish_at TEXT;
     """,
+    """
+    CREATE TABLE activity (
+        at TEXT NOT NULL,
+        actor TEXT NOT NULL,
+        action TEXT NOT NULL,
+        subject_kind TEXT NOT NULL,
+        subject_id TEXT NOT NULL,
+        detail TEXT NOT NULL
+    );
+    """,
 )

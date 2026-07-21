@@ -163,6 +163,9 @@ async def setup_submit(request: Request) -> object:
     db = get_db(request)
     await db.run(lambda storage: storage.save_user(user))
     request.app.state.setup_done = True
+    from cms_admin.audit import record as audit_record
+
+    await audit_record(request, username, "user-created", "user", username, "setup")
 
     if not project_exists:
         chosen = [

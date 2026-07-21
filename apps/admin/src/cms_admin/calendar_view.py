@@ -130,6 +130,9 @@ async def reschedule(
         await _save_article(request, entity, user.username)  # type: ignore[arg-type]
     else:
         await _save_page(request, entity, user.username)  # type: ignore[arg-type]
+    from cms_admin.audit import record as audit_record
+
+    await audit_record(request, user.username, "rescheduled", kind, entity_id, day)
     month_argument = f"{target.year:04d}-{target.month:02d}"
     return RedirectResponse(
         f"/calendar?month={month_argument}", status_code=status.HTTP_303_SEE_OTHER

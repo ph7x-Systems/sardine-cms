@@ -18,6 +18,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import ValidationError
 
 from cms_admin.articles import _load_article, _save_article
+from cms_admin.audit import record as audit_record
 from cms_admin.auth import enforce_csrf, get_db
 from cms_admin.i18n import translate
 from cms_admin.notifications import notify_transition
@@ -107,10 +108,12 @@ async def _apply_one(
     if action == "trash":
         entity.deleted_at = datetime.now(UTC)
         await _save(request, kind, entity, user.username)
+        await audit_record(request, user.username, "trashed", kind.rstrip("s"), entity.id, "bulk")
         return "ok"
     if action == "restore":
         entity.deleted_at = None
         await _save(request, kind, entity, user.username)
+        await audit_record(request, user.username, "restored", kind.rstrip("s"), entity.id, "bulk")
         return "ok"
     if action == "set-category":
         if not CATEGORY_PATTERN.match(category):
@@ -120,6 +123,9 @@ async def _apply_one(
         except ValidationError:
             return translate(request, "category: lowercase-with-dashes")
         await _save(request, kind, updated, user.username)
+        await audit_record(
+            request, user.username, "category-set", kind.rstrip("s"), entity.id, category
+        )
         return "ok"
 
     target = WORKFLOW_ACTIONS[action]
@@ -157,6 +163,7 @@ async def _apply_one(
         target=target,
         actor=user.username,
     )
+    await audit_record(request, user.username, target.value, kind.rstrip("s"), entity.id, "bulk")
     return "ok"
 
 
@@ -180,6 +187,7 @@ async def _delete_media(request: Request, asset_id: str) -> str:
     if references:
         return translate(request, "referenced by %(count)s entr(ies)") % {"count": len(references)}
     await db.run(lambda storage: storage.delete_media_asset(asset_id))
+    await audit_record(request, "bulk", "deleted", "media", asset_id, "bulk")
     return "ok"
 
 

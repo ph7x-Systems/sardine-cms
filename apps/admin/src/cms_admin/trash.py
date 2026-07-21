@@ -15,6 +15,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse
 
 from cms_admin.articles import _save_article
+from cms_admin.audit import record as audit_record
 from cms_admin.auth import current_session, enforce_csrf, get_db, require_at_least
 from cms_admin.pages import _save_page
 from cms_admin.security import admin_path
@@ -81,6 +82,7 @@ async def move_to_trash(
     entity = await _load_entity(request, kind, entity_id)
     entity.deleted_at = datetime.now(UTC)
     await _save_entity(request, kind, entity, user.username)
+    await audit_record(request, user.username, "trashed", kind, entity_id)
     return RedirectResponse("/trash", status_code=status.HTTP_303_SEE_OTHER)
 
 
@@ -95,6 +97,7 @@ async def restore_from_trash(
     entity = await _load_entity(request, kind, entity_id)
     entity.deleted_at = None
     await _save_entity(request, kind, entity, user.username)
+    await audit_record(request, user.username, "restored", kind, entity_id)
     destination = admin_path(f"{kind}s", entity.id)
     return RedirectResponse(destination, status_code=status.HTTP_303_SEE_OTHER)
 
@@ -117,4 +120,6 @@ async def purge_forever(
         await get_db(request).run(lambda storage: storage.delete_article(entity_id))
     else:
         await get_db(request).run(lambda storage: storage.delete_page(entity_id))
+    actor, _session = user_session
+    await audit_record(request, actor.username, "purged", kind, entity_id)
     return RedirectResponse("/trash", status_code=status.HTTP_303_SEE_OTHER)

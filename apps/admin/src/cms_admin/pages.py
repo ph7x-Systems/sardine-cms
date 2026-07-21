@@ -48,6 +48,7 @@ from cms_admin.articles import (
     parse_publish_at,
     publish_at_form,
 )
+from cms_admin.audit import record as audit_record
 from cms_admin.auth import current_session, enforce_csrf, get_db
 from cms_admin.notifications import notify_transition
 from cms_admin.publishing import _project, _site_source, _site_targets, refresh_entry_preview
@@ -951,6 +952,9 @@ async def page_status(
     page.status = target
     await _save_page(request, page, user.username)
     emit_transition(request, kind="page", entity_id=page.id, before=previous, after=target)
+    await audit_record(
+        request, user.username, target.value, "page", page.id, f"from {previous.value}"
+    )
     await notify_transition(
         request,
         section="pages",
