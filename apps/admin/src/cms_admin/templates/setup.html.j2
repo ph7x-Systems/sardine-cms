@@ -1,0 +1,104 @@
+{% extends "base.html.j2" %}
+{% block title %}{{ _("Set up your site") }} — Sardine CMS admin{% endblock %}
+{% block bodyclass %}login-page bg-body-secondary{% endblock %}
+{% block body %}
+<main id="main" class="login-box admin-setup">
+  <div class="card card-outline card-primary">
+    <div class="card-header text-center">
+      <img src="/static/brand/sardine.svg" alt="" width="56" height="56" class="mb-2">
+      <span class="h4 d-block">Sardine CMS</span>
+    </div>
+    <div class="card-body">
+      <h1 class="h5">{{ _("Set up your site") }}</h1>
+      <p class="form-text">{{ _("Three quick sections and you are publishing. Nothing is saved until the end.") }}</p>
+      {% if errors %}
+      <div role="alert" class="alert alert-danger admin-alert">
+        <ul class="mb-0">{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul>
+      </div>
+      {% endif %}
+      <form method="post" action="/setup">
+        <input type="hidden" name="setup_csrf" value="{{ setup_csrf }}">
+
+        <fieldset class="mb-4">
+          <legend class="h6">1 · {{ _("Your account") }}</legend>
+          <div class="mb-3 admin-field">
+            <label class="form-label" for="username">{{ _("Username") }}</label>
+            <input class="form-control admin-input" id="username" name="username" type="text"
+                   autocomplete="username" required value="{{ form.username }}">
+          </div>
+          <div class="mb-3 admin-field">
+            <label class="form-label" for="password">{{ _("Password") }}</label>
+            <input class="form-control admin-input" id="password" name="password" type="password"
+                   autocomplete="new-password" required minlength="12"
+                   aria-describedby="password-hint">
+            <div id="password-hint" class="form-text">{{ _("The password needs at least 12 characters.") }}</div>
+          </div>
+          <div class="mb-3 admin-field">
+            <label class="form-label" for="password_repeat">{{ _("Repeat the new password") }}</label>
+            <input class="form-control admin-input" id="password_repeat" name="password_repeat"
+                   type="password" autocomplete="new-password" required minlength="12">
+          </div>
+        </fieldset>
+
+        <fieldset class="mb-4">
+          <legend class="h6">2 · {{ _("Your site") }}</legend>
+          {% if existing_project %}
+          <p class="form-text">{{ _("This project already has a sardine.toml — its settings stay exactly as they are.") }}</p>
+          {% else %}
+          <div class="mb-3 admin-field">
+            <label class="form-label" for="site_name">{{ _("Site name") }}</label>
+            <input class="form-control admin-input" id="site_name" name="site_name" type="text"
+                   required value="{{ form.site_name }}">
+          </div>
+          <div class="mb-3 admin-field">
+            <label class="form-label" for="base_url">{{ _("Site address") }}</label>
+            <input class="form-control admin-input" id="base_url" name="base_url" type="url"
+                   required value="{{ form.base_url }}" aria-describedby="base-url-hint">
+            <div id="base-url-hint" class="form-text">{{ _("Where the site will live, e.g. https://example.com") }}</div>
+          </div>
+          <div class="mb-3 admin-field">
+            <label class="form-label" for="source_language">{{ _("Main language") }}</label>
+            <select class="form-select admin-input" id="source_language" name="source_language">
+              {% for tag, label in language_choices %}
+              <option value="{{ tag }}" {% if form.source_language == tag %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <fieldset class="mb-3 admin-field">
+            <legend class="form-label h6 fs-6">{{ _("Also translate into (optional)") }}</legend>
+            {% for tag, label in language_choices %}
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" name="languages" value="{{ tag }}"
+                     id="lang-{{ tag }}" {% if tag in form.languages %}checked{% endif %}>
+              <label class="form-check-label" for="lang-{{ tag }}">{{ label }}</label>
+            </div>
+            {% endfor %}
+            <div class="form-text">{{ _("You can add languages later; every target language must be translated before publishing.") }}</div>
+          </fieldset>
+          <div class="mb-3 admin-field">
+            <label class="form-label" for="theme">{{ _("Theme") }}</label>
+            <select class="form-select admin-input" id="theme" name="theme">
+              {% for name in themes %}
+              <option value="{{ name }}" {% if form.theme == name %}selected{% endif %}>{{ name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          {% endif %}
+        </fieldset>
+
+        <fieldset class="mb-4">
+          <legend class="h6">3 · {{ _("Example content") }}</legend>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="seed_example" id="seed_example"
+                   {% if form.seed_example %}checked{% endif %}>
+            <label class="form-check-label" for="seed_example">
+              {{ _("Start with the example site (you can delete it later)") }}</label>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="btn btn-primary w-100">{{ _("Create my site") }}</button>
+      </form>
+    </div>
+  </div>
+</main>
+{% endblock %}

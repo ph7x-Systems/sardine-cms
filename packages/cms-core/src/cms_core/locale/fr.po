@@ -1055,3 +1055,63 @@ msgstr "optionnel — dérivée du type si vide"
 
 msgid "the theme template that renders it — unknown kinds render generically"
 msgstr "le gabarit du thème qui la rend — les types inconnus sont rendus de façon générique"
+
+msgid "Also translate into (optional)"
+msgstr "Traduire aussi vers (facultatif)"
+
+msgid "Create my site"
+msgstr "Créer mon site"
+
+msgid "Create your first page"
+msgstr "Créez votre première page"
+
+msgid "Example content"
+msgstr "Contenu d'exemple"
+
+msgid "First steps"
+msgstr "Premiers pas"
+
+msgid "Main language"
+msgstr "Langue principale"
+
+msgid "Set up your site"
+msgstr "Configurez votre site"
+
+msgid "Site address"
+msgstr "Adresse du site"
+
+msgid "Site name"
+msgstr "Nom du site"
+
+msgid "Start with the example site (you can delete it later)"
+msgstr "Commencer avec le site d'exemple (supprimable ensuite)"
+
+msgid "Theme"
+msgstr "Thème"
+
+msgid "This project already has a sardine.toml — its settings stay exactly as they are."
+msgstr "Ce projet a déjà un sardine.toml — ses réglages restent exactement tels quels."
+
+msgid "Three quick sections and you are publishing. Nothing is saved until the end."
+msgstr "Trois sections rapides et vous publiez. Rien n'est enregistré avant la fin."
+
+msgid "Use the preview link on the page editor to see it with your theme."
+msgstr "Utilisez le lien d'aperçu dans l'éditeur de page pour la voir avec votre thème."
+
+msgid "Where the site will live, e.g. https://example.com"
+msgstr "Où vivra le site, p. ex. https://example.com"
+
+msgid "You can add languages later; every target language must be translated before publishing."
+msgstr "Vous pourrez ajouter des langues plus tard ; chaque langue cible doit être traduite avant publication."
+
+msgid "Your account"
+msgstr "Votre compte"
+
+msgid "Your site"
+msgstr "Votre site"
+
+msgid "pick blocks from the gallery and fill them in."
+msgstr "choisissez des blocs dans la galerie et remplissez-les."
+
+msgid "the validation report tells you if anything is missing."
+msgstr "le rapport de validation vous dit s'il manque quelque chose."

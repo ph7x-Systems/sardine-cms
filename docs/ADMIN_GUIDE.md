@@ -307,6 +307,21 @@ and the last admin can neither be deleted nor demoted. The first account
 still comes from `cms admin create-user` — there are never default
 credentials.
 
+## First-run setup (#128)
+
+An instance with no accounts sets itself up in the browser: every
+request lands on `/setup` — one page, three sections. **Your account**
+creates the first admin (always the `admin` role; the instance can
+never be left without one). **Your site** writes `sardine.toml` when
+the project has none — name, address, main language and optional
+target languages chosen from the registered language packs, theme; an
+existing project file is never rewritten and its settings show as
+kept. **Example content** optionally seeds the demo site. Submitting
+signs the new admin straight in; a fresh site's dashboard opens with a
+first-steps checklist (create a page → preview → publish). The wizard
+disappears permanently the moment any account exists. `cms admin
+create-user` remains the scripted path.
+
 ## Panel language (i18n)
 
 The panel speaks the editor's language (ADR-0022 + ADR-0034).

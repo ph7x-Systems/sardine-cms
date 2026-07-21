@@ -1055,3 +1055,63 @@ msgstr "optional — bei Leere vom Typ abgeleitet"
 
 msgid "the theme template that renders it — unknown kinds render generically"
 msgstr "die Theme-Vorlage, die ihn rendert — unbekannte Typen werden generisch gerendert"
+
+msgid "Also translate into (optional)"
+msgstr "Auch übersetzen in (optional)"
+
+msgid "Create my site"
+msgstr "Meine Website erstellen"
+
+msgid "Create your first page"
+msgstr "Erstellen Sie Ihre erste Seite"
+
+msgid "Example content"
+msgstr "Beispielinhalt"
+
+msgid "First steps"
+msgstr "Erste Schritte"
+
+msgid "Main language"
+msgstr "Hauptsprache"
+
+msgid "Set up your site"
+msgstr "Richten Sie Ihre Website ein"
+
+msgid "Site address"
+msgstr "Website-Adresse"
+
+msgid "Site name"
+msgstr "Name der Website"
+
+msgid "Start with the example site (you can delete it later)"
+msgstr "Mit der Beispiel-Website beginnen (später löschbar)"
+
+msgid "Theme"
+msgstr "Theme"
+
+msgid "This project already has a sardine.toml — its settings stay exactly as they are."
+msgstr "Dieses Projekt hat bereits eine sardine.toml — ihre Einstellungen bleiben genau so, wie sie sind."
+
+msgid "Three quick sections and you are publishing. Nothing is saved until the end."
+msgstr "Drei kurze Abschnitte und Sie veröffentlichen. Bis zum Ende wird nichts gespeichert."
+
+msgid "Use the preview link on the page editor to see it with your theme."
+msgstr "Nutzen Sie den Vorschau-Link im Seiteneditor, um sie mit Ihrem Theme zu sehen."
+
+msgid "Where the site will live, e.g. https://example.com"
+msgstr "Wo die Website leben wird, z. B. https://example.com"
+
+msgid "You can add languages later; every target language must be translated before publishing."
+msgstr "Sprachen lassen sich später hinzufügen; jede Zielsprache muss vor der Veröffentlichung übersetzt sein."
+
+msgid "Your account"
+msgstr "Ihr Konto"
+
+msgid "Your site"
+msgstr "Ihre Website"
+
+msgid "pick blocks from the gallery and fill them in."
+msgstr "wählen Sie Blöcke aus der Galerie und füllen Sie sie aus."
+
+msgid "the validation report tells you if anything is missing."
+msgstr "der Validierungsbericht sagt Ihnen, ob etwas fehlt."
