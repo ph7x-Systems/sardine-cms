@@ -201,6 +201,7 @@ def _validated_article(base: Article, form: dict[str, str]) -> Article:
         cover=form["cover"] or None,
         tags=parse_tags(form["tags"]),
         publish_at=parse_publish_at(form.get("publish_at", "")),
+        unpublish_at=parse_publish_at(form.get("unpublish_at", "")),
         author=form.get("author", "").strip() or None,
         featured=bool(form.get("featured")),
         updated_at=datetime.now(UTC),
@@ -221,6 +222,7 @@ async def article_create(
     tags: str = Form(""),
     cover: str = Form(""),
     publish_at: str = Form(""),
+    unpublish_at: str = Form(""),
     author: str = Form(""),
     featured: str = Form(""),
 ) -> object:
@@ -236,6 +238,7 @@ async def article_create(
         "tags": tags,
         "cover": cover,
         "publish_at": publish_at,
+        "unpublish_at": unpublish_at,
         "author": author,
         "featured": featured,
     }
@@ -292,6 +295,7 @@ def _editor_context(
             "tags": ", ".join(article.tags),
             "cover": article.cover or "",
             "publish_at": publish_at_form(article.publish_at),
+            "unpublish_at": publish_at_form(article.unpublish_at),
             "author": article.author or "",
             "featured": "1" if article.featured else "",
         },
@@ -355,6 +359,7 @@ async def article_edit_save(
     tags: str = Form(""),
     cover: str = Form(""),
     publish_at: str = Form(""),
+    unpublish_at: str = Form(""),
     author: str = Form(""),
     featured: str = Form(""),
 ) -> object:
@@ -377,6 +382,7 @@ async def article_edit_save(
         "tags": tags,
         "cover": cover,
         "publish_at": publish_at,
+        "unpublish_at": unpublish_at,
         "author": author,
         "featured": featured,
     }
@@ -414,6 +420,7 @@ async def article_autosave(
     tags: str = Form(""),
     cover: str = Form(""),
     publish_at: str = Form(""),
+    unpublish_at: str = Form(""),
     author: str = Form(""),
     featured: str = Form(""),
 ) -> object:
@@ -437,6 +444,7 @@ async def article_autosave(
         "tags": tags,
         "cover": cover,
         "publish_at": publish_at,
+        "unpublish_at": unpublish_at,
         "author": author,
         "featured": featured,
     }

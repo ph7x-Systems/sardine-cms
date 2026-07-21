@@ -65,7 +65,7 @@ Legend: ✅ shipped · 🟡 partial · 🔜 scheduled (milestone in brackets) ·
 | Bulk actions on content lists | ✅ checkbox selection on articles/pages/media; transitions, trash, category assignment, unreferenced-media delete — per-entry rules enforced, per-entry outcome report, no JavaScript required | — |
 | Publish to hosting from the panel | 🟡 generation ships (targets `swa`/`nginx`/`generic`, panel Build & export, persisted choice); transport, activation, health and rollback are [#152](https://github.com/ph7x-Systems/sardine-cms/issues/152) — the operational model is documented in [DEPLOYMENT.md](DEPLOYMENT.md) | 🔜 #152 |
 | Admin-wide search | ✅ navbar box on every screen; grouped results over articles, pages, sections and media, every language, straight to each editor; storage-level queries ([ADR-0038](adr/0038-admin-search-in-storage.md)) | — |
-| Scheduled unpublish | ❌ `publish_at` only | 🔜 `unpublish_at` mirror of the scheduling contract (M8) |
+| Scheduled unpublish | ✅ `unpublish_at` on articles and pages: deterministic window end (same clock as ADR-0024), contradictory windows refused at the model, editors carry the field, storage and portable round-trip on all four engines | — |
 | Editorial calendar | ✅ month view (UTC, as the panel schedules): published on their day, scheduled on their firing day, drag-to-reschedule keeping the time of day, editors one click away | — |
 | Audit log | ❌ revisions cover content only | 🔜 who-did-what trail for accounts and workflow (M8) |
 | Autosave while editing | ✅ valid article/page source edits persist on a debounce without flooding revisions | — |

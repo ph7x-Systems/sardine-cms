@@ -176,4 +176,8 @@ MIGRATIONS: tuple[str, ...] = (
     """
     ALTER TABLE sections ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0;
     """,
+    """
+    ALTER TABLE articles ADD COLUMN unpublish_at TEXT;
+    ALTER TABLE pages ADD COLUMN unpublish_at TEXT;
+    """,
 )

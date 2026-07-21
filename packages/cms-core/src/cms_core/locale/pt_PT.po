@@ -1292,3 +1292,9 @@ msgstr "Entradas publicadas no seu dia de publicação, agendadas no dia em que 
 
 msgid "scheduled"
 msgstr "agendado"
+
+msgid "Unpublish at (UTC)"
+msgstr "Despublicar em (UTC)"
+
+msgid "optional end of the window — after this moment the next build drops the entry; must fall after the publish moment"
+msgstr "fim opcional da janela — depois deste momento o próximo build retira a entrada; tem de ser posterior ao momento de publicação"

@@ -1292,3 +1292,9 @@ msgstr "Entrées publiées le jour de leur publication, programmées le jour où
 
 msgid "scheduled"
 msgstr "programmé"
+
+msgid "Unpublish at (UTC)"
+msgstr "Dépublier le (UTC)"
+
+msgid "optional end of the window — after this moment the next build drops the entry; must fall after the publish moment"
+msgstr "fin facultative de la fenêtre — après ce moment, la prochaine build retire l'entrée ; doit être postérieure au moment de publication"

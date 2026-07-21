@@ -108,3 +108,72 @@ def test_reschedule_refuses_history_and_bad_input(tmp_path: Path) -> None:
         assert history.status_code == 400  # published history never moves
         bad_month = client.get("/calendar?month=not-a-month")
         assert bad_month.status_code == 400
+
+
+def test_scheduled_unpublish_drops_the_entry_deterministically(tmp_path: Path) -> None:
+    """#133: the symmetric end of the window — a passed unpublish_at
+    takes the entry out of the next build, same clock, same determinism."""
+    from cms_build import SiteConfig, build_site
+    from cms_validation import SiteContent
+
+    article = new_article(
+        "campaign",
+        ArticleContent(title="Campaign page entry", summary="S", body_markdown="B"),
+        now=datetime(2030, 1, 1, tzinfo=UTC),
+    )
+    article.status = ContentStatus.PUBLISHED
+    article.unpublish_at = datetime(2030, 6, 1, tzinfo=UTC)
+    config = SiteConfig(name="T", base_url="https://t.example", languages=())
+    content = SiteContent(articles=[article], pages=[], media=[])
+
+    during = build_site(config, content, now=datetime(2030, 5, 1, tzinfo=UTC))
+    assert "blog/campaign/index.html" in during.files
+    after = build_site(config, content, now=datetime(2030, 6, 2, tzinfo=UTC))
+    assert "blog/campaign/index.html" not in after.files
+    # deterministic: the same clock always gives the same answer
+    assert (
+        build_site(config, content, now=datetime(2030, 6, 2, tzinfo=UTC)).digest() == after.digest()
+    )
+
+
+def test_contradictory_window_is_refused(tmp_path: Path) -> None:
+    import pytest as pytest_module
+    from cms_core.models import Article
+
+    article = new_article(
+        "window", ArticleContent(title="W", summary="S", body_markdown="B"), now=NOW
+    )
+    article.publish_at = datetime(2030, 6, 1, tzinfo=UTC)
+    with pytest_module.raises(ValueError, match="unpublish_at"):
+        Article.model_validate(
+            {**article.model_dump(), "unpublish_at": datetime(2030, 5, 1, tzinfo=UTC)}
+        )
+
+
+def test_unpublish_at_round_trips_storage_and_editor(tmp_path: Path) -> None:
+    with TestClient(_app(tmp_path), base_url="https://testserver") as client:
+        csrf = _sign_in(client)
+        editor = client.get("/articles/upcoming").text
+        assert 'name="unpublish_at"' in editor
+        response = client.post(
+            "/articles/upcoming",
+            data={
+                "csrf_token": csrf,
+                "title": "Upcoming note",
+                "summary": "S",
+                "body_markdown": "B",
+                "slug": "",
+                "category": "",
+                "cover": "",
+                "tags": "",
+                "publish_at": "2030-03-18T14:45",
+                "unpublish_at": "2030-09-30T12:00",
+                "author": "",
+            },
+            follow_redirects=False,
+        )
+        assert response.status_code == 303, response.text[:300]
+    with create_storage(f"sqlite:///{tmp_path / 'content.db'}") as storage:
+        stored = storage.load_article("upcoming")
+    assert stored is not None
+    assert stored.unpublish_at == datetime(2030, 9, 30, 12, 0, tzinfo=UTC)

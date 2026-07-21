@@ -8,7 +8,7 @@ translated from, so a source edit automatically marks translations outdated.
 import re
 from datetime import UTC, datetime
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 
 from cms_core.states import ContentStatus
 from cms_core.translatable import ChecksummedContent, TranslatableModel
@@ -36,10 +36,25 @@ class Article(TranslatableModel[ArticleContent]):
     publish_at: datetime | None = None
     """UTC moment before which a published entry stays out of builds
     (ADR-0024); None publishes immediately once published."""
+    unpublish_at: datetime | None = None
+    """UTC moment after which a published entry leaves the builds
+    (#133) — the symmetric end of ADR-0024's window. None means it
+    stays. Must fall after ``publish_at`` when both are set."""
     deleted_at: datetime | None = None
     """Set = in the trash (ADR-0026): invisible to builds, validation,
     export and the admin lists until restored or purged."""
     category: str | None = Field(default=None, pattern=SLUG_PATTERN)
+
+    @model_validator(mode="after")
+    def _window_makes_sense(self) -> "Article":
+        if (
+            self.publish_at is not None
+            and self.unpublish_at is not None
+            and self.unpublish_at <= self.publish_at
+        ):
+            raise ValueError("unpublish_at must fall after publish_at")
+        return self
+
     cover: str | None = Field(default=None, pattern=SLUG_PATTERN)
     tags: tuple[str, ...] = ()
     featured: bool = False

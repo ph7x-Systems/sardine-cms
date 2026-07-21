@@ -74,8 +74,8 @@ class SQLiteBackend(StorageBackend):
                 "INSERT INTO articles"
                 " (id, status, created_at, updated_at, title, summary, body_markdown, slug,"
                 "  category, tags_json, cover, publish_at, deleted_at, featured, author,"
-                "  fields_json)"
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                "  fields_json, unpublish_at)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                 " ON CONFLICT(id) DO UPDATE SET"
                 " status = excluded.status, updated_at = excluded.updated_at,"
                 " title = excluded.title, summary = excluded.summary,"
@@ -83,7 +83,8 @@ class SQLiteBackend(StorageBackend):
                 " category = excluded.category, tags_json = excluded.tags_json,"
                 " cover = excluded.cover, publish_at = excluded.publish_at,"
                 " deleted_at = excluded.deleted_at, featured = excluded.featured,"
-                " author = excluded.author, fields_json = excluded.fields_json",
+                " author = excluded.author, fields_json = excluded.fields_json,"
+                " unpublish_at = excluded.unpublish_at",
                 (
                     article.id,
                     article.status.value,
@@ -101,6 +102,7 @@ class SQLiteBackend(StorageBackend):
                     1 if article.featured else 0,
                     article.author,
                     json.dumps(article.fields, sort_keys=True),
+                    article.unpublish_at.isoformat() if article.unpublish_at else None,
                 ),
             )
             connection.execute("DELETE FROM translations WHERE article_id = ?", (article.id,))
@@ -127,8 +129,8 @@ class SQLiteBackend(StorageBackend):
     def load_article(self, article_id: str) -> Article | None:
         row = self._connection.execute(
             "SELECT id, status, created_at, updated_at, title, summary, body_markdown, slug,"
-            " category, tags_json, cover, publish_at, deleted_at, featured, author, fields_json"
-            " FROM articles WHERE id = ?",
+            " category, tags_json, cover, publish_at, deleted_at, featured, author, fields_json,"
+            " unpublish_at FROM articles WHERE id = ?",
             (article_id,),
         ).fetchone()
         if row is None:
@@ -156,6 +158,7 @@ class SQLiteBackend(StorageBackend):
             tags=tuple(json.loads(row[9])),
             cover=row[10],
             publish_at=datetime.fromisoformat(row[11]) if row[11] else None,
+            unpublish_at=datetime.fromisoformat(row[16]) if row[16] else None,
             deleted_at=datetime.fromisoformat(row[12]) if row[12] else None,
             featured=bool(row[13]),
             author=row[14],
@@ -178,13 +181,14 @@ class SQLiteBackend(StorageBackend):
             connection.execute(
                 "INSERT INTO pages"
                 " (id, status, created_at, updated_at, title, description, slug,"
-                "  publish_at, deleted_at, body_markdown)"
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                "  publish_at, deleted_at, body_markdown, unpublish_at)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                 " ON CONFLICT(id) DO UPDATE SET"
                 " status = excluded.status, updated_at = excluded.updated_at,"
                 " title = excluded.title, description = excluded.description,"
                 " slug = excluded.slug, publish_at = excluded.publish_at,"
                 " body_markdown = excluded.body_markdown,"
+                " unpublish_at = excluded.unpublish_at,"
                 " deleted_at = excluded.deleted_at",
                 (
                     page.id,
@@ -197,6 +201,7 @@ class SQLiteBackend(StorageBackend):
                     page.publish_at.isoformat() if page.publish_at else None,
                     page.deleted_at.isoformat() if page.deleted_at else None,
                     page.source.body_markdown,
+                    page.unpublish_at.isoformat() if page.unpublish_at else None,
                 ),
             )
             connection.execute("DELETE FROM page_translations WHERE page_id = ?", (page.id,))
@@ -362,7 +367,7 @@ class SQLiteBackend(StorageBackend):
     def load_page(self, page_id: str) -> Page | None:
         row = self._connection.execute(
             "SELECT id, status, created_at, updated_at, title, description, slug, publish_at,"
-            " deleted_at, body_markdown"
+            " deleted_at, body_markdown, unpublish_at"
             " FROM pages WHERE id = ?",
             (page_id,),
         ).fetchone()
@@ -389,6 +394,7 @@ class SQLiteBackend(StorageBackend):
             translations=translations,
             sections=self._load_sections(page_id),
             publish_at=datetime.fromisoformat(row[7]) if row[7] else None,
+            unpublish_at=datetime.fromisoformat(row[10]) if row[10] else None,
             deleted_at=datetime.fromisoformat(row[8]) if row[8] else None,
         )
 
