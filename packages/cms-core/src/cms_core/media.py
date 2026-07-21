@@ -19,6 +19,12 @@ class MediaAsset(BaseModel):
     width: int | None = Field(default=None, gt=0)
     height: int | None = Field(default=None, gt=0)
     alt: dict[Language, str]
+    collection: str = Field(default="", pattern=r"^([a-z0-9]+(-[a-z0-9]+)*)?$")
+    """Optional grouping (#136): a slug naming the library folder the
+    asset lives in; empty means uncollected."""
+    content_hash: str = Field(default="", pattern=r"^([0-9a-f]{64})?$")
+    """SHA-256 of the file bytes (#136): set at upload, used to refuse
+    duplicate content; empty on assets recorded before it existed."""
 
     @property
     def is_image(self) -> bool:

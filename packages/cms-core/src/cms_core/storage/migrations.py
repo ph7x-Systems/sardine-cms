@@ -190,4 +190,8 @@ MIGRATIONS: tuple[str, ...] = (
         detail TEXT NOT NULL
     );
     """,
+    """
+    ALTER TABLE media_assets ADD COLUMN collection TEXT NOT NULL DEFAULT '';
+    ALTER TABLE media_assets ADD COLUMN content_hash TEXT NOT NULL DEFAULT '';
+    """,
 )

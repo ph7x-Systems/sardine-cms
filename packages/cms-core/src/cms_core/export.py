@@ -121,6 +121,8 @@ def media_to_portable(asset: MediaAsset) -> dict[str, object]:
             language.value: text
             for language, text in sorted(asset.alt.items(), key=lambda item: item[0].value)
         },
+        "collection": asset.collection,
+        "content_hash": asset.content_hash,
     }
 
 

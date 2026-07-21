@@ -1385,3 +1385,18 @@ msgstr "a aguardar"
 
 msgid "verifying"
 msgstr "a verificar"
+
+msgid "Collection"
+msgstr "Coleção"
+
+msgid "All collections"
+msgstr "Todas as coleções"
+
+msgid "In use"
+msgstr "Em uso"
+
+msgid "unused"
+msgstr "sem uso"
+
+msgid "optional folder, lowercase-with-dashes — group related assets"
+msgstr "pasta opcional, minúsculas-com-hífens — agrupa recursos relacionados"

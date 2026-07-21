@@ -7,6 +7,7 @@ applies. EN alt text is mandatory at the model level. Deleting checks usage
 first: an asset referenced by an article cover or a section stays.
 """
 
+import hashlib
 import os
 import struct
 
@@ -111,7 +112,9 @@ def _page(
 
 def _alt_form(asset: MediaAsset | None) -> dict[str, str]:
     alts = asset.alt if asset else {}
-    return {f"alt_{language.value}": alts.get(language, "") for language in Language}
+    form = {f"alt_{language.value}": alts.get(language, "") for language in Language}
+    form["collection"] = asset.collection if asset else ""
+    return form
 
 
 def _write_new_file(path: os.PathLike[str], data: bytes) -> None:
@@ -130,13 +133,22 @@ async def media_list(
     user_session: tuple[User, AdminSession] = Depends(current_session),
     q: str = "",
     show: str = "all",
+    collection: str = "",
 ) -> object:
     """The library with server-side filters (M5): a text search over id,
-    path, MIME type and alt texts, plus quick views — images only and
-    assets still missing translated alt text."""
+    path, MIME type and alt texts, quick views — images only, assets
+    still missing translated alt text — and collections (#136), with
+    per-asset usage counts."""
     user, session = user_session
-    assets = await get_db(request).run(lambda storage: storage.load_all_media_assets())
+    db = get_db(request)
+    assets = await db.run(lambda storage: storage.load_all_media_assets())
     total = len(assets)
+    collections = sorted({asset.collection for asset in assets if asset.collection})
+    articles = await db.run(lambda storage: storage.load_all_articles())
+    pages = await db.run(lambda storage: storage.load_all_pages())
+    usage = {asset.id: len(asset_references(asset.id, articles, pages)) for asset in assets}
+    if collection:
+        assets = [asset for asset in assets if asset.collection == collection]
     needle = q.strip().lower()
     if needle:
         assets = [
@@ -162,6 +174,9 @@ async def media_list(
             "total": total,
             "q": q,
             "show": show if show in ("all", "images", "missing-alt") else "all",
+            "collection": collection,
+            "collections": collections,
+            "usage": usage,
             "target_languages": _site_targets(project),
             "source_language": _site_source(project),
         },
@@ -181,7 +196,7 @@ async def media_new_form(
             "user": user,
             "csrf_token": session.csrf_token,
             "errors": [],
-            "form": {"id": "", "alt": ""},
+            "form": {"id": "", "alt": "", "collection": ""},
         },
     )
 
@@ -192,12 +207,13 @@ async def media_upload(
     user_session: tuple[User, AdminSession] = Depends(enforce_csrf),
     asset_id: str = Form(alias="id"),
     alt: str = Form(""),
+    collection: str = Form(""),
     upload: UploadFile | None = None,
 ) -> object:
     user, session = user_session
     settings = request.app.state.settings
     db = get_db(request)
-    form = {"id": asset_id, "alt": alt}
+    form = {"id": asset_id, "alt": alt, "collection": collection.strip()}
     errors: list[str] = []
     data = b""
     if upload is not None:
@@ -229,6 +245,8 @@ async def media_upload(
                     width=size[0],
                     height=size[1],
                     alt={_site_source(_project(request)): alt},
+                    collection=collection.strip(),
+                    content_hash=hashlib.sha256(data).hexdigest(),
                 )
             except ValidationError as error:
                 errors.extend(form_errors(error))
@@ -236,6 +254,13 @@ async def media_upload(
         existing = await db.run(lambda storage: _load_asset(storage, asset_id))
         if existing is not None:
             errors = [f"id: a media asset with id {asset_id!r} already exists"]
+        else:
+            # Duplicate prevention (#136): the same bytes never enter the
+            # library twice — the message names where they already live.
+            everything = await db.run(lambda storage: storage.load_all_media_assets())
+            duplicate = next((a for a in everything if a.content_hash == asset.content_hash), None)
+            if duplicate is not None:
+                errors = [f"file: identical content already exists as {duplicate.id!r}"]
     if asset is None or errors:
         return _page(
             request,
@@ -315,12 +340,15 @@ async def media_alt_save(
         for language in Language
         if str(form.get(f"alt_{language.value}", "")).strip()
     }
+    collection = str(form.get("collection", "")).strip()
     try:
-        updated = asset.model_copy(update={"alt": alts})
+        updated = asset.model_copy(update={"alt": alts, "collection": collection})
         MediaAsset.model_validate(updated.model_dump())
     except ValidationError as error:
         context = await _asset_context(request, asset_id)
-        context["form"] = {f"alt_{lang.value}": alts.get(lang, "") for lang in Language}
+        context["form"] = {f"alt_{lang.value}": alts.get(lang, "") for lang in Language} | {
+            "collection": collection
+        }
         return _page(
             request,
             "media_edit.html.j2",

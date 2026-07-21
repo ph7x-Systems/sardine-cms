@@ -19,6 +19,8 @@
     </div>
     {{ text_field("alt", _("Alt text (EN)"), form.alt, required=true,
                   hint=_("mandatory — translations are added after the upload")) }}
+    {{ text_field("collection", _("Collection"), form.collection,
+                  hint=_("optional folder, lowercase-with-dashes — group related assets")) }}
   </div></div>
   <button type="submit" class="btn btn-primary">{{ _("Upload") }}</button>
   <a class="btn btn-outline-secondary" href="/media">{{ _("Cancel") }}</a>

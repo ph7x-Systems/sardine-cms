@@ -414,12 +414,22 @@ class PostgresBackend(StorageBackend):
     def save_media_asset(self, asset: MediaAsset) -> None:
         with self._connection.transaction():
             self._connection.execute(
-                "INSERT INTO media_assets (id, path, mime_type, width, height)"
-                " VALUES (%s, %s, %s, %s, %s)"
+                "INSERT INTO media_assets (id, path, mime_type, width, height,"
+                " collection, content_hash)"
+                " VALUES (%s, %s, %s, %s, %s, %s, %s)"
                 " ON CONFLICT (id) DO UPDATE SET"
                 " path = excluded.path, mime_type = excluded.mime_type,"
-                " width = excluded.width, height = excluded.height",
-                (asset.id, asset.path, asset.mime_type, asset.width, asset.height),
+                " width = excluded.width, height = excluded.height,"
+                " collection = excluded.collection, content_hash = excluded.content_hash",
+                (
+                    asset.id,
+                    asset.path,
+                    asset.mime_type,
+                    asset.width,
+                    asset.height,
+                    asset.collection,
+                    asset.content_hash,
+                ),
             )
             self._connection.execute("DELETE FROM media_alt_texts WHERE media_id = %s", (asset.id,))
             for language, alt in sorted(asset.alt.items(), key=lambda item: item[0].value):
@@ -430,7 +440,8 @@ class PostgresBackend(StorageBackend):
 
     def load_media_asset(self, asset_id: str) -> MediaAsset | None:
         row = self._connection.execute(
-            "SELECT id, path, mime_type, width, height FROM media_assets WHERE id = %s",
+            "SELECT id, path, mime_type, width, height, collection, content_hash"
+            " FROM media_assets WHERE id = %s",
             (asset_id,),
         ).fetchone()
         if row is None:
@@ -443,7 +454,14 @@ class PostgresBackend(StorageBackend):
             )
         }
         return MediaAsset(
-            id=row[0], path=row[1], mime_type=row[2], width=row[3], height=row[4], alt=alt
+            id=row[0],
+            path=row[1],
+            mime_type=row[2],
+            width=row[3],
+            height=row[4],
+            alt=alt,
+            collection=str(row[5] or ""),
+            content_hash=str(row[6] or ""),
         )
 
     def delete_media_asset(self, asset_id: str) -> bool:

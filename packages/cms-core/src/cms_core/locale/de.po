@@ -1385,3 +1385,18 @@ msgstr "wartet"
 
 msgid "verifying"
 msgstr "wird geprüft"
+
+msgid "Collection"
+msgstr "Sammlung"
+
+msgid "All collections"
+msgstr "Alle Sammlungen"
+
+msgid "In use"
+msgstr "In Verwendung"
+
+msgid "unused"
+msgstr "unbenutzt"
+
+msgid "optional folder, lowercase-with-dashes — group related assets"
+msgstr "optionaler Ordner, kleinbuchstaben-mit-bindestrichen — gruppiert zusammengehörige Medien"

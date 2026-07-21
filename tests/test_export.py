@@ -64,6 +64,8 @@ def test_export_includes_pages_and_media() -> None:
         width=1600,
         height=900,
         alt={Language.EN: "A sunrise"},
+        collection="landing",
+        content_hash="cd" * 32,
     )
 
     first = export_content_json([], pages=[page], media=[asset])
@@ -77,6 +79,12 @@ def test_export_includes_pages_and_media() -> None:
     assert exported_page["sections"][0]["languages"]["pt-pt"]["state"] == "complete"
     assert payload["media"][0]["alt"] == {"en": "A sunrise"}
     assert payload["media"][0]["width"] == 1600
+    assert payload["media"][0]["collection"] == "landing"
+    assert payload["media"][0]["content_hash"] == "cd" * 32
+
+    from cms_core.portable import media_from_portable
+
+    assert media_from_portable(payload["media"][0]) == asset
 
 
 def test_portable_round_trip_carries_items_and_body() -> None:

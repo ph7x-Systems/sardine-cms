@@ -286,11 +286,14 @@ def test_media_filters_search_and_views(tmp_path: Path) -> None:
     with TestClient(app, base_url="https://testserver") as client:
         _sign_in(client)
         csrf = client.get("/").text.split('name="csrf_token" value="')[1].split('"')[0]
-        for asset_id, alt in (("tin-rocket", "A tin rocket"), ("sea-chart", "A sea chart")):
+        for asset_id, alt, size in (
+            ("tin-rocket", "A tin rocket", 4),
+            ("sea-chart", "A sea chart", 6),  # distinct bytes: identical content is refused
+        ):
             client.post(
                 "/media",
                 data={"csrf_token": csrf, "id": asset_id, "alt": alt},
-                files={"upload": (f"{asset_id}.png", _png(4, 4))},
+                files={"upload": (f"{asset_id}.png", _png(size, size))},
             )
         everything = client.get("/media").text
         assert "tin-rocket" in everything and "sea-chart" in everything
@@ -302,3 +305,76 @@ def test_media_filters_search_and_views(tmp_path: Path) -> None:
         assert "tin-rocket" in missing  # translations still missing
         none = client.get("/media", params={"q": "nothing-here"}).text
         assert "Nothing matches the filter." in none
+
+
+def test_duplicate_content_is_refused_naming_the_existing_asset(tmp_path: Path) -> None:
+    app = _app(tmp_path)
+    with _client(app) as client:
+        csrf = _sign_in(client)
+        first = client.post(
+            "/media",
+            data={"csrf_token": csrf, "id": "original", "alt": "The tin"},
+            files={"upload": ("a.png", _png(3, 2), "image/png")},
+            follow_redirects=False,
+        )
+        assert first.status_code == 303
+        again = client.post(
+            "/media",
+            data={"csrf_token": csrf, "id": "copycat", "alt": "The tin again"},
+            files={"upload": ("b.png", _png(3, 2), "image/png")},
+            follow_redirects=False,
+        )
+    assert again.status_code == 422
+    assert "identical content already exists" in again.text
+    assert "original" in again.text  # the message names where the bytes live
+    with create_storage(f"sqlite:///{tmp_path / 'content.db'}") as storage:
+        assert storage.load_media_asset("copycat") is None
+
+
+def test_collection_persists_filters_and_edits(tmp_path: Path) -> None:
+    app = _app(tmp_path)
+    with _client(app) as client:
+        csrf = _sign_in(client)
+        client.post(
+            "/media",
+            data={"csrf_token": csrf, "id": "press-logo", "alt": "Logo", "collection": "press"},
+            files={"upload": ("a.png", _png(3, 2), "image/png")},
+            follow_redirects=False,
+        )
+        client.post(
+            "/media",
+            data={"csrf_token": csrf, "id": "loose-shot", "alt": "Loose"},
+            files={"upload": ("b.png", _png(5, 4), "image/png")},
+            follow_redirects=False,
+        )
+        filtered = client.get("/media", params={"collection": "press"}).text
+        assert "press-logo" in filtered
+        assert "loose-shot" not in filtered
+        # the collection is editable from the asset page
+        response = client.post(
+            "/media/loose-shot",
+            data={"csrf_token": csrf, "alt_en": "Loose", "collection": "press"},
+            follow_redirects=False,
+        )
+        assert response.status_code == 303
+        filtered = client.get("/media", params={"collection": "press"}).text
+        assert "loose-shot" in filtered
+        # a bad slug is refused with the model's message
+        bad = client.post(
+            "/media/loose-shot",
+            data={"csrf_token": csrf, "alt_en": "Loose", "collection": "Not A Slug"},
+        )
+    assert bad.status_code == 422
+    with create_storage(f"sqlite:///{tmp_path / 'content.db'}") as storage:
+        stored = storage.load_media_asset("loose-shot")
+    assert stored is not None
+    assert stored.collection == "press"
+
+
+def test_the_list_shows_usage_counts(tmp_path: Path) -> None:
+    app = _app(tmp_path, _asset(), with_cover=True)
+    with _client(app) as client:
+        _sign_in(client)
+        listing = client.get("/media").text
+    assert "unused" not in listing.split("tin-photo")[0]  # header intact
+    assert '<span class="badge text-bg-secondary">1</span>' in listing

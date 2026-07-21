@@ -170,6 +170,14 @@ with that entity's errors listed (the publish gate; disable only with
   practice — validation checks the configured source); alt is
   translatable per language. Assets
   referenced by covers or sections refuse deletion.
+- **Collections**: an optional lowercase-with-dashes folder name set at
+  upload or edited later on the asset page; the library filter narrows
+  to one collection, and collection names in the list link to their
+  filtered view. Every asset also shows how many entries use it — a
+  count in the list, the full reference list on the asset page.
+- **Duplicate prevention**: each upload records the file's SHA-256;
+  uploading bytes identical to an existing asset is refused with a
+  message naming the asset that already holds them.
 
 ## Publishing panel
 
