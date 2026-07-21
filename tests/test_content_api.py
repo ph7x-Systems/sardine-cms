@@ -121,6 +121,7 @@ def test_articles_carry_slugs_relationships_and_media_metadata() -> None:
         "alt": "A cover",
         "width": 1200,
         "height": 630,
+        "sources": [],
     }
     assert entry["fields"] == {"mood": "orbital"}
     assert "<p>" in entry["body_html"]

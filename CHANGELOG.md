@@ -10,6 +10,13 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Added
 
+- Modern image formats by default: every raster image ships WebP/AVIF
+  variants (of the base size and of each configured responsive width)
+  whenever the environment can encode them; both bundled themes render
+  them as picture sources and the Content API lists them in a new
+  additive `sources` field. `[build] modern_image_formats = false`
+  turns it off (#136).
+
 - Media crop and focal point: an optional crop stored as data and
   applied at build — the published image, its dimensions and every
   derivative descend from the cropped area while the original stays

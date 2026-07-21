@@ -53,8 +53,10 @@ source language first) and `categories` (slug → per-language labels).
   (`{slug, label, url}` or `null`), `tags` (`[{slug, url}]`), `cover`
   (media metadata: `url`, localized `alt`, `width`, `height`, `focal`
   (`{x, y}` fractions of the image, present when an editor set one),
-  plus `srcset` when image derivatives are configured) and `fields`
-  (the article's custom fields).
+  `sources` (a list of `{type, srcset}` alternatives in modern formats
+  such as WebP/AVIF, best first; may be empty), plus `srcset` when
+  image derivatives are configured) and `fields` (the article's custom
+  fields).
 - **`pages`**: `id`, `slug`, `url`, `title`, `description` and
   `sections` — each with `key`, `kind`, `fields` (the language's
   resolved field map) and `images` (the same media metadata as covers).

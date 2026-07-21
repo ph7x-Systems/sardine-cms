@@ -4,6 +4,7 @@ import json
 import re
 from datetime import UTC, datetime
 
+import pytest
 from cms_build import SiteConfig, build_entry_preview, build_site
 from cms_core import (
     ArticleContent,
@@ -283,7 +284,9 @@ def test_image_derivatives_generate_and_reach_srcset() -> None:
     assert again.digest() == artifact.digest()  # deterministic
     plain = build_site(CONFIG, content, media_files={"images/wide.png": png}, now=NOW)
     assert "media/images/wide@480.png" not in plain.files
-    assert "srcset" not in plain.files["index.html"].decode("utf-8")
+    plain_html = plain.files["index.html"].decode("utf-8")
+    assert "wide@480" not in plain_html  # no width derivatives without configuration
+    assert "<img src=" in plain_html  # the img itself carries no srcset
 
 
 def test_redirect_fallback_pages_ship_in_every_artifact() -> None:
@@ -355,3 +358,60 @@ def test_crop_reshapes_the_published_pipeline() -> None:
     )
     with Image.open(BytesIO(full.files["media/images/wide.png"])) as restored:
         assert (restored.width, restored.height) == (1200, 600)
+
+
+def test_modern_image_formats_ship_by_default() -> None:
+    """#136: WebP/AVIF variants of every raster image, on by default —
+    picture sources in both the HTML and the Content API, derived from
+    the (possibly cropped) bytes, deterministic, and disabled by one
+    configuration switch."""
+    from io import BytesIO
+
+    from cms_build.images import available_modern_formats
+    from PIL import Image
+
+    if not available_modern_formats():
+        pytest.skip("no modern encoders in this environment")
+
+    buffer = BytesIO()
+    Image.new("RGB", (1200, 600), color=(10, 20, 30)).save(buffer, format="PNG")
+    png = buffer.getvalue()
+    asset = MediaAsset(
+        id="wide",
+        path="images/wide.png",
+        mime_type="image/png",
+        width=1200,
+        height=600,
+        alt={Language.EN: "Wide"},
+        crop="0,0,1000,500",
+    )
+    home = new_page("home", PageContent(title="Home", slug="home"), now=NOW)
+    home.status = ContentStatus.PUBLISHED
+    home.sections.append(
+        Section(
+            key="hero",
+            kind="hero",
+            source=SectionContent(fields={"heading": "Hi"}, media=["wide"]),
+        )
+    )
+    content = SiteContent(pages=[home], media=[asset])
+    config = CONFIG.model_copy(update={"image_widths": (480,), "content_api": True})
+    artifact = build_site(config, content, media_files={"images/wide.png": png}, now=NOW)
+
+    assert "media/images/wide.webp" in artifact.files
+    assert "media/images/wide@480.webp" in artifact.files
+    with Image.open(BytesIO(artifact.files["media/images/wide.webp"])) as webp:
+        assert (webp.width, webp.height) == (1000, 500)  # descends from the crop
+    html = artifact.files["index.html"].decode("utf-8")
+    assert '<source type="image/webp"' in html
+    assert "/media/images/wide.webp 1000w" in html
+    api = artifact.files["api/v1/en/content.json"].decode("utf-8")
+    assert '"type": "image/webp"' in api
+
+    again = build_site(config, content, media_files={"images/wide.png": png}, now=NOW)
+    assert again.digest() == artifact.digest()  # deterministic
+
+    off = config.model_copy(update={"modern_image_formats": False})
+    without = build_site(off, content, media_files={"images/wide.png": png}, now=NOW)
+    assert "media/images/wide.webp" not in without.files
+    assert "<source" not in without.files["index.html"].decode("utf-8")

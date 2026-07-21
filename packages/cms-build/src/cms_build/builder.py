@@ -28,7 +28,7 @@ from cms_validation import SiteContent
 from cms_build import urls
 from cms_build.config import SiteConfig
 from cms_build.head import Head, build_head, hreflang_code
-from cms_build.images import apply_crops, generate_derivatives
+from cms_build.images import apply_crops, generate_derivatives, generate_modern_variants
 from cms_build.markdown import render_markdown
 from cms_build.themes import SectionKindSpec, Theme, create_theme, resolve_kind_spec
 from cms_build.ui import format_date, ui_label
@@ -197,6 +197,13 @@ class _SiteBuilder:
             },
         )
         self.image_variants = generate_derivatives(self.media_files, config.image_widths)
+        # Modern formats ride the same pipeline (#136): variants of the
+        # (possibly cropped) bytes, on by default, absent without Pillow.
+        self.modern_variants = (
+            generate_modern_variants(self.media_files, config.image_widths)
+            if config.modern_image_formats
+            else {}
+        )
         self.articles_by_language: dict[Language, list[Article]] = {
             language: [a for a in self.articles if _available(a, language, config.source_language)]
             for language in config.all_languages
@@ -630,6 +637,19 @@ class _SiteBuilder:
             ]
             candidates.append(f"/{MEDIA_PREFIX}/{asset.path} {display_width}w")
             image["srcset"] = ", ".join(candidates)
+        sources: list[dict[str, str]] = []
+        modern = self.modern_variants.get(asset.path)
+        if modern and display_width:
+            for mime in sorted(modern):  # image/avif before image/webp
+                sized = modern[mime]
+                entries = [
+                    f"/{MEDIA_PREFIX}/{path} {width}w"
+                    for width, path in sorted(sized.items())
+                    if width
+                ]
+                entries.append(f"/{MEDIA_PREFIX}/{sized[0]} {display_width}w")
+                sources.append({"type": mime, "srcset": ", ".join(entries)})
+        image["sources"] = sources
         return image
 
     def _category_filters(self, language: Language) -> list[dict[str, str]]:

@@ -161,9 +161,15 @@ Run the output-integrity suite against a build with your theme
 HTML/CSS must resolve inside the artifact.
 
 Image contexts (`image`, `entry.thumb`) carry an optional `srcset`
-string when the project configures `[build] image_widths` (ADR-0029) —
-render it with an appropriate `sizes` attribute; ignoring it keeps
-working.
+string when the project configures `[build] image_widths` — render it
+with an appropriate `sizes` attribute; ignoring it keeps working. They
+also always carry `sources`: a list of `{type, srcset}` alternatives
+in modern formats (WebP/AVIF, best first; empty when none could be
+encoded). Render them as `<source>` elements inside a `<picture>`
+around the `img` — both bundled themes do — or ignore the key; the
+`img` alone keeps working. When a `focal` point is present
+(`{x, y}` fractions), themes that trim images to fit should keep that
+point in view.
 
 Article contexts carry an optional top-level `comments` object
 (ADR-0031) when the project configures a `[comments]` provider:
