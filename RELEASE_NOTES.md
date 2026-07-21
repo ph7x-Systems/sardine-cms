@@ -8,6 +8,17 @@ changes live in [CHANGELOG.md](CHANGELOG.md); the product map in
 
 ## Unreleased (towards 0.3.0)
 
+- **Any destination for a submission** (#137, final part): the
+  provider contract, frozen only after the reference implementation
+  proved the shape in production. The endpoint owns everything before
+  acceptance (protocol, spam layers, validation, the visitor's
+  answer); a provider owns everything after it. Extensions register
+  destinations (webhooks, queues, CRMs) by name; the contract version
+  is validated at selection; a provider failure is contained and
+  audited, never visitor-facing. A conformance suite runs the rules
+  against any provider, and the developer guide documents the
+  authoring path.
+
 - **Submissions can stay** (#137, third part): `[forms] store = true`
   persists accepted submissions — storage is a consumer of the
   accepted submission, never part of the HTTP decision, and fully

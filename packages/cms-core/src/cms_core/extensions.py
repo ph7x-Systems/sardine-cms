@@ -58,6 +58,10 @@ class Extension:
     """A ``typer.Typer`` mounted as ``cms x <name>``."""
     section_kinds: Mapping[str, tuple[str, ...] | SectionKindSpec] = field(default_factory=dict)
     deploy_providers: Mapping[str, Callable[..., object]] = field(default_factory=dict)
+    forms_providers: Mapping[str, Callable[..., object]] = field(default_factory=dict)
+    """Forms providers by name (ADR-0040): a factory ``() ->
+    FormsProvider``. Registered on activation; a new destination never
+    touches the endpoint or the editorial flow."""
     """Deployment providers by name (#156): a factory ``(settings,
     project_dir) -> DeployProvider``. Registered on activation; adding
     a destination never touches the core, the editor or the flow."""

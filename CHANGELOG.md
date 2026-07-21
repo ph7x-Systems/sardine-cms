@@ -10,6 +10,13 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Added
 
+- Forms provider contract: `[forms] provider` selects who handles
+  accepted submissions; extensions register destinations via
+  `Extension.forms_providers` (contract version validated at
+  selection, failures contained and audited, never visitor-facing);
+  the reference behaviour is the default and a conformance suite
+  covers any provider (ADR-0040).
+
 - Optional form-submission storage: `[forms] store` persists accepted
   submissions (decoupled from notification — either leg failing never
   affects the other or the visitor), with an admin-only Submissions
