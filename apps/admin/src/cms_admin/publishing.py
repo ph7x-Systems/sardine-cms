@@ -203,6 +203,7 @@ async def publishing_home(
                 tuple(languages),
                 _extension_rules(project),
                 source_language=_site_source(project),
+                disabled=project.validation_disabled if project else (),
             ),
             "targets": TARGETS,
             "current_target": project.target if project else "generic",
@@ -270,7 +271,12 @@ async def run_build(
         _record(request, "build", ok=False, detail=f"unknown target {target!r}")
         return _redirect()
     content = await _site_content(request)
-    report = run_report(content, tuple(project.site.languages), _extension_rules(project))
+    report = run_report(
+        content,
+        tuple(project.site.languages),
+        _extension_rules(project),
+        disabled=project.validation_disabled,
+    )
     if not report.ok:
         _record(
             request,

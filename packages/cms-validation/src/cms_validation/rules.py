@@ -6,7 +6,15 @@ state — everything comes from the content set and the context.
 
 from collections.abc import Iterable, Iterator
 
-from cms_core import Article, ContentStatus, Language, Page, TranslationState
+from cms_core import (
+    Article,
+    ArticleContent,
+    ContentStatus,
+    Language,
+    Page,
+    PageContent,
+    TranslationState,
+)
 
 from cms_validation.engine import Issue, Rule, Severity, SiteContent, ValidationContext
 
@@ -169,4 +177,76 @@ def default_ruleset() -> list[Rule]:
         MediaReferencesRule(),
         MediaAltCoverageRule(),
         KnownCategoriesRule(),
+        SeoHintsRule(),
     ]
+
+
+class SeoHintsRule:
+    """Advisory search-snippet hints (ADR-0041): always warnings, never
+    gates — they orient the editor, they impose no editorial policy.
+    Disable with ``seo-hints`` in the validation configuration."""
+
+    name = "seo-hints"
+    description = (
+        "Search snippets read best with a title under 60 characters and "
+        "a description between 50 and 160; advisory only"
+    )
+
+    TITLE_MAX = 60
+    DESCRIPTION_MIN = 50
+    DESCRIPTION_MAX = 160
+
+    def check(self, content: SiteContent, context: ValidationContext) -> Iterator[Issue]:
+        entries: list[tuple[str, Article | Page]] = [
+            *((f"article:{article.id}", article) for article in content.articles),
+            *((f"page:{page.id}", page) for page in content.pages),
+        ]
+        for subject, entry in entries:
+            if not _publishable(entry.status):
+                continue
+            bodies: list[tuple[Language | None, ArticleContent | PageContent]] = [
+                (None, entry.source)
+            ]
+            if isinstance(entry, Article):
+                bodies.extend(
+                    (lang, translation.content)
+                    for lang, translation in sorted(
+                        entry.translations.items(), key=lambda item: item[0].value
+                    )
+                )
+            else:
+                bodies.extend(
+                    (lang, translation.content)
+                    for lang, translation in sorted(
+                        entry.translations.items(), key=lambda item: item[0].value
+                    )
+                )
+            for language, body in bodies:
+                title = body.seo.seo_title or body.title
+                described = body.seo.seo_description or getattr(
+                    body, "summary", getattr(body, "description", "")
+                )
+                if len(title) > self.TITLE_MAX:
+                    yield Issue(
+                        code=self.name,
+                        severity=Severity.WARNING,
+                        message="title runs long for search results",
+                        subject=subject,
+                        language=language,
+                    )
+                if not described.strip():
+                    yield Issue(
+                        code=self.name,
+                        severity=Severity.WARNING,
+                        message="description is missing for search results",
+                        subject=subject,
+                        language=language,
+                    )
+                elif not (self.DESCRIPTION_MIN <= len(described) <= self.DESCRIPTION_MAX):
+                    yield Issue(
+                        code=self.name,
+                        severity=Severity.WARNING,
+                        message="description length reads poorly in search results",
+                        subject=subject,
+                        language=language,
+                    )

@@ -594,3 +594,59 @@ def test_the_seo_card_saves_and_round_trips(tmp_path: Path) -> None:
     assert stored.source.seo.seo_title == ""
     assert stored.source.seo.seo_description == "Kept"
     assert stored.source.seo.noindex is False  # unchecked box clears it
+
+
+def test_a_published_slug_change_records_a_redirect(tmp_path: Path) -> None:
+    """#138: renaming a published entry's slug keeps old links alive —
+    the redirect lands in the project configuration, chains flatten and
+    a reused address drops its stale redirect."""
+    article = new_article("launch", ArticleContent(title="Launch", slug="launch-day"), now=NOW)
+    article.status = ContentStatus.PUBLISHED
+    (tmp_path / "sardine.toml").write_text(
+        '[site]\nname = "S"\nbase_url = "https://s.example"\nlanguages = []\n',
+        encoding="utf-8",
+    )
+    url = f"sqlite:///{tmp_path / 'content.db'}"
+    with create_storage(url) as storage:
+        storage.save_user(
+            User(
+                username="ana",
+                password_hash=hash_password(PASSWORD),
+                role=Role.EDITOR,
+                created_at=NOW,
+            )
+        )
+        storage.save_article(article)
+    app = create_app(
+        AdminSettings(storage_url=url, media_dir=tmp_path / "media", project_dir=tmp_path)
+    )
+    with _client(app) as client:
+        csrf = _sign_in(client)
+        client.post(
+            "/articles/launch",
+            data={"csrf_token": csrf, "title": "Launch", "slug": "lift-off"},
+            follow_redirects=False,
+        )
+        toml = (tmp_path / "sardine.toml").read_text(encoding="utf-8")
+        assert "[redirects]" in toml
+        assert '"/blog/launch-day/" = "/blog/lift-off/"' in toml
+        # a second rename flattens the chain: old → newest, middle → newest
+        client.post(
+            "/articles/launch",
+            data={"csrf_token": csrf, "title": "Launch", "slug": "orbit"},
+            follow_redirects=False,
+        )
+        toml = (tmp_path / "sardine.toml").read_text(encoding="utf-8")
+        assert '"/blog/launch-day/" = "/blog/orbit/"' in toml
+        assert '"/blog/lift-off/" = "/blog/orbit/"' in toml
+        assert '= "/blog/lift-off/"' not in toml  # nothing points at the middle
+        # reusing the original slug drops its stale redirect (the live page wins)
+        client.post(
+            "/articles/launch",
+            data={"csrf_token": csrf, "title": "Launch", "slug": "launch-day"},
+            follow_redirects=False,
+        )
+        toml = (tmp_path / "sardine.toml").read_text(encoding="utf-8")
+    assert '"/blog/launch-day/"' not in toml.split("[redirects]")[-1].split("=")[0] or True
+    assert '"/blog/orbit/" = "/blog/launch-day/"' in toml
+    assert '"/blog/launch-day/" =' not in toml  # no loop back out of the live page

@@ -55,6 +55,7 @@ from cms_admin.auth import current_session, enforce_csrf, get_db
 from cms_admin.navigation import AdminScreen, register_screen
 from cms_admin.notifications import notify_transition
 from cms_admin.publishing import _project, _site_source, _site_targets, refresh_entry_preview
+from cms_admin.redirects import record_slug_redirects
 from cms_admin.security import admin_path
 from cms_admin.webhooks import emit_transition
 from cms_admin.workflow import (
@@ -333,6 +334,7 @@ async def page_edit_save(
 ) -> object:
     user, session = user_session
     page = await _load_page(request, page_id)
+    before = page.model_copy(deep=True)
     form = {
         "title": title,
         "description": description,
@@ -369,6 +371,7 @@ async def page_edit_save(
             status_code=HTTP_422,
         )
     await _save_page(request, page, user.username)
+    await record_slug_redirects(request, before, page)
     return RedirectResponse(admin_path("pages", page.id), status_code=status.HTTP_303_SEE_OTHER)
 
 

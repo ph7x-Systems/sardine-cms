@@ -1493,3 +1493,15 @@ msgstr "Social-Bild"
 
 msgid "a media asset id; the published rendition becomes the card image"
 msgstr "eine Medien-ID; die veröffentlichte Fassung wird zum Kartenbild"
+
+msgid "title runs long for search results"
+msgstr "der Titel ist lang für die Suchergebnisse"
+
+msgid "description is missing for search results"
+msgstr "die Beschreibung für die Suchergebnisse fehlt"
+
+msgid "description length reads poorly in search results"
+msgstr "die Beschreibungslänge liest sich in den Suchergebnissen schlecht"
+
+msgid "Search snippets read best with a title under 60 characters and a description between 50 and 160; advisory only"
+msgstr "Suchausschnitte lesen sich am besten mit einem Titel unter 60 Zeichen und einer Beschreibung zwischen 50 und 160; nur beratend"

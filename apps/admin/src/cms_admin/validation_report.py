@@ -15,10 +15,11 @@ def run_report(
     languages: tuple[Language, ...],
     extra_rules: tuple[object, ...] = (),
     source_language: Language = SOURCE_LANGUAGE,
+    disabled: tuple[str, ...] = (),
 ) -> Report:
     rules = default_ruleset()
     rules.extend(extra_rules)  # type: ignore[arg-type]  # ADR-0028 extensions
-    return RuleSet(rules=rules).run(
+    return RuleSet(rules=rules, disabled=set(disabled)).run(
         content,
         ValidationContext(required_languages=languages, source_language=source_language),
     )
@@ -29,9 +30,12 @@ def report_context(
     languages: tuple[Language, ...] | None = None,
     extra_rules: tuple[object, ...] = (),
     source_language: Language = SOURCE_LANGUAGE,
+    disabled: tuple[str, ...] = (),
 ) -> dict[str, object]:
     required = languages or TARGET_LANGUAGES
-    report = run_report(content, tuple(required), extra_rules, source_language=source_language)
+    report = run_report(
+        content, tuple(required), extra_rules, source_language=source_language, disabled=disabled
+    )
     scope = {
         "articles": len(content.articles),
         "pages": len(content.pages),
