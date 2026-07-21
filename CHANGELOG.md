@@ -5,6 +5,14 @@ from `0.1.0`; the six packages release in lockstep under one `vX.Y.Z` tag.
 
 ## Unreleased
 
+- **The locale set opens** (M8, ADR-0034 phase 1a): `Language` is no
+  longer a closed five-member enum but an interned, validated tag type
+  with the exact same surface — identity comparisons, `.value`, class
+  iteration and `ValueError` on unknown tags all behave as before, and
+  the entire test suite passed without touching a single call site.
+  `Language.register(tag)` is the new entry point language packs will
+  use; until a pack registers a tag, behavior is unchanged.
+
 - **Internal dependencies are bounded to the release series**
   (`>=0.2.0,<0.3`): a half-published release can no longer hand new
   installs a mix of package versions — the resolver now refuses instead

@@ -301,9 +301,13 @@ Ordered by dependency; every 🧭 item begins with its ADR:
       ([ADR-0034](adr/0034-language-packs.md), proposed): tag-based
       locales, configurable source language, packs as extension
       contributions, RTL/LTR direction — languages stay data
-- [ ] ADR-0034 executed in phases: core tags → builder/themes
-      (labels, dates, dir, logical CSS) → admin catalogs → ecosystem
-      pack guide + fictional RTL pack through the gates
+- [x] ADR-0034 phase 1a: `Language` opens — interned validated tags
+      behind the enum's exact surface, `Language.register` for packs;
+      full suite green with zero call-site changes
+- [ ] ADR-0034 remaining phases: configurable source language + bundled
+      packs → builder/themes (labels, dates, dir, logical CSS) → admin
+      catalogs → ecosystem pack guide + fictional RTL pack through the
+      gates
 - [ ] Bulk actions on the content lists (multi-select workflow + trash)
 - [ ] Admin-wide search (articles, pages, media from one box)
 - [ ] Scheduled unpublish: `unpublish_at` mirroring ADR-0024's contract
