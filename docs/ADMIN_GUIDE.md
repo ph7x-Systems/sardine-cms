@@ -362,6 +362,18 @@ what the build includes. The choice is remembered in `sardine.toml`
 successful build answers *what now*: where the files are and the one
 action that puts them live for the chosen target.
 
+## Search and social
+
+Every article and page editor carries a collapsed **Search and social**
+card: SEO title and description (overriding what search engines and
+social cards show; empty derives from the content), a noindex request,
+a canonical URL for content that originally lives elsewhere, and a
+social image chosen from the media library (its published rendition
+becomes the card image). A static preview under the fields shows the
+title and snippet as they will read. The fields are per language —
+translation editors carry their own — and editing the source's SEO
+marks translations outdated exactly like any other content change.
+
 ## Forms
 
 A page section of kind **form** turns into a working visitor form.

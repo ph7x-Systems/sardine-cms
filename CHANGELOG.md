@@ -10,6 +10,10 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Added
 
+- SEO editor card: a collapsed Search-and-social card on article and
+  page editors (title, description, noindex, canonical, social image)
+  with a static preview; per language, localized (#138).
+
 - Per-entry SEO overrides: articles and pages carry an optional `seo`
   payload per language (title, description, `noindex`, canonical
   override, social-card image from the media library) that flows

@@ -8,6 +8,13 @@ changes live in [CHANGELOG.md](CHANGELOG.md); the product map in
 
 ## Unreleased (towards 0.3.0)
 
+- **The SEO card in the editors** (#138, second part): a collapsed
+  Search-and-social card on every article and page editor — SEO title
+  and description with a static preview of how the result will read,
+  the noindex request, the canonical URL and the social image picked
+  from the media library. Ten new panel strings in the four catalogs;
+  the card opens itself whenever any override is set.
+
 - **SEO the editor controls** (#138, first part): articles and pages
   take per-language SEO overrides — title, description, `noindex`
   (emitted as `noindex, follow`), a canonical override and a

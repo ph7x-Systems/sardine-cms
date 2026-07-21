@@ -45,6 +45,7 @@ from cms_admin.articles import (
     _copy_id,
     _form_error_list,
     _picker_context,
+    _seo_from_form,
     form_errors,
     parse_publish_at,
     publish_at_form,
@@ -265,6 +266,11 @@ def _editor_context(
             "body_markdown": page.source.body_markdown,
             "publish_at": publish_at_form(page.publish_at),
             "unpublish_at": publish_at_form(page.unpublish_at),
+            "seo_title": page.source.seo.seo_title,
+            "seo_description": page.source.seo.seo_description,
+            "noindex": "1" if page.source.seo.noindex else "",
+            "canonical": page.source.seo.canonical,
+            "og_image": page.source.seo.og_image,
         },
     }
 
@@ -319,6 +325,11 @@ async def page_edit_save(
     body_markdown: str = Form(""),
     publish_at: str = Form(""),
     unpublish_at: str = Form(""),
+    seo_title: str = Form(""),
+    seo_description: str = Form(""),
+    noindex: str = Form(""),
+    canonical: str = Form(""),
+    og_image: str = Form(""),
 ) -> object:
     user, session = user_session
     page = await _load_page(request, page_id)
@@ -329,12 +340,21 @@ async def page_edit_save(
         "body_markdown": body_markdown,
         "publish_at": publish_at,
         "unpublish_at": unpublish_at,
+        "seo_title": seo_title,
+        "seo_description": seo_description,
+        "noindex": noindex,
+        "canonical": canonical,
+        "og_image": og_image,
     }
     try:
         page.publish_at = parse_publish_at(publish_at)
         page.unpublish_at = parse_publish_at(unpublish_at)
         page.source = PageContent(
-            title=title, description=description, slug=slug, body_markdown=body_markdown
+            title=title,
+            description=description,
+            slug=slug,
+            body_markdown=body_markdown,
+            seo=_seo_from_form(form),
         )
     except ValueError as error:
         return _page_response(
@@ -371,7 +391,11 @@ async def page_autosave(
         page.publish_at = parse_publish_at(publish_at)
         page.unpublish_at = parse_publish_at(unpublish_at)
         page.source = PageContent(
-            title=title, description=description, slug=slug, body_markdown=body_markdown
+            title=title,
+            description=description,
+            slug=slug,
+            body_markdown=body_markdown,
+            seo=page.source.seo,  # autosave never touches the SEO card
         )
     except ValueError as error:
         return JSONResponse({"ok": False, "errors": _form_error_list(error)}, status_code=HTTP_422)

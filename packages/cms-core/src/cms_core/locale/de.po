@@ -1463,3 +1463,33 @@ msgstr "Einsendung löschen"
 
 msgid "No submissions in this window."
 msgstr "Keine Einsendungen in diesem Zeitraum."
+
+msgid "Search and social (optional)"
+msgstr "Suche und soziale Netzwerke (optional)"
+
+msgid "SEO title"
+msgstr "SEO-Titel"
+
+msgid "overrides the page title for search and social; empty derives from the content"
+msgstr "ersetzt den Seitentitel für Suche und soziale Netzwerke; leer leitet sich vom Inhalt ab"
+
+msgid "SEO description"
+msgstr "SEO-Beschreibung"
+
+msgid "the snippet under the title; empty derives from the summary"
+msgstr "der Auszug unter dem Titel; leer leitet sich von der Zusammenfassung ab"
+
+msgid "Ask search engines not to index this entry"
+msgstr "Suchmaschinen bitten, diesen Eintrag nicht zu indexieren"
+
+msgid "Canonical URL"
+msgstr "Kanonische URL"
+
+msgid "only when this content originally lives at another address"
+msgstr "nur wenn dieser Inhalt ursprünglich unter einer anderen Adresse lebt"
+
+msgid "Social image"
+msgstr "Social-Bild"
+
+msgid "a media asset id; the published rendition becomes the card image"
+msgstr "eine Medien-ID; die veröffentlichte Fassung wird zum Kartenbild"

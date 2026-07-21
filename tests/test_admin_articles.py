@@ -556,3 +556,41 @@ def test_the_picker_flags_images_below_the_configured_widths(tmp_path: Path) -> 
     assert "below the widest configured size" in flagged
     unflagged = editor.split("harbor-shot.png")[1].split("</label>")[0]
     assert "below the widest configured size" not in unflagged
+
+
+def test_the_seo_card_saves_and_round_trips(tmp_path: Path) -> None:
+    """#138: the editor's SEO card persists the per-entry overrides and
+    shows them back; clearing a field returns it to derived."""
+    article = new_article("launch", ArticleContent(title="Launch"), now=NOW)
+    app = _app(tmp_path, article)
+    with _client(app) as client:
+        csrf = _sign_in(client)
+        response = client.post(
+            "/articles/launch",
+            data={
+                "csrf_token": csrf,
+                "title": "Launch",
+                "seo_title": "Launch, optimized",
+                "seo_description": "A crafted snippet",
+                "noindex": "1",
+                "canonical": "https://elsewhere.example/launch/",
+                "og_image": "card-shot",
+            },
+            follow_redirects=False,
+        )
+        assert response.status_code == 303, response.text
+        editor = client.get("/articles/launch").text
+        assert 'value="Launch, optimized"' in editor
+        assert "checked" in editor.split('id="noindex"')[1].split(">")[0]
+        # clearing the title returns it to derived
+        client.post(
+            "/articles/launch",
+            data={"csrf_token": csrf, "title": "Launch", "seo_description": "Kept"},
+            follow_redirects=False,
+        )
+    with create_storage(f"sqlite:///{tmp_path / 'content.db'}") as storage:
+        stored = storage.load_article("launch")
+    assert stored is not None
+    assert stored.source.seo.seo_title == ""
+    assert stored.source.seo.seo_description == "Kept"
+    assert stored.source.seo.noindex is False  # unchecked box clears it
