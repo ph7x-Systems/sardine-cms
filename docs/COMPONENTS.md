@@ -15,7 +15,7 @@ Rendered by theme templates from builder-provided context
 | Language switcher | `base.html.j2` | `nav.languages` (code, url, current) |
 | Head contract block | `base.html.j2` | `head` (canonical, hreflang, OG, JSON-LD) |
 | Page sections | `page.html.j2` | `sections` (key, kind, fields, images) |
-| Article body + meta | `article.html.j2` | `article` (title, date, category, tags, body_html) |
+| Article body + meta | `article.html.j2` | `article` (title, summary, date_iso/date_human, minutes, author, category, tags, body_html) |
 | Listing + pagination | `listing.html.j2` | `listing` (entries, page/pages, prev/next) |
 | Not-found | `not_found.html.j2` | `not_found.home_url`, localized `head.title` |
 | Footer | `base.html.j2` | `footer.text`, `footer.menu` |
@@ -31,6 +31,7 @@ every page is complete without them. Total JS budget ≤ 20 KB (tested).
 | Element | Asset | Attributes | Behavior |
 | --- | --- | --- | --- |
 | `<site-search>` | `assets/search.js` | `index-url`, `label` | Filters listings from the per-language `search-index.json`; same-origin fetch only; results announced via `aria-live` |
+| `<site-comments>` | `assets/comments-island.js` (provider-shipped, ADR-0031) | `data-thread-url` | Wraps the localized no-JS discussion link; contacts nothing before an explicit reader action |
 
 The reference theme adds **no JavaScript**: its effects (aurora, grain,
 reveal-on-scroll) are modern CSS only — gradients, an inline-SVG noise data
@@ -85,6 +86,7 @@ content header with `breadcrumb`, `app-footer` with copyright. Surfaces:
 | Side-by-side editors | Bootstrap grid (`row`/`col`, `admin-sbs`), cards, Markdown preview panel |
 | Forms | `form-control`/`form-label` (+ mono textarea), form-text hints, alert block |
 | Markdown editor (article bodies) | EasyMDE (MIT, vendored at `static/vendor/easymde/` — ADR-0023), Bootstrap Icons toolbar, localized titles, no built-in preview (the builder's preview is the truth) |
+| Media library | upload card with validated file input, server-side filter/search form, quick-view links, per-language alt-text editors |
 | Workflow (status transitions) | role-filtered button group (`admin-workflow`), per-status badge colors |
 | Publishing panel | gate `callout` (success/danger), rules + issues tables in cards, target select, buttons |
 | Editorial notes (editors) | comment trail card with inline add form, author-or-admin removal |

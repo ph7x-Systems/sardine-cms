@@ -40,7 +40,7 @@ ADRs.
 - [x] Media assets: mandatory EN alt text, translatable alt, image dimensions
       required, safe relative paths
 - [x] PostgreSQL backend ([ADR-0009](adr/0009-postgres-backend.md)): psycopg 3,
-      optional extra `cms-core[postgres]`, shared ANSI migration history,
+      optional extra `sardine-cms-core[postgres]`, shared ANSI migration history,
       conformance suite green in CI (service container) and locally (Docker)
 - [x] SQL Server and MySQL/MariaDB backends — optional extras, shared
       conformance suite and real CI service containers
@@ -227,7 +227,7 @@ tests, docs and wiki updates, per the standing gates.
 - [x] **Editorial notes**: comment trail per entry (migration 12),
       author-or-admin removal, never published
 
-## Milestone 6 — Extensibility and adoption
+## Milestone 6 — Extensibility and adoption (CLOSED)
 
 - [x] Extension contract (ADR-0028): `sardine.extensions` entry-point
       group + dotted paths, explicit activation, validation rules, build

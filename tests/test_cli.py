@@ -238,7 +238,7 @@ def test_portable_round_trip_is_lossless(tmp_path: Path) -> None:
     assert blocked.exit_code == 3  # refuses to overwrite without --replace
 
 
-def test_import_wordpress_wxr_into_a_fresh_project(tmp_path: Path) -> None:
+def test_import_wxr_into_a_fresh_project(tmp_path: Path) -> None:
     project = make_project(tmp_path)
     export = tmp_path / "blog.xml"
     export.write_text(
@@ -255,11 +255,9 @@ def test_import_wordpress_wxr_into_a_fresh_project(tmp_path: Path) -> None:
         encoding="utf-8",
     )
 
-    result = runner.invoke(
-        app, ["import", str(export), "--format", "wordpress", "-p", str(project)]
-    )
+    result = runner.invoke(app, ["import", str(export), "--format", "wxr", "-p", str(project)])
     assert result.exit_code == 0, result.output
-    assert "imported 1 WordPress article(s)" in result.output
+    assert "imported 1 WXR article(s)" in result.output
     with load_project(project).open_storage() as storage:
         article = storage.load_article("imported-launch")
     assert article is not None

@@ -50,9 +50,9 @@ tests/                          # unit and integration tests
 ## Status
 
 Developed in the open and released on PyPI (see the version badge above for
-the current release). Milestone 5 is closed; Milestone 6 now concentrates on
-the remaining adoption seams, followed by operational completeness in
-Milestone 7. The content core, validator, deterministic builder, theme system,
+the current release). Milestones 5 and 6 are closed; Milestone 7 —
+operational completeness (email/notifications per ADR-0032, two-factor
+authentication, webhooks, diagnostics) — is underway. The content core, validator, deterministic builder, theme system,
 `cms` CLI and full browser editorial cycle are implemented and tested — the
 live demo is built with them on every merge. No secrets, personal data or
 client content live in this repository.

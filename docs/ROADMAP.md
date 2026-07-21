@@ -134,8 +134,8 @@ target`
 
 Current queue:
 
-1. **M7 operations** — email/notifications ADR → TOTP 2FA → on-publish
-   webhooks → `cms doctor`.
+1. **M7 operations** — implement ADR-0032 (email + notifications) →
+   TOTP 2FA → on-publish webhooks → `cms doctor`.
 
 ## Definition of done for the current queue
 

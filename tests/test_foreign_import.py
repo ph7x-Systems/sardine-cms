@@ -3,7 +3,7 @@
 from datetime import UTC, datetime
 
 import pytest
-from cms_core import ContentStatus, import_wordpress_wxr
+from cms_core import ContentStatus, import_wxr
 
 WXR = b"""<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0"
@@ -38,8 +38,8 @@ WXR = b"""<?xml version="1.0" encoding="UTF-8" ?>
 """
 
 
-def test_wordpress_wxr_maps_blog_posts_without_network_or_format_leakage() -> None:
-    imported = import_wordpress_wxr(WXR)
+def test_wxr_maps_blog_posts_without_network_or_format_leakage() -> None:
+    imported = import_wxr(WXR)
 
     assert imported.skipped == 1
     assert len(imported.articles) == 1
@@ -54,25 +54,25 @@ def test_wordpress_wxr_maps_blog_posts_without_network_or_format_leakage() -> No
     assert article.category == "mission-log"
     assert article.tags == ("test-flight",)
     assert article.author == "Editorial desk"
-    assert article.fields == {"wordpress_post_id": "41"}
+    assert article.fields == {"wxr_post_id": "41"}
 
 
-def test_wordpress_wxr_rejects_dtds_and_entities() -> None:
+def test_wxr_rejects_dtds_and_entities() -> None:
     payload = b"""<?xml version="1.0"?>
 <!DOCTYPE rss [<!ENTITY payload "must-not-expand">]>
 <rss><channel><item><title>&payload;</title></item></channel></rss>"""
 
     with pytest.raises(ValueError, match="DTD or entity"):
-        import_wordpress_wxr(payload)
+        import_wxr(payload)
 
     encoded = (
         payload.decode("utf-8").replace('encoding="UTF-8"', 'encoding="UTF-16"').encode("utf-16")
     )
     with pytest.raises(ValueError, match="DTD or entity"):
-        import_wordpress_wxr(encoded)
+        import_wxr(encoded)
 
 
-def test_wordpress_wxr_collision_and_missing_date_fallback_are_deterministic() -> None:
+def test_wxr_collision_and_missing_date_fallback_are_deterministic() -> None:
     payload = WXR.replace(
         b"</channel>",
         b"""<item>
@@ -84,7 +84,7 @@ def test_wordpress_wxr_collision_and_missing_date_fallback_are_deterministic() -
         </item></channel>""",
     )
 
-    imported = import_wordpress_wxr(payload)
+    imported = import_wxr(payload)
     second = imported.articles[1]
     assert second.id == "first-flight-2"
     assert second.status is ContentStatus.REVIEW

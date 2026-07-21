@@ -3,6 +3,11 @@
 - **Status:** accepted
 - **Date:** 2026-07-17
 
+> Identifiers in this record predate the Stillsite → Sardine CMS rename
+> ([ADR-0016](0016-rename-sardine-cms.md)): read `stillsite*` names as their
+> `sardine*` successors.
+
+
 ## Context
 
 The framework's extension seams are code (`register_theme`, `register_target`,

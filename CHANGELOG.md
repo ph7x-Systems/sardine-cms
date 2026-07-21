@@ -131,7 +131,7 @@ from `0.1.0`; the six packages release in lockstep under one `vX.Y.Z` tag.
   themes render (site name when empty). The demo snapshot captures the
   Users page (its sidebar link 404ed), and a new anti-recurrence test
   asserts every sidebar entry exists in the snapshot. ADR-0027
-  (proposed) records the direction for design-aware editing.
+  records the direction for design-aware editing.
 
 - **Media library filters** (M5): server-side search over id, path, MIME
   type and alt texts, plus quick views (images only, missing translated

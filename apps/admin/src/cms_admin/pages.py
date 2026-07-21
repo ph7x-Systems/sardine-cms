@@ -1,11 +1,13 @@
 """Pages: metadata, ordered typed sections, and their translations.
 
 Sections are free-form field maps (the theme owns the meaning of each
-``kind``), so the section editor is a dynamic name/value form. For the kinds
-the reference theme ships, the editor suggests the field names that kind
-consumes — suggestions only, never validation: any theme can define any
-kind. The side-by-side translation UX mirrors the article editor: the EN
-source read-only next to the translation, one field at a time.
+``kind``), so the section editor is a dynamic name/value form. The editor
+suggests the field names of the bundled section-kind gallery
+(``SECTION_KIND_GALLERY``) plus any kinds the project's activated
+extensions advertise (ADR-0028) — suggestions only, never validation:
+any theme can define any kind. The side-by-side translation UX mirrors
+the article editor: the EN source read-only next to the translation, one
+field at a time.
 """
 
 import difflib

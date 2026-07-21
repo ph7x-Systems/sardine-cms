@@ -196,7 +196,8 @@ jobs:
           python scripts/a11y_check.py examples/multilingual-company-site/_site package/axe.min.js
       - name: Run the accessibility gate over the admin (snapshot)
         run: |
-          python -m pip install httpx2
+          # TestClient's transport: the real httpx, never a fork.
+          python -m pip install httpx
           python -m cms_admin.demo_export \
             --storage examples/multilingual-company-site/content.sqlite3 \
             --out demo-admin/admin \
@@ -260,5 +261,3 @@ jobs:
       - name: Scan Python security patterns
         run: bandit -q -r apps packages scripts -x '*/static/*,*/assets/*' -ll -ii
 
-  # Content validation and example-site build jobs are added in Milestone 2,
-  # once cms-validation and cms-build produce runnable CLIs.
