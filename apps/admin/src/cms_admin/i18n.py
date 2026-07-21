@@ -40,6 +40,11 @@ LOCALE_DIR = Path(__file__).parent / "locale"
 RUNTIME_MSGIDS: tuple[str, ...] = (
     # login route
     "Wrong username or password.",
+    # notifications (ADR-0032 phase 2)
+    "Review requested: %(title)s",
+    "%(actor)s sent %(title)s to review. Open it in the panel:\n\n%(link)s",
+    "Published: %(title)s",
+    "%(title)s was published by %(actor)s:\n\n%(link)s",
     # password reset (ADR-0032)
     "Email",
     "optional — password reset and notifications",

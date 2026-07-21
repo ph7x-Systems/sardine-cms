@@ -46,6 +46,7 @@ from cms_admin.articles import (
     publish_at_form,
 )
 from cms_admin.auth import current_session, enforce_csrf, get_db
+from cms_admin.notifications import notify_transition
 from cms_admin.publishing import _project, refresh_entry_preview
 from cms_admin.security import admin_path
 from cms_admin.workflow import (
@@ -646,6 +647,14 @@ async def page_status(
             )
     page.status = target
     await _save_page(request, page, user.username)
+    await notify_transition(
+        request,
+        section="pages",
+        entity_id=page.id,
+        title=page.source.title,
+        target=target,
+        actor=user.username,
+    )
     return RedirectResponse(admin_path("pages", page.id), status_code=status.HTTP_303_SEE_OTHER)
 
 

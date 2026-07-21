@@ -31,6 +31,7 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from pydantic import ValidationError
 
 from cms_admin.auth import current_session, enforce_csrf, get_db
+from cms_admin.notifications import notify_transition
 from cms_admin.publishing import _project, refresh_entry_preview
 from cms_admin.security import admin_path
 from cms_admin.workflow import (
@@ -550,6 +551,14 @@ async def article_status(
     article.status = target
     article.updated_at = datetime.now(UTC)
     await _save_article(request, article, user.username)
+    await notify_transition(
+        request,
+        section="articles",
+        entity_id=article.id,
+        title=article.source.title,
+        target=target,
+        actor=user.username,
+    )
     return RedirectResponse(
         admin_path("articles", article.id), status_code=status.HTTP_303_SEE_OTHER
     )
