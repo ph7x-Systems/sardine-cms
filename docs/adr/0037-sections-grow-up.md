@@ -83,7 +83,7 @@ that the structure stops being a cage:
 - Docs must stop presenting numbered fields as the contract
   (THEME_GUIDE gallery table, wiki Themes page).
 
-## Execution (phased, each phase its own PR)
+## Execution (phased, each phase its own PR — all four executed)
 
 1. **Model + storage**: `SectionContent.items`, `PageContent.
    body_markdown`, checksum coverage, storage migration on all four

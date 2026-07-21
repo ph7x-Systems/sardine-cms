@@ -353,8 +353,15 @@ Ordered by dependency; every 🧭 item begins with its ADR:
       the long-form body, the translation editors mirror items
       row-aligned beside the source — and the editors' hardcoded
       "(EN)" labels became source-neutral
-- [ ] ADR-0037 phase 4 (docs): THEME_GUIDE gallery v2, ADMIN_GUIDE,
-      wiki, seed content exercising items
+- [x] ADR-0037 phase 4 — the vertical close (#126): seed content
+      migrated to items (FAQ, expertise, story stat pairs — zero
+      numbered fields left), THEME_GUIDE gallery v2 (spec table:
+      fields/Markdown/item columns, `section.rows`, `page.body_html`),
+      ADMIN_GUIDE editors chapter, wiki, and a behavioral E2E that
+      drives the full editorial flow over the admin HTTP surface —
+      open, edit items past the old cap, save, translate, publish
+      through the gate, and read the eighth FAQ item in both themes'
+      final HTML
 - [ ] Bulk actions on the content lists (multi-select workflow + trash)
 - [ ] Admin-wide search (articles, pages, media from one box)
 - [ ] Scheduled unpublish: `unpublish_at` mirroring ADR-0024's contract

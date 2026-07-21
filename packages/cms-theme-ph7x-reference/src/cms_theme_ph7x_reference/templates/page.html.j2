@@ -66,13 +66,10 @@
       {% for image in section.images %}
       <img src="{{ image.url }}"{% if image.srcset %} srcset="{{ image.srcset }}" sizes="100vw"{% endif %} alt="{{ image.alt }}" width="{{ image.width }}" height="{{ image.height }}">
       {% endfor %}
-      {% if section.data.meta1k %}
+      {% if section.rows %}
       <div class="meta">
-        {% for i in range(1, 7) %}
-        {% set k = section.data.get("meta" ~ i ~ "k") %}
-        {% if k %}
-        <div><div class="k">{{ k }}</div><div class="v">{{ section.data.get("meta" ~ i ~ "v") }}</div></div>
-        {% endif %}
+        {% for item in section.rows %}
+        <div><div class="k">{{ item.label }}</div><div class="v">{{ item.value }}</div></div>
         {% endfor %}
       </div>
       {% endif %}

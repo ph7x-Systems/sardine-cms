@@ -5,6 +5,19 @@ from `0.1.0`; the six packages release in lockstep under one `vX.Y.Z` tag.
 
 ## Unreleased
 
+- **ADR-0037 closes vertically** (#126): the seed and public demo now
+  exercise `items` (FAQ, expertise and story stat pairs — zero numbered
+  fields left in seed data, and the story kind's stat pairs joined the
+  items contract), THEME_GUIDE documents gallery v2 as the authoring
+  contract, ADMIN_GUIDE describes the three-part section editor, and a
+  behavioral end-to-end test drives the whole editorial flow over the
+  admin's real HTTP surface: open the page, edit items past the retired
+  cap, save, translate the second language side by side, publish
+  through the gate, and read the **eighth FAQ item** in the final built
+  HTML of both bundled themes. Only with all of that true do the
+  roadmap rows flip to ✅ — the first feature shipped under the
+  product-review definition of done.
+
 - **The roadmap became a product plan** (2026-07-21 product review):
   the stale execution queue is gone — the queue now lives in the issue
   tracker (#126–#141), one issue per capability with user problem,

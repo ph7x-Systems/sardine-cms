@@ -74,15 +74,15 @@ Legend: ✅ shipped · 🟡 partial · 🔜 scheduled (milestone in brackets) ·
 | Capability | Today | Gap → where |
 | --- | --- | --- |
 | Articles + pages with typed sections | ✅ open kinds, unlimited reorderable sections; unknown kinds render generically | — |
-| Repeating groups in sections | ❌ repetition is numbered fields (`q1…q6`, `row1…row8`) with caps hidden in theme templates | 🔜 unbounded `items` per section, translatable and validated ([ADR-0037](adr/0037-sections-grow-up.md) phase 1–2) |
-| Rich text inside sections | ❌ section fields are plain strings | 🔜 kinds declare Markdown fields; same safe renderer as article bodies (ADR-0037 phase 2) |
-| Long-form pages | ❌ pages hold no body — all content must fit section kinds | 🔜 `PageContent.body_markdown` rendered as prose (ADR-0037 phase 1–2) |
+| Repeating groups in sections | ✅ unbounded `items` per section — model, storage, both themes, admin table, side-by-side translation; legacy numbered fields keep rendering; behavioral E2E proves the eighth FAQ item end to end ([ADR-0037](adr/0037-sections-grow-up.md)) | — |
+| Rich text inside sections | ✅ kinds declare Markdown fields (`story.body`, `cta.body`; extensions declare their own) — same safe renderer and editor widget as article bodies | — |
+| Long-form pages | ✅ `PageContent.body_markdown` — editor, autosave, translation, both themes render it as prose | — |
 | In-editor visual page building | ❌ form-based section editor (server-rendered) | 🧭 deferred by ADR-0037: needs a client-side island beyond ADR-0010's budget — its own ADR if forms measurably fail editors |
 | Categories, tags, listing pages | ✅ incl. validation rule | — |
 | Custom content types | ❌ deliberate: pages-with-sections + article custom fields cover known cases | 🧭 own ADR when a real case appears (ADR-0028) |
 | Custom fields | ✅ free-form fields on articles (editable, exported, themed) and sections | — |
 | Navigation menus | ✅ explicit menu manager (per-language labels, ordering, external links) with automatic-menu fallback | — |
-| Reusable blocks | ✅ the section-kind gallery is a tested contract: nine bundled kinds (incl. quote, FAQ, CTA, image gallery), both themes, admin field suggestions, extension-added kinds, THEME_GUIDE authoring table | 🔜 gallery v2 adds field specs (Markdown-capable fields) — ADR-0037 phase 2 |
+| Reusable blocks | ✅ gallery v2 (`SectionKindSpec`): nine bundled kinds with field specs, Markdown fields and item columns; both themes; admin forms built from the spec; extension kinds as tuples or full specs; THEME_GUIDE authoring table | — |
 | Design-aware editing | ✅ themed side-preview plus debounced live refresh through the scoped real builder (ADR-0027) | — |
 | Multilingual | ✅ **core strength** — the dedicated map below tells the whole story | — |
 | Authors / bylines | ✅ editorial byline on articles, rendered by the themes | — |
@@ -229,6 +229,12 @@ details do not need one.
 | Preview refresh | < 2 seconds |
 | Admin search on 10 000 entries | < 300 ms |
 | WXR migration of a reference export | explicit fidelity % reported |
+
+Each metric, when first measured, must declare its method: reference
+environment, where measurement starts and ends, dataset, number of
+runs, percentile reported, who performs it (the editor metrics require
+a **real non-technical tester**, never a maintainer) and where the
+result is recorded. A number without its method does not count.
 
 ## Milestones ahead
 

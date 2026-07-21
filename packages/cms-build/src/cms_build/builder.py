@@ -136,6 +136,12 @@ def _legacy_items(kind: str, fields: Mapping[str, str]) -> list[dict[str, str]]:
                     "detail": fields.get(f"row{index}d", ""),
                 }
             )
+    elif kind == "story":
+        for index in range(1, len(fields) + 2):
+            label = fields.get(f"meta{index}k", "")
+            if not label:
+                break
+            items.append({"label": label, "value": fields.get(f"meta{index}v", "")})
     return items
 
 
