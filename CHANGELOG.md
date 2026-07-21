@@ -5,6 +5,20 @@ from `0.1.0`; the six packages release in lockstep under one `vX.Y.Z` tag.
 
 ## Unreleased
 
+- **The operational model is written down** (#152, docs-only): Sardine
+  manages the site; external infrastructure serves it — and
+  publication is a repeatable cycle, never a one-off export. The new
+  DEPLOYMENT.md documents every supported model (Nginx-served local
+  directory with the symlink pattern, sync to static hosting, panel
+  build, the demo's own privilege-separated CI/CD pipeline), Azure
+  Static Web Apps and Nginx examples, rollback/credentials/partial-
+  failure guidance, and the five-phase provider contract with honest
+  status (generation ✅, transport/activation/health/rollback → #152).
+  README separates managing from serving; ADMIN_GUIDE explains what
+  "publish" means and where its state lives; the wiki gains an
+  Operational Architecture page with the flow diagram. The README's
+  stale "EN as source" line caught up with ADR-0034 on the way.
+
 - **The month has a face** (#132): the Calendar screen shows published
   entries on their publication day and scheduled entries on the day
   their `publish_at` will fire — in UTC, exactly as the panel

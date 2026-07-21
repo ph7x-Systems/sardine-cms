@@ -19,7 +19,7 @@ Reusable multilingual, static-first CMS framework extracted from the pH7x System
 
 ## What it is
 
-A static-first, multilingual content and publishing engine (EN as source + PT-PT, ES, FR, DE), built on the contracts proven on the public ph7x.com site:
+A static-first, multilingual content and publishing engine (configurable source language; EN, PT-PT, ES, FR and DE bundled as language packs — any pack can join), built on the contracts proven on the public ph7x.com site:
 
 - structured content in JSON and Markdown articles, separated from presentation;
 - strong validation before publishing (language parity, structure, editorial rules);
@@ -29,6 +29,14 @@ A static-first, multilingual content and publishing engine (EN as source + PT-PT
   scheduling, trash, media, menus and user management;
 - portable content, controlled external imports and an explicit extension
   contract for themes, storage, build steps, rules and editorial components.
+
+**Where things run:** Sardine is where the site is *managed* — the
+panel, storage and build can live on a laptop or a private server and
+never need to serve the public site. Publication ships the static
+build to external hosting (Azure Static Web Apps, your own Nginx,
+S3/CloudFront, GitHub Pages, Netlify, …) and is a repeatable cycle,
+not a one-off export: edit in Sardine, republish to the same
+destination. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Structure
 
