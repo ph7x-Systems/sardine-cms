@@ -84,7 +84,7 @@ Legend: ✅ shipped · 🟡 partial · 🔜 scheduled (milestone in brackets) ·
 | Authors / bylines | ✅ editorial byline on articles, rendered by the themes | — |
 | Custom taxonomies | ❌ category + tags | 🧭 arbitrary taxonomy definitions need an ADR (M8) |
 | Content relations | ❌ | 🧭 typed entry-to-entry links (related articles) need an ADR (M8) |
-| Arbitrary locale sets + language packs | ❌ the five supported languages are fixed | 🧭 **top of M8**: one ADR for configurable locales, contributable language packs (site labels + admin catalogs) and RTL/LTR text direction |
+| Arbitrary locale sets + language packs | ❌ the five supported languages are fixed | 🔜 contract fixed by [ADR-0034](adr/0034-language-packs.md) (proposed): tag-based locales, contributable packs, RTL/LTR — phased execution opens M8 |
 
 ### Media
 
