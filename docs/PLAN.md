@@ -287,9 +287,13 @@ tests, docs and wiki updates, per the standing gates.
 
 Ordered by dependency; every 🧭 item begins with its ADR:
 
-- [ ] **Language-pack ADR first**: arbitrary locale sets, contributable
-      language packs (site labels + admin catalogs), RTL/LTR text
-      direction — languages stay data, never schema or enumerations
+- [x] Language-pack ADR written
+      ([ADR-0034](adr/0034-language-packs.md), proposed): tag-based
+      locales, configurable source language, packs as extension
+      contributions, RTL/LTR direction — languages stay data
+- [ ] ADR-0034 executed in phases: core tags → builder/themes
+      (labels, dates, dir, logical CSS) → admin catalogs → ecosystem
+      pack guide + fictional RTL pack through the gates
 - [ ] Bulk actions on the content lists (multi-select workflow + trash)
 - [ ] Admin-wide search (articles, pages, media from one box)
 - [ ] Scheduled unpublish: `unpublish_at` mirroring ADR-0024's contract
