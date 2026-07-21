@@ -39,6 +39,8 @@ revokes all of its existing sessions before storing the new credentials.
 | `SARDINE_SMTP_URL` | unset | For the `smtp` transport: `smtp://user:pass@host:587` (STARTTLS) or `smtps://host:465`; unset keeps email off |
 | `SARDINE_MAIL_FROM` | unset | The From address for panel email; required together with the SMTP URL |
 | `SARDINE_ADMIN_REQUIRE_2FA` | unset | Minimum role at/above which two-factor is mandatory (`editor`\|`reviewer`\|`publisher`\|`admin`); unset keeps it optional |
+| `SARDINE_WEBHOOK_URL` | unset | ADR-0036 on-publish webhook receiver (HTTPS; plain HTTP only for loopback) |
+| `SARDINE_WEBHOOK_SECRET` | unset | Shared secret signing every webhook body; required with the URL |
 
 ### Password reset (ADR-0032)
 
@@ -74,6 +76,17 @@ codes in this phase: the recovery path is
 `cms admin create-user --force`, which replaces the account, clears
 two-factor state and revokes every session. Password reset by email
 deliberately does not clear the second factor.
+
+### On-publish webhooks (ADR-0036)
+
+With the URL and secret set, transitions that change the public site —
+into `published` and out of it — POST a minimal signed JSON doorbell
+(`{"event", "entity": {"kind", "id"}, "occurred_at"}`) to the receiver.
+Verify `X-Sardine-Signature` (`sha256=<hex>`, HMAC-SHA256 of the exact
+body with the shared secret), answer 2xx quickly and rebuild
+asynchronously. Delivery retries three times with backoff off the
+request path; after that the failure is recorded and the event is
+dropped — the scheduled-build recipe remains the safety net.
 
 The admin never reads configuration files — secrets cannot end up in a
 project directory that gets committed or exported. Preview artifacts and

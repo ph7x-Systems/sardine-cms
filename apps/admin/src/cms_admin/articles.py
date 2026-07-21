@@ -34,6 +34,7 @@ from cms_admin.auth import current_session, enforce_csrf, get_db
 from cms_admin.notifications import notify_transition
 from cms_admin.publishing import _project, refresh_entry_preview
 from cms_admin.security import admin_path
+from cms_admin.webhooks import emit_transition
 from cms_admin.workflow import (
     allowed,
     available_transitions,
@@ -548,9 +549,11 @@ async def article_status(
                 },
                 status_code=HTTP_422,
             )
+    previous = article.status
     article.status = target
     article.updated_at = datetime.now(UTC)
     await _save_article(request, article, user.username)
+    emit_transition(request, kind="article", entity_id=article.id, before=previous, after=target)
     await notify_transition(
         request,
         section="articles",

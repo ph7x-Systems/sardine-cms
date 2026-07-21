@@ -43,6 +43,9 @@ class AdminSettings:
     # ADR-0035 amendment: minimum role at/above which two-factor is
     # mandatory (forced enrolment). None = optional for everyone.
     require_2fa_role: "Role | None" = None
+    # ADR-0036: on-publish webhook — URL + shared secret, both or neither.
+    webhook_url: str | None = None
+    webhook_secret: str | None = None
 
     def __post_init__(self) -> None:
         if self.session_ttl <= timedelta(0):
@@ -51,6 +54,9 @@ class AdminSettings:
             raise ValueError("upload_max_bytes must be positive")
         if self.upload_max_pixels <= 0:
             raise ValueError("upload_max_pixels must be positive")
+        from cms_admin.webhooks import validate_webhook_settings
+
+        validate_webhook_settings(self.webhook_url, self.webhook_secret)
 
     @classmethod
     def from_env(cls) -> "AdminSettings":
@@ -77,6 +83,8 @@ class AdminSettings:
             smtp_url=os.environ.get("SARDINE_SMTP_URL"),
             mail_from=os.environ.get("SARDINE_MAIL_FROM"),
             require_2fa_role=_parse_2fa_role(os.environ.get("SARDINE_ADMIN_REQUIRE_2FA")),
+            webhook_url=os.environ.get("SARDINE_WEBHOOK_URL"),
+            webhook_secret=os.environ.get("SARDINE_WEBHOOK_SECRET"),
         )
 
 
