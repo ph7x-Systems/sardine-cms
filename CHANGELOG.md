@@ -5,6 +5,14 @@ from `0.1.0`; the six packages release in lockstep under one `vX.Y.Z` tag.
 
 ## Unreleased
 
+- **On-publish webhooks** (M7, ADR-0036): with `SARDINE_WEBHOOK_URL` +
+  `SARDINE_WEBHOOK_SECRET` set, transitions that change the public site
+  (into and out of `published`) POST a minimal signed JSON doorbell —
+  HMAC-SHA256 over the exact body in `X-Sardine-Signature` — to the
+  receiver, retried three times with backoff off the request path.
+  HTTPS enforced (loopback exempt for development); a URL without a
+  secret fails startup; unset means nothing changes anywhere.
+
 - **Two-factor enforcement by role** (ADR-0035 amendment):
   `SARDINE_ADMIN_REQUIRE_2FA` names the minimum role at/above which
   two-factor is mandatory. Covered accounts without it still sign in

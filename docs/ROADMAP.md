@@ -133,7 +133,7 @@ Legend: ✅ shipped · 🟡 partial · 🔜 scheduled (milestone in brackets) ·
 | Import / restore | ✅ portable JSON/Markdown round-trip plus an offline WXR 1.2 blog adapter ([ADR-0030](adr/0030-foreign-blog-import.md)) | More foreign formats only when a concrete migration requires one |
 | Export / portability | ✅ JSON/Markdown is the source of truth | — |
 | Content API | ✅ opt-in `api/v1/` JSON in every build ([CONTENT_API.md](CONTENT_API.md)): versioned, deterministic, same publication/language gates as the HTML | — |
-| Webhooks (publish → host build) | ❌ | 🔜 on-publish webhook (M7) |
+| Webhooks (publish → host build) | ✅ [ADR-0036](adr/0036-on-publish-webhooks.md): signed doorbell on publish/unpublish, bounded retries, HTTPS-only, optional | — |
 | Health check | 🟡 `cms validate` covers content | 🔜 `cms doctor` (storage, media, config) (M7) |
 | Backups | ✅ `cms dump` writes the portable pair, `cms import` restores it — the DB stays disposable | — |
 | Scheduled builds | ✅ recipe in ADMIN_GUIDE (CI `schedule:` + `cms export`); `publish_at`-aware by construction | — |

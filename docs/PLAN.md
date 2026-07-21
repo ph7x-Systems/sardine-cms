@@ -284,7 +284,9 @@ tests, docs and wiki updates, per the standing gates.
 - [x] TOTP two-factor authentication ([ADR-0035](adr/0035-totp.md)):
       RFC 6238 in the standard library, migration 17, confirmed
       enrolment, single-use codes, limiter-covered, i18n complete
-- [ ] On-publish webhook (trigger the host's build)
+- [x] On-publish webhook ([ADR-0036](adr/0036-on-publish-webhooks.md)):
+      published/unpublished events, HMAC-SHA256 signature, three
+      bounded retries, HTTPS-only, environment-configured, optional
 - [ ] `cms doctor`: storage, media, config, environment diagnostics
 - [x] Documented backup/restore and scheduled-build recipes
 

@@ -49,6 +49,7 @@ from cms_admin.auth import current_session, enforce_csrf, get_db
 from cms_admin.notifications import notify_transition
 from cms_admin.publishing import _project, refresh_entry_preview
 from cms_admin.security import admin_path
+from cms_admin.webhooks import emit_transition
 from cms_admin.workflow import (
     allowed,
     available_transitions,
@@ -645,8 +646,10 @@ async def page_status(
                 },
                 status_code=HTTP_422,
             )
+    previous = page.status
     page.status = target
     await _save_page(request, page, user.username)
+    emit_transition(request, kind="page", entity_id=page.id, before=previous, after=target)
     await notify_transition(
         request,
         section="pages",
