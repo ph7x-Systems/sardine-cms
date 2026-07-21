@@ -277,7 +277,10 @@ tests, docs and wiki updates, per the standing gates.
       four engines), pluggable mail transports (`smtp` baseline +
       `Extension.mail_transports` for passwordless provider APIs),
       enumeration-safe reset flow, localized messages, session revocation
-- [ ] ADR-0032 phase 2: review-requested + published notifications
+- [x] ADR-0032 phase 2: review-requested (reviewers and above, minus
+      the actor) + published (newest revision author) notifications —
+      localized per recipient, fire-and-forget, failures recorded,
+      byte-for-byte no-op without a configured transport
 - [ ] TOTP two-factor authentication
 - [ ] On-publish webhook (trigger the host's build)
 - [ ] `cms doctor`: storage, media, config, environment diagnostics

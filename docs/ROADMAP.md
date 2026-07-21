@@ -122,7 +122,7 @@ Legend: ✅ shipped · 🟡 partial · 🔜 scheduled (milestone in brackets) ·
 | Admin panel in the editor's language | ✅ gettext i18n (ADR-0022): PT-PT/ES/FR/DE shipped, per-user preference + browser fallback, completeness enforced by tests | — |
 | Password reset | ✅ ADR-0032: enumeration-safe request, hashed single-use 30-min tokens, session revocation; pluggable mail transports (`smtp` baseline, extensions for passwordless APIs) | — |
 | Two-factor authentication | ❌ | 🔜 TOTP (M7) |
-| Notifications (review requested…) | ❌ | 🔜 ADR-0032 phase 2: review-requested + published, fire-and-forget (M7, next) |
+| Notifications (review requested…) | ✅ ADR-0032: review-requested (reviewers and above) + published (last editing author), localized, fire-and-forget off the request path | — |
 
 ### Platform and operations
 

@@ -908,3 +908,27 @@ msgstr "E-mail"
 
 msgid "optional — password reset and notifications"
 msgstr "facultatif — réinitialisation du mot de passe et notifications"
+
+msgid "Review requested: %(title)s"
+msgstr "Relecture demandée : %(title)s"
+
+msgid ""
+"%(actor)s sent %(title)s to review. Open it in the panel:\n"
+"\n"
+"%(link)s"
+msgstr ""
+"%(actor)s a envoyé %(title)s en relecture. Ouvrez-le dans le panneau :\n"
+"\n"
+"%(link)s"
+
+msgid "Published: %(title)s"
+msgstr "Publié : %(title)s"
+
+msgid ""
+"%(title)s was published by %(actor)s:\n"
+"\n"
+"%(link)s"
+msgstr ""
+"%(title)s a été publié par %(actor)s :\n"
+"\n"
+"%(link)s"

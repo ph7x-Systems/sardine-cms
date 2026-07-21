@@ -49,6 +49,15 @@ stored only as a hash. Completing a reset applies the password policy
 and revokes every session of the account. Without SMTP the pages do not
 exist and the panel behaves exactly as before.
 
+### Notifications (ADR-0032)
+
+With email configured, two events notify by mail: a transition into
+review mails every account of role reviewer or above that has an
+address (except the actor), and publishing mails the entry's most
+recent editing author. Messages are plain text in each recipient's
+panel language; delivery runs off the request path and a transport
+failure never becomes an editorial error.
+
 The admin never reads configuration files — secrets cannot end up in a
 project directory that gets committed or exported. Preview artifacts and
 uploaded media are served only to an authenticated session. Responses are

@@ -1,6 +1,6 @@
 # ADR-0032 — Email and notifications: SMTP-only, optional, enumeration-safe
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-07-20
 
 ## Context

@@ -5,6 +5,14 @@ from `0.1.0`; the six packages release in lockstep under one `vX.Y.Z` tag.
 
 ## Unreleased
 
+- **Editorial notifications** (M7, ADR-0032 phase 2 — the ADR is now
+  accepted): a transition into review mails every reviewer-and-above
+  account with an address (except the actor), and publishing mails the
+  entry's most recent editing author. Plain-text messages in each
+  recipient's panel language, delivered fire-and-forget through the
+  pluggable transport; failures are recorded, never editorial errors;
+  without a configured transport nothing changes at all.
+
 - **Password reset, with a pluggable mail contract** (M7, ADR-0032
   phase 1): accounts gain an optional email address (Users screen,
   `cms admin create-user --email`; migration 15) and the login page —
