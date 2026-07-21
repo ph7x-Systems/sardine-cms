@@ -1,6 +1,6 @@
 """Deployment providers (#156): immutable releases, atomic activation.
 
-The contract every provider follows — slice 1 ships the filesystem
+The contract every provider follows; the bundled filesystem
 reference implementation (Sardine and the web server share a machine;
 Nginx serves ``current/`` and is never touched by a publication):
 
@@ -390,7 +390,7 @@ POLL_INTERVAL_SECONDS = 2.0
 
 
 class SwaDeployer:
-    """Azure Static Web Apps provider (#156 slice 2): the same contract,
+    """Azure Static Web Apps provider (#156): the same contract,
     a remote activation.
 
     The local release store is identical to the filesystem provider's —

@@ -33,7 +33,7 @@ truth for content itself.
 
 ## Supported operating models
 
-### 1. Local directory served by Nginx — automated (#156 slice 1)
+### 1. Local directory served by Nginx — automated (#156)
 
 With one table in `sardine.toml`, editorial actions end on the public
 site — publish and unpublish redeploy automatically, and nobody runs a
@@ -132,7 +132,7 @@ every merge and is honest about privilege separation:
 The same pattern works with real content: point the workflow at your
 storage URL instead of seeding.
 
-## Azure Static Web Apps — automated (#156 slice 2)
+## Azure Static Web Apps — automated (#156)
 
 The same contract and the same panel experience as the filesystem
 provider — the editor never knows which provider runs:

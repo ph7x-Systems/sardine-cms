@@ -1,4 +1,4 @@
-"""Panel deployment (#156, slice 1): publish ends on the public site.
+"""Panel deployment (#156): publish ends on the public site.
 
 With ``[deploy] root`` configured, every workflow transition into or
 out of ``published`` runs the full flow — build, validate, immutable

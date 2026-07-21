@@ -1,11 +1,10 @@
-"""#156 slice 3: one deployment contract, any destination.
+"""One deployment contract, any destination (#156).
 
 The conformance suite runs the same rules over every provider — the two
 bundled ones (filesystem, swa) and a fictional third one defined right
-here and registered through an extension. That third provider is the
-maturity criterion of #156 made executable: a new destination is one
-factory implementing the contract; the core, the editor and the publish
-flow never change.
+here and registered through an extension. That third provider proves
+the design end to end: a new destination is one factory implementing
+the contract; the core, the editor and the publish flow never change.
 """
 
 import shutil
@@ -245,7 +244,7 @@ def test_conflicting_reregistration_is_loud() -> None:
         register_deploy_provider("mirror", lambda settings, project_dir: None)
 
 
-# --- the maturity criterion, end to end ------------------------------------
+# --- an extension-shipped provider, end to end -----------------------------
 
 
 def test_a_third_provider_needs_no_core_change(tmp_path: Path) -> None:
