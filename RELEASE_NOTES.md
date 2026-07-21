@@ -8,6 +8,19 @@ changes live in [CHANGELOG.md](CHANGELOG.md); the product map in
 
 ## Unreleased (towards 0.3.0)
 
+- **Links survive renames, and hints stay hints** (#138, final part):
+  renaming a published entry's slug records a redirect from every old
+  address automatically — per language, flattened to a single hop
+  (A→B then B→C becomes A→C and B→C), never looping, and dropped the
+  moment an address becomes live content again. The redirect map stays
+  the same `[redirects]` table operators already edit by hand; the
+  builder keeps emitting fallback pages and target rules from it, and
+  each recorded redirect lands in the Activity trail. The validation
+  report gains advisory search-snippet hints (title over 60
+  characters, description missing or outside 50–160) — warnings only,
+  never a gate, and `[validation] disabled = ["seo-hints"]` switches
+  them off per project through the new rule-disabling configuration.
+
 - **The SEO card in the editors** (#138, second part): a collapsed
   Search-and-social card on every article and page editor — SEO title
   and description with a static preview of how the result will read,

@@ -100,6 +100,9 @@ RUNTIME_MSGIDS: tuple[str, ...] = (
     "translation is missing",
     "translation is outdated",
     "missing alt text",
+    "title runs long for search results",
+    "description is missing for search results",
+    "description length reads poorly in search results",
     # scheduling form error (ADR-0024)
     "publish_at: use the picker format (YYYY-MM-DDTHH:MM, UTC)",
     # users screen route errors

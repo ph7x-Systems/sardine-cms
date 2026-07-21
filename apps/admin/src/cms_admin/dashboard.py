@@ -127,7 +127,10 @@ async def dashboard(
                 "media": len(content.media),
             },
             **report_context(
-                content, _site_targets(project), source_language=_site_source(project)
+                content,
+                _site_targets(project),
+                source_language=_site_source(project),
+                disabled=project.validation_disabled if project else (),
             ),
             "attention": attention,
             "last_build": getattr(request.app.state, "last_build", None),

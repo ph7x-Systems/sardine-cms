@@ -10,6 +10,13 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Added
 
+- Advisory SEO hints in the validation report (title/description
+  length; warnings only, `[validation] disabled` opts out — the new
+  per-project rule switch) and automatic redirects when a published
+  entry's slug changes: per language, chains flattened, loops
+  impossible, stale redirects dropped when an address returns to life;
+  every recorded redirect audited (#138).
+
 - Package metadata declares the project URLs (homepage, repository,
   wiki, changelog) — published releases show them as verified links.
 

@@ -51,6 +51,9 @@ class Project:
     """``[forms] store``: persist accepted submissions. Off by default;
     the endpoint never depends on it."""
     forms_retention_days: int = 0
+    validation_disabled: tuple[str, ...] = ()
+    """``[validation] disabled``: rule names switched off — advisory
+    rules like ``seo-hints`` opt out here."""
     """``[forms] retention_days``: stored submissions older than this
     are pruned at panel startup; 0 keeps everything until deleted."""
 
@@ -201,4 +204,7 @@ def load_project(directory: Path) -> Project:
         forms_notify=str(data.get("forms", {}).get("notify", "")),
         forms_store=bool(data.get("forms", {}).get("store", False)),
         forms_retention_days=int(data.get("forms", {}).get("retention_days", 0)),
+        validation_disabled=tuple(
+            str(name) for name in data.get("validation", {}).get("disabled", [])
+        ),
     )

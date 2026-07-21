@@ -31,9 +31,22 @@ def run(content: SiteContent) -> list[str]:
 
 
 def test_complete_published_content_passes() -> None:
-    article = new_article("post", ArticleContent(title="Post"), now=NOW)
+    article = new_article(
+        "post",
+        ArticleContent(
+            title="Post",
+            summary="A fine tale of tinned voyagers crossing the quiet harbour at first light.",
+        ),
+        now=NOW,
+    )
     for language in CONTEXT.required_languages:
-        article.set_translation(language, ArticleContent(title="Trad"))
+        article.set_translation(
+            language,
+            ArticleContent(
+                title="Trad",
+                summary="A fine tale of tinned voyagers crossing the quiet harbour at first light.",
+            ),
+        )
     article.status = ContentStatus.PUBLISHED
     report = RuleSet(rules=default_ruleset()).run(SiteContent(articles=[article]), CONTEXT)
     assert report.ok
@@ -107,6 +120,7 @@ def test_report_lists_every_rule_result_even_when_all_pass() -> None:
         "media-references",
         "media-alt-coverage",
         "known-categories",
+        "seo-hints",
     ]
     assert all(result.ok for result in report.results)
     assert all(result.description for result in report.results)
@@ -126,3 +140,23 @@ def test_disabled_rules_do_not_appear_in_results() -> None:
     ruleset = RuleSet(rules=default_ruleset(), disabled={"media-alt-coverage"})
     report = ruleset.run(SiteContent(), CONTEXT)
     assert "media-alt-coverage" not in {result.rule for result in report.results}
+
+
+def test_seo_hints_warn_and_are_disableable() -> None:
+    """#138: advisory only — warnings never gate, and the rule opts out
+    by name."""
+    long_title = "A title that keeps going well past the sixty characters search results show"
+    article = new_article("post", ArticleContent(title=long_title, summary="Too short"), now=NOW)
+    article.status = ContentStatus.PUBLISHED
+    for language in CONTEXT.required_languages:
+        article.set_translation(language, ArticleContent(title="Trad", summary="Too short"))
+    content = SiteContent(articles=[article])
+
+    report = RuleSet(rules=default_ruleset()).run(content, CONTEXT)
+    hints = [issue for issue in report.issues if issue.code == "seo-hints"]
+    assert hints, "the advisory rule found nothing"
+    assert all(issue.severity is Severity.WARNING for issue in hints)
+    assert report.ok  # warnings never gate
+
+    quiet = RuleSet(rules=default_ruleset(), disabled={"seo-hints"}).run(content, CONTEXT)
+    assert not [issue for issue in quiet.issues if issue.code == "seo-hints"]

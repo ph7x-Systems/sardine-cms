@@ -36,7 +36,7 @@ def _validate(project: Project) -> Report:
     rules = default_ruleset()
     for extension in project.load_extensions():
         rules.extend(extension.validation_rules)  # type: ignore[arg-type]
-    ruleset = RuleSet(rules=rules)
+    ruleset = RuleSet(rules=rules, disabled=set(project.validation_disabled))
     context = ValidationContext(
         required_languages=project.site.languages,
         source_language=project.site.source_language,

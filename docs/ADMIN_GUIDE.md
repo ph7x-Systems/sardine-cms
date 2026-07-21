@@ -374,6 +374,24 @@ title and snippet as they will read. The fields are per language —
 translation editors carry their own — and editing the source's SEO
 marks translations outdated exactly like any other content change.
 
+### Advisory hints and automatic redirects
+
+The validation report includes advisory search-snippet hints — a title
+over 60 characters or a description missing or outside 50–160
+characters warns, never blocks. Turn them off per project:
+
+```toml
+[validation]
+disabled = ["seo-hints"]
+```
+
+Renaming a published entry's slug records a redirect from the old
+address automatically (per language): chains flatten to a single hop,
+an address that becomes live again drops its stale redirect, and the
+builder keeps emitting fallback pages and target rules from the same
+`[redirects]` table you can also edit by hand. Each recorded redirect
+lands in the Activity trail.
+
 ## Forms
 
 A page section of kind **form** turns into a working visitor form.

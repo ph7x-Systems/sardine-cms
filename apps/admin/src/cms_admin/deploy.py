@@ -81,6 +81,7 @@ async def run_deploy(request: Request, actor: str) -> DeployState | None:
         tuple(_site_targets(project)),
         _extension_rules(project),
         source_language=_site_source(project),
+        disabled=project.validation_disabled if project else (),
     )
     if not report.ok:
         # Persisted, not just returned: the panel's deploy card must show
@@ -236,6 +237,7 @@ async def run_deploy_for_app(app: FastAPI, actor: str) -> DeployState | None:
         content,
         tuple(project.site.languages),
         source_language=project.site.source_language,
+        disabled=project.validation_disabled,
     )
     if not report.ok:
         state = deployer.record_failure(
