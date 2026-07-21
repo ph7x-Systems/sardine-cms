@@ -259,6 +259,7 @@ def _editor_context(
             "slug": page.source.slug,
             "body_markdown": page.source.body_markdown,
             "publish_at": publish_at_form(page.publish_at),
+            "unpublish_at": publish_at_form(page.unpublish_at),
         },
     }
 
@@ -312,6 +313,7 @@ async def page_edit_save(
     slug: str = Form(""),
     body_markdown: str = Form(""),
     publish_at: str = Form(""),
+    unpublish_at: str = Form(""),
 ) -> object:
     user, session = user_session
     page = await _load_page(request, page_id)
@@ -321,9 +323,11 @@ async def page_edit_save(
         "slug": slug,
         "body_markdown": body_markdown,
         "publish_at": publish_at,
+        "unpublish_at": unpublish_at,
     }
     try:
         page.publish_at = parse_publish_at(publish_at)
+        page.unpublish_at = parse_publish_at(unpublish_at)
         page.source = PageContent(
             title=title, description=description, slug=slug, body_markdown=body_markdown
         )
@@ -353,12 +357,14 @@ async def page_autosave(
     slug: str = Form(""),
     body_markdown: str = Form(""),
     publish_at: str = Form(""),
+    unpublish_at: str = Form(""),
 ) -> object:
     """Persist valid page metadata and refresh its scoped themed preview."""
     user, _ = user_session
     page = await _load_page(request, page_id)
     try:
         page.publish_at = parse_publish_at(publish_at)
+        page.unpublish_at = parse_publish_at(unpublish_at)
         page.source = PageContent(
             title=title, description=description, slug=slug, body_markdown=body_markdown
         )

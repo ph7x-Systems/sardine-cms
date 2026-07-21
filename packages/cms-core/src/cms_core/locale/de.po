@@ -1292,3 +1292,9 @@ msgstr "Veröffentlichte Einträge an ihrem Veröffentlichungstag, geplante an d
 
 msgid "scheduled"
 msgstr "geplant"
+
+msgid "Unpublish at (UTC)"
+msgstr "Zurückziehen am (UTC)"
+
+msgid "optional end of the window — after this moment the next build drops the entry; must fall after the publish moment"
+msgstr "optionales Fensterende — nach diesem Moment entfernt der nächste Build den Eintrag; muss nach dem Veröffentlichungszeitpunkt liegen"

@@ -66,6 +66,7 @@ def article_from_portable(data: dict[str, Any], bodies: dict[str, str]) -> Artic
         created_at=datetime.fromisoformat(data["created_at"]),
         updated_at=datetime.fromisoformat(data["updated_at"]),
         publish_at=_moment(data.get("publish_at")),
+        unpublish_at=_moment(data.get("unpublish_at")),
         deleted_at=_moment(data.get("deleted_at")),
         featured=bool(data.get("featured", False)),
         author=data.get("author"),
@@ -128,6 +129,7 @@ def page_from_portable(data: dict[str, Any]) -> Page:
         created_at=datetime.fromisoformat(data["created_at"]),
         updated_at=datetime.fromisoformat(data["updated_at"]),
         publish_at=_moment(data.get("publish_at")),
+        unpublish_at=_moment(data.get("unpublish_at")),
         deleted_at=_moment(data.get("deleted_at")),
         source=PageContent(
             title=source_raw["title"],

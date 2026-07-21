@@ -51,6 +51,8 @@
 </div>
 {{ datetime_field("publish_at", _("Publish at (UTC)"), form.publish_at,
                   hint=_("empty publishes immediately once published; a future moment keeps the entry out of builds until a build runs after it")) }}
+{{ datetime_field("unpublish_at", _("Unpublish at (UTC)"), form.unpublish_at,
+                  hint=_("optional end of the window — after this moment the next build drops the entry; must fall after the publish moment")) }}
 {% endmacro %}
 
 {% macro errors_block(errors) %}

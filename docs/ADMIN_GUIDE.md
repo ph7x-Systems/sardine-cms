@@ -345,6 +345,15 @@ republish to the same destination
 the transport leg, status, failure preservation and rollback fully
 into the panel).
 
+## Scheduled unpublish (#133)
+
+Entries carry an optional **Unpublish at (UTC)** next to the publish
+moment: after it passes, the next build drops the entry — the
+symmetric end of ADR-0024's window, from the same deterministic clock.
+A window that ends before it starts is refused at the model. Campaign
+pages and legal notices get an end date without anyone remembering to
+unpublish them.
+
 ## Calendar (#132)
 
 **Calendar** shows the month as the panel sees time: published entries

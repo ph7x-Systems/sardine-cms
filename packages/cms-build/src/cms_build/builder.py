@@ -64,12 +64,15 @@ class _SafeHtml(str):
 
 
 def _live(entry: Article | Page, now: datetime) -> bool:
-    """Published, not in the trash (ADR-0026), and its moment has come
-    (ADR-0024): a future publish_at keeps the entry out of the artifact
-    until a build runs past it."""
+    """Published, not in the trash (ADR-0026), and inside its window:
+    a future publish_at keeps the entry out until a build runs past it
+    (ADR-0024), and a passed unpublish_at takes it out again (#133) —
+    deterministically, from the same clock."""
     if entry.status is not ContentStatus.PUBLISHED or entry.deleted_at is not None:
         return False
-    return entry.publish_at is None or entry.publish_at <= now
+    if entry.publish_at is not None and entry.publish_at > now:
+        return False
+    return entry.unpublish_at is None or entry.unpublish_at > now
 
 
 def _published_articles(content: SiteContent, now: datetime) -> list[Article]:

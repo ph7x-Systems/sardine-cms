@@ -5,6 +5,15 @@ from `0.1.0`; the six packages release in lockstep under one `vX.Y.Z` tag.
 
 ## Unreleased
 
+- **Publication windows close by themselves** (#133): articles and
+  pages gain `unpublish_at` — after it passes, the next build drops
+  the entry, deterministically, from the same clock as `publish_at`
+  (ADR-0024's symmetric end). A window that ends before it starts is
+  refused at the model. The editors carry the field beside the publish
+  moment; storage migration 20 lands on all four engines; the portable
+  format round-trips it. Two new panel strings in the four bundled
+  catalogs.
+
 - **The operational model is written down** (#152, docs-only): Sardine
   manages the site; external infrastructure serves it — and
   publication is a repeatable cycle, never a one-off export. The new
