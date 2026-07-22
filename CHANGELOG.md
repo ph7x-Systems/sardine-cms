@@ -8,18 +8,11 @@ features with their PRs, breaking changes and migrations — live in
 
 ## Unreleased
 
-## 0.5.0 — 2026-07-22
-
-The WXR migration flow (#140) ships partially in this release: the
-inspection report, idempotent re-imports and mappings are in; media
-fetch, redirects for changed URLs and the admin migration flow remain
-pending.
-
 ### Added
 
 - Indonesian language pack (`id`): site labels, month names, date
-  pattern and a full admin catalog (494 strings) so the panel itself
-  speaks Bahasa Indonesia. Seventh bundled language.
+  pattern and a full admin catalog so the panel itself speaks Bahasa
+  Indonesia. Seventh bundled language.
 
 ## 0.5.0 — 2026-07-22
 
