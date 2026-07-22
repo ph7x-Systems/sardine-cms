@@ -8,6 +8,15 @@ features with their PRs, breaking changes and migrations — live in
 
 ## Unreleased
 
+### Added
+
+- Themes screen (#141): the panel lists every theme the environment
+  can activate — bundled and installed packages with their versions,
+  discovered through the entry-point group without loading code — and
+  activates one without editing files. Activation tries a full build
+  first; a failing theme shows its error and the configuration stays
+  untouched. The panel never installs packages (ADR-0048).
+
 ## 0.6.0 — 2026-07-23
 
 The migration release: the WXR flow (#140) is complete end to end,
