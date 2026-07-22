@@ -160,6 +160,25 @@ cms export   -p examples/multilingual-company-site --target swa   # or nginx | g
 cms preview  -p examples/multilingual-company-site   # serve locally
 ```
 
+## Docker quickstart
+
+A `docker compose up` brings up the admin panel with a seeded example site and
+an admin account — no Python environment needed:
+
+```bash
+docker compose up
+```
+
+The panel is at `http://localhost:8000`. On first run a random admin password
+is generated and printed once in the container log (save it — it won't be
+shown again). To set a fixed password instead, uncomment
+`SARDINE_ADMIN_PASSWORD` in `docker-compose.yml`. Site content and the SQLite
+database persist in named volumes (`sardine-site`, `sardine-data`).
+
+> **Local evaluation only:** this setup runs over plain HTTP with
+> `SARDINE_ADMIN_COOKIE_SECURE=0`. Do not expose it to a network without
+> TLS and a secure cookie setting.
+
 ## Documentation
 
 - [Roadmap](docs/ROADMAP.md) — capability inventory, product direction and
