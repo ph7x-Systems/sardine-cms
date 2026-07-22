@@ -1629,3 +1629,40 @@ msgstr "descarregado como %(asset)s"
 
 msgid "reused %(asset)s"
 msgstr "reutilizado %(asset)s"
+
+# Themes screen (ADR-0048)
+msgid "Activate"
+msgstr "Ativar"
+
+msgid "Activated %(name)s — the change applies to the next build and preview."
+msgstr "%(name)s ativado — a mudança aplica-se ao próximo build e pré-visualização."
+
+msgid "Activation failed and the configuration was left untouched: %(error)s"
+msgstr "A ativação falhou e a configuração ficou intocada: %(error)s"
+
+msgid "Active"
+msgstr "Ativo"
+
+msgid "Built-in"
+msgstr "Incluído"
+
+msgid "Installed themes"
+msgstr "Temas instalados"
+
+msgid "No project configuration was found; themes activate per project."
+msgstr "Não foi encontrada configuração de projeto; os temas ativam-se por projeto."
+
+msgid "Package"
+msgstr "Pacote"
+
+msgid "The active theme fails to load: %(error)s"
+msgstr "O tema ativo falha ao carregar: %(error)s"
+
+msgid "Themes"
+msgstr "Temas"
+
+msgid "Themes install with the environment's package manager and appear here on their own. Activation tries a full build first — a failing theme never reaches the configuration."
+msgstr "Os temas instalam-se com o gestor de pacotes do ambiente e aparecem aqui por si. A ativação tenta primeiro um build completo — um tema com falhas nunca chega à configuração."
+
+msgid "Version"
+msgstr "Versão"

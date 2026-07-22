@@ -36,6 +36,7 @@ from cms_admin.publishing import router as publishing_router
 from cms_admin.settings import AdminSettings
 from cms_admin.submissions_view import apply_forms_retention
 from cms_admin.submissions_view import router as submissions_router
+from cms_admin.themes_view import router as themes_router
 from cms_admin.trash import router as trash_router
 from cms_admin.users import router as users_router
 
@@ -174,6 +175,7 @@ def create_app(settings: AdminSettings | None = None) -> FastAPI:
     app.include_router(preview_links_router)
     app.include_router(submissions_router)
     app.include_router(migration_router)
+    app.include_router(themes_router)
     from cms_admin.search import router as search_router
 
     app.include_router(search_router)

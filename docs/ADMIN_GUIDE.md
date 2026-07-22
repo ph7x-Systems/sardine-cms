@@ -268,6 +268,19 @@ a previous run stays valid across incremental re-runs — and `--dry-run`
 with mappings previews the post-mapping inventories before anything is
 written.
 
+### Themes
+
+The **Themes** screen (admin role) lists every theme the environment
+can activate — bundled and installed packages alike, discovered through
+the `sardine.themes` entry-point group with their package and version —
+and marks the active one. Activation is try-first, write-second: the
+theme must resolve and a full trial build of the current content must
+succeed before `theme = "…"` is written into `[site]`; a failing theme
+shows its error and the configuration stays untouched, so the site can
+never become unbuildable from this screen. The panel never installs
+packages — themes install with the environment's package manager and
+appear on their own. Activations land in the audit trail.
+
 ### Migrating from the panel
 
 The **Migration** screen (admin role) is the same pipeline with a

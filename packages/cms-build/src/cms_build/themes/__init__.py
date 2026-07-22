@@ -8,6 +8,7 @@ assets. Themes plug in via :func:`register_theme`; the built-in
 """
 
 from collections.abc import Callable, Mapping
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol, runtime_checkable
 
@@ -71,6 +72,34 @@ def resolve_kind_spec(kind: str, extension_kinds: Mapping[str, object] = {}) -> 
     if isinstance(raw, tuple):
         return SectionKindSpec(fields=raw)
     return SectionKindSpec()
+
+
+@dataclass(frozen=True)
+class ThemeInfo:
+    """One discoverable theme: bundled or installed as a package."""
+
+    name: str
+    distribution: str = ""
+    version: str = ""
+
+
+def discovered_themes() -> tuple[ThemeInfo, ...]:
+    """Every theme this environment can activate (ADR-0048).
+
+    Bundled registrations plus everything the ``sardine.themes``
+    entry-point group declares — no code is loaded or executed here.
+    """
+    from importlib.metadata import entry_points
+
+    infos = {name: ThemeInfo(name=name) for name in _REGISTRY}
+    for entry_point in entry_points(group="sardine.themes"):
+        dist = entry_point.dist
+        infos[entry_point.name] = ThemeInfo(
+            name=entry_point.name,
+            distribution=dist.name if dist is not None else "",
+            version=dist.version if dist is not None else "",
+        )
+    return tuple(sorted(infos.values(), key=lambda info: info.name))
 
 
 @runtime_checkable
