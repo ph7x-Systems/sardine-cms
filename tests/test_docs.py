@@ -85,9 +85,12 @@ def test_ci_workflow_covers_the_checks_the_readme_promises() -> None:
 
 
 def test_readme_images_exist() -> None:
-    references = re.findall(r'<img src="([^"#]+)"', README) + re.findall(
-        r'srcset="([^"#]+)"', README
+    references = (
+        re.findall(r'<img src="([^"#]+)"', README)
+        + re.findall(r"!\[[^\]]*\]\(([^)#]+)\)", README)
+        + re.findall(r'srcset="([^"#]+)"', README)
     )
+    references = [ref for ref in references if not ref.startswith("http")]
     assert references, "README references no images"
     for reference in references:
         assert (REPO_ROOT / reference).is_file(), f"README references missing image {reference}"

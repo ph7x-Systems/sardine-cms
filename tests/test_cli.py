@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+import pytest
 from cms_cli.app import app
 from cms_cli.project import load_project
 from typer.testing import CliRunner
@@ -296,3 +297,40 @@ def test_doctor_fails_on_a_broken_extension(tmp_path: Path) -> None:
     result = runner.invoke(app, ["doctor", "-p", str(tmp_path)])
     assert result.exit_code == 1
     assert "extensions: FAIL" in result.output
+
+
+def test_demo_reaches_a_served_site_in_one_command(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """#190: scaffold, seed, build and serve — one command, no
+    questions; the directory persists for exploring afterwards."""
+    import http.server
+
+    class _InstantServer:
+        def __init__(self, *args: object, **kwargs: object) -> None:
+            pass
+
+        def __enter__(self) -> "_InstantServer":
+            return self
+
+        def __exit__(self, *args: object) -> None:
+            return None
+
+        def serve_forever(self) -> None:
+            raise KeyboardInterrupt
+
+    monkeypatch.setattr(http.server, "ThreadingHTTPServer", _InstantServer)
+    monkeypatch.chdir(tmp_path)
+    result = runner.invoke(app, ["demo"])
+    assert result.exit_code == 0, result.output
+    assert "created" in result.output
+    assert "seeded" in result.output
+    assert "built" in result.output
+    assert "Next steps:" in result.output
+    assert (tmp_path / "sardine-demo" / "sardine.toml").is_file()
+    assert (tmp_path / "sardine-demo" / "_site" / "index.html").is_file()
+    # running again reuses everything without complaint
+    again = runner.invoke(app, ["demo"])
+    assert again.exit_code == 0, again.output
+    assert "created" not in again.output
+    assert "seeded" not in again.output
