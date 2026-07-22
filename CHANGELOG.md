@@ -8,6 +8,15 @@ features with their PRs, breaking changes and migrations — live in
 
 ## Unreleased
 
+### Added
+
+- WXR migration flow, third part (#140): `--fetch-media` downloads the
+  images imported posts reference into the media library and rewrites
+  bodies to `/media/…` paths — explicit opt-in, public hosts only,
+  size/time caps with three attempts, duplicate bytes reuse the
+  existing asset, and every URL is reported as fetched, reused or
+  failed with its reason (ADR-0045).
+
 ## 0.5.0 — 2026-07-22
 
 The WXR migration flow (#140) ships partially in this release: the
@@ -32,13 +41,6 @@ pending.
   take repeatable `"source=target"` renames, an empty target drops the
   value, unmatched sources warn and proceed, and `--dry-run` previews
   the post-mapping inventories (ADR-0044).
-
-- WXR migration flow, third part (#140): `--fetch-media` downloads the
-  images imported posts reference into the media library and rewrites
-  bodies to `/media/…` paths — explicit opt-in, public hosts only,
-  size/time caps with three attempts, duplicate bytes reuse the
-  existing asset, and every URL is reported as fetched, reused or
-  failed with its reason (ADR-0045).
 
 - **Docker quickstart** ([#192](https://github.com/ph7x-Systems/sardine-cms/issues/192)): `docker compose up` brings up the admin panel with a seeded example site — no Python environment needed. A random admin password is generated on first run and printed in the container log. Site content and the SQLite database persist in named volumes.
 - Italian language pack (`it`): site labels, month names and date
