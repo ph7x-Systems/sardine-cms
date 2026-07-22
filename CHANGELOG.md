@@ -17,6 +17,10 @@ pending.
 
 ### Added
 
+- Indonesian language pack (`id`): site labels, month names, date
+  pattern and a full admin catalog (494 strings) so the panel itself
+  speaks Bahasa Indonesia. Seventh bundled language.
+
 - WXR migration flow, first part (#140): `cms import --format wxr
   --dry-run` reports what an export contains before anything is written
   — importable posts, author/category/tag inventories, referenced
