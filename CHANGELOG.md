@@ -21,6 +21,15 @@ pending.
   pattern and a full admin catalog (494 strings) so the panel itself
   speaks Bahasa Indonesia. Seventh bundled language.
 
+## 0.5.0 — 2026-07-22
+
+The WXR migration flow (#140) ships partially in this release: the
+inspection report, idempotent re-imports and mappings are in; media
+fetch, redirects for changed URLs and the admin migration flow remain
+pending.
+
+### Added
+
 - WXR migration flow, first part (#140): `cms import --format wxr
   --dry-run` reports what an export contains before anything is written
   — importable posts, author/category/tag inventories, referenced
