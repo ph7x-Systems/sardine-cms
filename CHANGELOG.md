@@ -6,6 +6,14 @@ release in lockstep under one `vX.Y.Z` tag. Narrative release notes —
 features with their PRs, breaking changes and migrations — live in
 [RELEASE_NOTES.md](RELEASE_NOTES.md).
 
+## Unreleased
+
+### Added
+
+- `cms demo`: from nothing to a browsable five-language site in one
+  command — scaffold, seed, build and serve, with printed next steps;
+  the directory persists for exploring afterwards.
+
 ## 0.3.0 — 2026-07-22
 
 ### Added

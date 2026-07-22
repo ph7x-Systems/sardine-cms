@@ -224,6 +224,61 @@ class PreviewHandler(http.server.SimpleHTTPRequestHandler):
 
 
 @app.command()
+def demo(
+    directory: Annotated[Path, typer.Argument(help="Directory for the demo project")] = Path(
+        "sardine-demo"
+    ),
+    port: Annotated[int, typer.Option(help="Port to serve on")] = 8000,
+) -> None:
+    """From nothing to a browsable site in one command.
+
+    Scaffolds a demo project, seeds the fictional five-language
+    content, builds and serves it — then says what to try next. The
+    directory stays afterwards so exploring can continue."""
+    if not (directory / PROJECT_FILE).exists():
+        from copier import run_copy
+
+        template = Path(__file__).parent / "templates" / "init"
+        run_copy(
+            str(template),
+            str(directory),
+            data={
+                "project_name": "Sardine Demo",
+                "base_url": "https://demo.example",
+                "languages": "pt-pt, es, fr, de",
+            },
+            defaults=True,
+            quiet=True,
+        )
+        typer.echo(f"created {directory / PROJECT_FILE}")
+    project = _project(directory)
+    with project.open_storage() as storage:
+        if not storage.has_content():
+            pages, articles, media = seed(storage, project.directory)
+            typer.echo(f"seeded {pages} page(s), {articles} article(s) and {media} media asset(s)")
+    artifact = _build_artifact(project)
+    written = _write_artifact(artifact, project.output)
+    typer.echo(f"built {written} file(s) into {project.output}")
+    typer.echo("")
+    typer.echo("Next steps:")
+    typer.echo("  - browse the site below; switch languages in the top navigation")
+    typer.echo("  - edit in a browser: pip install sardine-cms-admin, then")
+    typer.echo(f"    cms admin create-user me --role admin -p {directory}")
+    typer.echo(f"    SARDINE_PROJECT_DIR={directory} SARDINE_ADMIN_COOKIE_SECURE=0 \\")
+    typer.echo(f"      SARDINE_STORAGE_URL=sqlite:///{directory}/content.sqlite3 \\")
+    typer.echo("      uvicorn --factory cms_admin.app:create_app")
+    typer.echo(f"  - the content is portable: cms dump -p {directory}")
+    typer.echo("")
+    handler = partial(PreviewHandler, directory=str(project.output))
+    typer.echo(f"serving the demo at http://127.0.0.1:{port}/ (Ctrl+C to stop)")
+    with http.server.ThreadingHTTPServer(("127.0.0.1", port), handler) as server:
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            typer.echo(f"stopped — the demo project stays in {directory}")
+
+
+@app.command()
 def preview(
     project_dir: ProjectDir = Path(),
     port: Annotated[int, typer.Option(help="Port to serve on")] = 8000,

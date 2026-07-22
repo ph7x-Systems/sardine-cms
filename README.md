@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="assets/brand/banner-dark.png" alt="Sardine CMS — multilingual, static-first CMS framework">
-</p>
-
 # Sardine CMS
 
 [![CI](https://github.com/ph7x-Systems/sardine-cms/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ph7x-Systems/sardine-cms/actions/workflows/ci.yml)
@@ -15,6 +11,14 @@
 
 ```bash
 pip install sardine-cms-cli sardine-cms-theme-ph7x-reference
+cms demo
+```
+
+One command scaffolds a five-language demo site, seeds it, builds it
+and serves it — then tells you what to try next. Starting a real
+project is the same flow, spelled out:
+
+```bash
 cms init my-site && cd my-site
 cms seed && cms build && cms preview
 ```
