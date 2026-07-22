@@ -1,0 +1,15 @@
+services:
+  sardine:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      SARDINE_ADMIN_PASSWORD: sardine-admin-123
+      SARDINE_ADMIN_COOKIE_SECURE: "0"
+    volumes:
+      - sardine-data:/data
+      - sardine-site:/site
+
+volumes:
+  sardine-data:
+  sardine-site:
