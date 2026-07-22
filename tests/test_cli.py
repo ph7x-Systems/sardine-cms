@@ -366,6 +366,91 @@ def test_import_wxr_rerun_never_duplicates(tmp_path: Path) -> None:
     assert replaced.source.body_markdown == "Second take."
 
 
+def test_import_wxr_mapping_previews_applies_and_warns(tmp_path: Path) -> None:
+    project = make_project(tmp_path)
+    export = tmp_path / "blog.xml"
+    export.write_text(
+        """<?xml version="1.0"?>
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:wp="http://wordpress.org/export/1.2/">
+  <channel><item>
+    <title>Mapped launch</title>
+    <dc:creator><![CDATA[Old Desk]]></dc:creator>
+    <content:encoded><![CDATA[<p>Body.</p>]]></content:encoded>
+    <wp:post_id>8</wp:post_id><wp:post_name>mapped-launch</wp:post_name>
+    <wp:status>draft</wp:status><wp:post_type>post</wp:post_type>
+    <category domain="category" nicename="old-cat">Old cat</category>
+    <category domain="post_tag" nicename="retired">Retired</category>
+  </item></channel>
+</rss>""",
+        encoding="utf-8",
+    )
+
+    preview = runner.invoke(
+        app,
+        [
+            "import",
+            str(export),
+            "--format",
+            "wxr",
+            "--dry-run",
+            "--map-author",
+            "Old Desk=New Desk",
+            "--map-category",
+            "old-cat=stories",
+            "--map-tag",
+            "retired=",
+            "--map-tag",
+            "absent=whatever",
+        ],
+    )
+    assert preview.exit_code == 0, preview.output
+    assert "authors: New Desk" in preview.output
+    assert "categories: stories" in preview.output
+    assert "tags: (none)" in preview.output
+    assert 'warning: --map-tag "absent" matched nothing in this export' in preview.output
+
+    imported = runner.invoke(
+        app,
+        [
+            "import",
+            str(export),
+            "--format",
+            "wxr",
+            "-p",
+            str(project),
+            "--map-author",
+            "Old Desk=New Desk",
+            "--map-category",
+            "old-cat=stories",
+            "--map-tag",
+            "retired=",
+        ],
+    )
+    assert imported.exit_code == 0, imported.output
+    with load_project(project).open_storage() as storage:
+        article = storage.load_article("mapped-launch")
+    assert article is not None
+    assert article.author == "New Desk"
+    assert article.category == "stories"
+    assert article.tags == ()
+
+    malformed = runner.invoke(
+        app, ["import", str(export), "--format", "wxr", "--dry-run", "--map-author", "NoSeparator"]
+    )
+    assert malformed.exit_code == 2
+    bad_slug = runner.invoke(
+        app,
+        [
+            *["import", str(export), "--format", "wxr", "--dry-run"],
+            "--map-category",
+            "old-cat=Not A Slug",
+        ],
+    )
+    assert bad_slug.exit_code == 2
+
+
 def test_doctor_passes_on_a_healthy_project(tmp_path: Path) -> None:
     project = make_project(tmp_path)
     runner.invoke(app, ["seed", "-p", str(project)])

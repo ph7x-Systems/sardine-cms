@@ -9,7 +9,8 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from dataclasses import dataclass
+from collections.abc import Mapping
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from email.utils import parsedate_to_datetime
 from html.parser import HTMLParser
@@ -33,6 +34,31 @@ class WxrImport:
 
     articles: tuple[Article, ...]
     skipped: int
+
+
+@dataclass(frozen=True)
+class WxrMapping:
+    """Explicit renames applied at import time (ADR-0044).
+
+    Keys match exactly — authors by source byline, categories and tags by
+    the slug the report shows. An empty target drops the value.
+    """
+
+    authors: Mapping[str, str] = field(default_factory=dict)
+    categories: Mapping[str, str] = field(default_factory=dict)
+    tags: Mapping[str, str] = field(default_factory=dict)
+
+    def author(self, value: str) -> str:
+        return self.authors.get(value, value)
+
+    def category(self, value: str) -> str:
+        return self.categories.get(value, value)
+
+    def tag(self, value: str) -> str:
+        return self.tags.get(value, value)
+
+
+_NO_MAPPING = WxrMapping()
 
 
 @dataclass(frozen=True)
@@ -198,9 +224,14 @@ _LEFT_BEHIND_REASONS = {
 }
 
 
-def inspect_wxr(payload: bytes | str) -> WxrReport:
-    """Report what a WXR 1.2 document contains without writing anything."""
+def inspect_wxr(payload: bytes | str, *, mapping: WxrMapping | None = None) -> WxrReport:
+    """Report what a WXR 1.2 document contains without writing anything.
 
+    With a mapping, the inventories are post-mapping: the report previews
+    exactly what an import with the same mapping would produce (ADR-0044).
+    """
+
+    mapping = mapping or _NO_MAPPING
     root = _document(payload)
     posts = 0
     authors: set[str] = set()
@@ -225,17 +256,17 @@ def inspect_wxr(payload: bytes | str) -> WxrReport:
             left_behind.append(WxrNote(kind="post", title=title, reason="post has no title"))
             continue
         posts += 1
-        author = (item.findtext(f"{{{DC_NS}}}creator") or "").strip()
+        author = mapping.author((item.findtext(f"{{{DC_NS}}}creator") or "").strip())
         if author:
             authors.add(author)
         for term in item.findall("category"):
             value = _slug(term.get("nicename") or (term.text or ""), "")
             if not value:
                 continue
-            if term.get("domain") == "category":
-                categories.add(value)
-            elif term.get("domain") == "post_tag":
-                tags.add(value)
+            if term.get("domain") == "category" and mapping.category(value):
+                categories.add(mapping.category(value))
+            elif term.get("domain") == "post_tag" and mapping.tag(value):
+                tags.add(mapping.tag(value))
         body = item.findtext(f"{{{CONTENT_NS}}}encoded") or ""
         for source in re.findall(r"<img[^>]*\ssrc=[\"']([^\"']+)", body, flags=re.IGNORECASE):
             media.add(source)
@@ -250,7 +281,7 @@ def inspect_wxr(payload: bytes | str) -> WxrReport:
     )
 
 
-def import_wxr(payload: bytes | str) -> WxrImport:
+def import_wxr(payload: bytes | str, *, mapping: WxrMapping | None = None) -> WxrImport:
     """Convert posts from a WXR 1.2 document into articles.
 
     Pages, attachments, navigation items and comments are intentionally
@@ -258,6 +289,7 @@ def import_wxr(payload: bytes | str) -> WxrImport:
     media semantics would make the migration look more complete than it is.
     """
 
+    mapping = mapping or _NO_MAPPING
     root = _document(payload)
 
     articles: list[Article] = []
@@ -294,10 +326,10 @@ def import_wxr(payload: bytes | str) -> WxrImport:
             value = _slug(nicename, "")
             if not value:
                 continue
-            if term.get("domain") == "category":
-                categories.append(value)
-            elif term.get("domain") == "post_tag":
-                tags.append(value)
+            if term.get("domain") == "category" and mapping.category(value):
+                categories.append(mapping.category(value))
+            elif term.get("domain") == "post_tag" and mapping.tag(value):
+                tags.append(mapping.tag(value))
 
         article = new_article(
             article_id,
@@ -307,7 +339,8 @@ def import_wxr(payload: bytes | str) -> WxrImport:
         article.status = _status(foreign_status)
         article.category = categories[0] if categories else None
         article.tags = tuple(sorted(set(tags)))
-        article.author = (item.findtext(f"{{{DC_NS}}}creator") or "").strip() or None
+        creator = (item.findtext(f"{{{DC_NS}}}creator") or "").strip()
+        article.author = mapping.author(creator) or None
         article.fields = {"wxr_post_id": foreign_id}
         if foreign_status == "future":
             article.publish_at = created_at

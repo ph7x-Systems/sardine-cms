@@ -1,6 +1,7 @@
 """The `cms` command line: thin wiring from project config to services."""
 
 import http.server
+import re
 from datetime import UTC, datetime
 from functools import partial
 from pathlib import Path
@@ -427,6 +428,46 @@ def dump(
     typer.echo(f"dumped {len(content.articles)} article(s) into {destination}")
 
 
+def _wxr_mapping(authors: list[str], categories: list[str], tags: list[str]) -> Any | None:
+    """Parse repeated "source=target" specs into a WxrMapping (ADR-0044)."""
+    from cms_core import WxrMapping
+
+    tables: list[dict[str, str]] = []
+    for kind, specs, slug_target in (
+        ("--map-author", authors, False),
+        ("--map-category", categories, True),
+        ("--map-tag", tags, True),
+    ):
+        table: dict[str, str] = {}
+        for spec in specs:
+            source, separator, target = spec.partition("=")
+            if not separator or not source:
+                typer.echo(f'error: {kind} takes "source=target" (got {spec!r})', err=True)
+                raise typer.Exit(code=2)
+            if slug_target and target and not re.fullmatch(r"[a-z0-9-]+", target):
+                typer.echo(
+                    f"error: {kind} target must be a slug (lowercase, digits, dashes): {target!r}",
+                    err=True,
+                )
+                raise typer.Exit(code=2)
+            table[source] = target
+        tables.append(table)
+    if not any(tables):
+        return None
+    return WxrMapping(authors=tables[0], categories=tables[1], tags=tables[2])
+
+
+def _warn_unmatched(mapping: Any, report: Any) -> None:
+    """A mapping key absent from this export warns and proceeds (ADR-0044)."""
+    for kind, keys, seen in (
+        ("--map-author", mapping.authors, report.authors),
+        ("--map-category", mapping.categories, report.categories),
+        ("--map-tag", mapping.tags, report.tags),
+    ):
+        for missing in sorted(set(keys) - set(seen)):
+            typer.echo(f'warning: {kind} "{missing}" matched nothing in this export')
+
+
 def _print_wxr_report(report: Any) -> None:
     typer.echo(
         f"WXR 1.2 export: {report.posts} importable post(s) of "
@@ -468,6 +509,27 @@ def import_command(
             help="Overwrite entries already migrated from this source (wxr; the entity id is kept)",
         ),
     ] = False,
+    map_author: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--map-author",
+            help='Rename an author at import: "Source=Target"; empty target drops the byline',
+        ),
+    ] = None,
+    map_category: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--map-category",
+            help='Rename a category slug at import: "source=target"; empty target drops it',
+        ),
+    ] = None,
+    map_tag: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--map-tag",
+            help='Rename a tag slug at import: "source=target"; empty target drops it',
+        ),
+    ] = None,
 ) -> None:
     """Import a portable dump or a supported foreign blog export."""
     from cms_core import import_content_json, import_wxr, inspect_wxr
@@ -478,22 +540,26 @@ def import_command(
             err=True,
         )
         raise typer.Exit(code=2)
-    if (dry_run or update) and source_format != "wxr":
-        typer.echo("error: --dry-run and --update apply to --format wxr only", err=True)
+    wxr_only = dry_run or update or map_author or map_category or map_tag
+    if wxr_only and source_format != "wxr":
+        typer.echo("error: --dry-run, --update and --map-* apply to --format wxr only", err=True)
         raise typer.Exit(code=2)
     if source_format == "wxr":
         if not source.is_file():
             typer.echo(f"error: {source} not found", err=True)
             raise typer.Exit(code=2)
+        mapping = _wxr_mapping(map_author or [], map_category or [], map_tag or [])
         payload = source.read_bytes()
         try:
             report = inspect_wxr(payload)
-            imported = import_wxr(payload)
+            imported = import_wxr(payload, mapping=mapping)
         except ValueError as error:
             typer.echo(f"error: {error}", err=True)
             raise typer.Exit(code=2) from error
+        if mapping is not None:
+            _warn_unmatched(mapping, report)
         if dry_run:
-            _print_wxr_report(report)
+            _print_wxr_report(inspect_wxr(payload, mapping=mapping) if mapping else report)
             return
         project = _project(project_dir)
         with project.open_storage() as storage:
