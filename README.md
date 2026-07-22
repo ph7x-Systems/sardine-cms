@@ -11,17 +11,12 @@
 
 ```bash
 pip install sardine-cms-cli sardine-cms-theme-ph7x-reference
-cms demo
-```
-
-One command scaffolds a five-language demo site, seeds it, builds it
-and serves it — then tells you what to try next. Starting a real
-project is the same flow, spelled out:
-
-```bash
 cms init my-site && cd my-site
 cms seed && cms build && cms preview
 ```
+
+That scaffolds a five-language site, seeds it with example content,
+builds it and serves it locally.
 
 Editors work in a real browser admin; the public site ships as plain
 static files to any host. Content lives in portable JSON and Markdown —
