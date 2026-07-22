@@ -2,10 +2,10 @@
 set -eu
 
 SITE_DIR="${SARDINE_PROJECT_DIR:-/site}"
-DATA_DIR="$(dirname "${SARDINE_STORAGE_URL#sqlite:///}")"
+DATA_DIR="$(dirname "${SARDINE_STORAGE_URL#sqlite:////}")"
 mkdir -p "$DATA_DIR" "$SITE_DIR" "${SARDINE_MEDIA_DIR:-/data/media}"
 
-# Scaffold a project on first run so the panel has something to serve.
+# First-run setup: scaffold, seed, and create admin user.
 if [ ! -f "$SITE_DIR/sardine.toml" ]; then
     echo "==> initializing example site"
     cms init "$SITE_DIR" \
@@ -13,15 +13,20 @@ if [ ! -f "$SITE_DIR/sardine.toml" ]; then
         --base-url "http://localhost:8000" \
         --languages "pt-pt,es,fr,de" \
         --theme ph7x-reference
-fi
 
-# Seed starter content if the database is empty.
-cms seed -p "$SITE_DIR" --force 2>/dev/null || true
+    echo "==> seeding starter content"
+    cms seed -p "$SITE_DIR"
 
-# Create a default admin user on first run (password must be >= 12 chars).
-ADMIN_PASSWORD="${SARDINE_ADMIN_PASSWORD:-sardine-admin-123}"
-if ! cms admin create-user admin -p "$SITE_DIR" --role admin --password "$ADMIN_PASSWORD" 2>/dev/null; then
-    echo "==> admin user already exists (or creation skipped)"
+    # Generate a random password on first run if none is provided.
+    if [ -z "${SARDINE_ADMIN_PASSWORD:-}" ]; then
+        ADMIN_PASSWORD=$(head -c 16 /dev/urandom | base64 | tr -dc 'A-Za-z0-9' | head -c 24)
+        echo "==> generated admin password (save this — it won't be shown again):"
+        echo "    admin / $ADMIN_PASSWORD"
+    else
+        ADMIN_PASSWORD="$SARDINE_ADMIN_PASSWORD"
+        echo "==> admin user created from SARDINE_ADMIN_PASSWORD"
+    fi
+    cms admin create-user admin -p "$SITE_DIR" --role admin --password "$ADMIN_PASSWORD"
 fi
 
 echo "==> starting admin panel on :8000"

@@ -4,7 +4,9 @@ services:
     ports:
       - "8000:8000"
     environment:
-      SARDINE_ADMIN_PASSWORD: sardine-admin-123
+      # Leave SARDINE_ADMIN_PASSWORD unset to auto-generate on first run
+      # (printed once in the container log). Set it only if you want a fixed password.
+      # SARDINE_ADMIN_PASSWORD: your-password-here
       SARDINE_ADMIN_COOKIE_SECURE: "0"
     volumes:
       - sardine-data:/data

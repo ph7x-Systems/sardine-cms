@@ -2,7 +2,7 @@ FROM python:3.12-slim
 
 ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
-    SARDINE_STORAGE_URL=sqlite:///data/content.db \
+    SARDINE_STORAGE_URL=sqlite:////data/content.db \
     SARDINE_PROJECT_DIR=/site \
     SARDINE_MEDIA_DIR=/data/media \
     SARDINE_ADMIN_COOKIE_SECURE=0
