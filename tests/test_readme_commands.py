@@ -43,7 +43,7 @@ def _readme_commands() -> set[str]:
     found: set[str] = set()
     for block in blocks:
         for line in block.splitlines():
-            # tudo depois de # é prosa ("the cms command line"), não um comando
+            # everything after # is prose ("the cms command line"), not a command
             for match in re.finditer(r"\bcms\s+([a-z][a-z-]*)", line.split("#")[0]):
                 found.add(match.group(1))
     return found
