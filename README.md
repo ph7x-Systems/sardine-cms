@@ -11,11 +11,50 @@
 [![Checked with mypy (strict)](https://img.shields.io/badge/mypy-strict-blue.svg)](pyproject.toml)
 [![Code style: ruff](https://img.shields.io/badge/style-ruff-261230.svg)](pyproject.toml)
 
-Reusable multilingual, static-first CMS framework extracted from the pH7x Systems website architecture.
+**Build multilingual, SEO-ready static websites with a browser-based CMS — and no proprietary platform lock-in.**
 
-**Live demo:** <https://sardine.ph7x.com> — the fictional "Sardine Aerospace" site in five languages, built and deployed by this framework on every merge (design is theme-level: bring your own).
+```bash
+pip install sardine-cms-cli sardine-cms-theme-ph7x-reference
+cms init my-site && cd my-site
+cms seed && cms build && cms preview
+```
 
-> **License:** [Apache-2.0](LICENSE) (see [ADR-0002](docs/adr/0002-license-apache-2.md)).
+Editors work in a real browser admin; the public site ships as plain
+static files to any host. Content lives in portable JSON and Markdown —
+never locked in a database.
+
+**▶ [Try the live demo](https://sardine.ph7x.com)** — a fictional
+five-language site, rebuilt and deployed by Sardine on every merge —
+and **[walk through its read-only admin](https://sardine.ph7x.com/admin/)**.
+
+| The generated site | The admin |
+| --- | --- |
+| ![The generated site: a five-language static site with its own theme](docs/images/site-home.png) | ![The admin dashboard: workflow tiles, translation coverage, the publish gate](docs/images/admin-dashboard.png) |
+
+## Why Sardine?
+
+- **Translations that cannot silently rot.** Five languages ship
+  bundled; editing a source marks its translations outdated, and the
+  publish gate reports every parity gap before anything goes live.
+- **SEO generated, not hand-maintained.** Canonical, hreflang, Open
+  Graph, JSON-LD, sitemap and RSS derive from the content — plus
+  per-entry overrides when an editor wants control.
+- **A real editorial workflow.** Draft → review → published, scheduled
+  publication windows, revisions, previews through the real theme,
+  signed external preview links for approval without an account.
+- **Static and yours.** The public site is plain files on any host;
+  the panel can live on a laptop. Same input, same bytes — builds are
+  deterministic and tested to be.
+
+| Sardine CMS | Traditional CMS |
+| --- | --- |
+| Static public website | Dynamic public runtime |
+| Portable Markdown/JSON | Content locked in a database |
+| Multilingual validation before publish | Manual language consistency |
+| Deterministic builds | Runtime-dependent rendering |
+| Self-hosted, Apache-2.0 | Platform dependency |
+
+> **License:** [Apache-2.0](LICENSE).
 
 ## What it is
 
