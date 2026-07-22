@@ -3,7 +3,7 @@
 from datetime import UTC, datetime
 
 import pytest
-from cms_core import ContentStatus, import_wxr, inspect_wxr
+from cms_core import ContentStatus, WxrMapping, import_wxr, inspect_wxr
 
 WXR = b"""<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0"
@@ -164,3 +164,27 @@ def test_inspect_of_an_empty_channel_reports_full_fidelity() -> None:
     assert report.total_items == 0
     assert report.fidelity == 100.0
     assert report.left_behind == ()
+
+
+def test_mapping_renames_and_drops_across_import_and_inspect() -> None:
+    mapping = WxrMapping(
+        authors={"Editorial desk": "Newsroom"},
+        categories={"mission-log": "flight-log"},
+        tags={"test-flight": ""},
+    )
+
+    report = inspect_wxr(MIXED, mapping=mapping)
+    assert report.authors == ("Newsroom",)
+    assert report.categories == ("flight-log",)
+    assert report.tags == ()
+
+    article = import_wxr(MIXED, mapping=mapping).articles[0]
+    assert article.author == "Newsroom"
+    assert article.category == "flight-log"
+    assert article.tags == ()
+
+
+def test_mapping_can_clear_the_byline() -> None:
+    mapping = WxrMapping(authors={"Editorial desk": ""})
+    assert import_wxr(MIXED, mapping=mapping).articles[0].author is None
+    assert inspect_wxr(MIXED, mapping=mapping).authors == ()

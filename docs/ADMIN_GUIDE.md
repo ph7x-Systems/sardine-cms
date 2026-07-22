@@ -259,6 +259,15 @@ its slug changed upstream. Matched posts are left untouched (local edits
 win) unless `--update` is passed, which overwrites them from the source
 while keeping the entity id, so links and references survive.
 
+Bylines and taxonomies map at import: `--map-author "Source=Target"`,
+`--map-category "source=target"` and `--map-tag "source=target"` repeat
+freely; an empty target drops the value. Keys match exactly what the report
+shows (authors by byline, categories and tags by slug). A mapping that
+matches nothing in this export warns and proceeds — a mapping set kept from
+a previous run stays valid across incremental re-runs — and `--dry-run`
+with mappings previews the post-mapping inventories before anything is
+written.
+
 The validation report (shared with the dashboard) always shows the whole
 story, not only failures: a gate callout (open/blocked) with the scope that
 was validated (articles, pages, media assets, languages), one row per rule
