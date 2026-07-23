@@ -96,6 +96,7 @@ References point at the ADR, issue or document that owns the detail.
 | Translation queue + list filters | ✅ | #131 |
 | Scalable coverage in lists (never a column per language) | ✅ | ADR-0034 |
 | Fallback policy per language | 🧭 | — |
+| Translation providers (suggestions under editorial sovereignty, vendor-neutral contract) | 🧭 queued after #141 | #228 |
 | Machine-translation assist | 🧭 | — |
 | Data-only language packs | ✅ | LANGUAGE_PACK_GUIDE.md |
 
@@ -142,7 +143,7 @@ References point at the ADR, issue or document that owns the detail.
 | Content API (versioned JSON) | ✅ | CONTENT_API.md |
 | Webhooks (on publish) | ✅ | ADR-0036 |
 | Health check (`cms doctor`) | ✅ | — |
-| Theme/extension experience without editing files | 🟡 shipped: Themes screen with manifest-backed cards, Extensions screen (transactional activation, capabilities after load, recovery without imports) · pending: extension health/settings surfaces, official theme set | #141, ADR-0048–0050 |
+| Theme/extension experience without editing files | 🟡 shipped: Themes screen with manifest-backed cards, Extensions screen (transactional activation, capabilities after load, recovery without imports) · pending: extension settings surface, official theme set | #141, ADR-0048–0051 |
 | WXR migration flow | ✅ end to end: inspection with fidelity report, idempotent re-import by source id, `--update` keeping entity ids, mappings, media fetch with rewrite, automatic redirects, and the panel Migration screen on the same shared pipeline | #140, ADR-0043–0047 |
 | Backups, scheduled builds | 🧭 | — |
 | Incremental builds, ecosystem catalog | 🔜 P3 | — |
