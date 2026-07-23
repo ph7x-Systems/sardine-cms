@@ -259,20 +259,25 @@ def _write_extension_settings(
 
 def _settings_context(request: Request, name: str) -> dict[str, Any]:
     project = _project(request)
-    if project is None or name not in project.extension_names:
+    # The activation list is the allowlist: the raw parameter never
+    # flows onward — only its match from the project's own config does.
+    entry = None
+    if project is not None:
+        entry = next((n for n in project.extension_names if n == name), None)
+    if project is None or entry is None:
         raise HTTPException(status_code=404, detail="not active")
     try:
-        (extension,) = load_extensions([name])
+        (extension,) = load_extensions([entry])
     except Exception as failure:
         raise HTTPException(status_code=409, detail=str(failure)[:200]) from None
     if extension.settings_schema is None:
         raise HTTPException(status_code=404, detail="no settings schema")
     schema = extension.settings_schema
-    stored = dict(project.extension_settings.get(name, {}))
+    stored = dict(project.extension_settings.get(entry, {}))
     stored.pop("schema_version", None)
     values, provenance = resolve_settings(schema, stored)
     return {
-        "name": name,
+        "name": entry,
         "schema": schema,
         "values": values,
         "provenance": provenance,
@@ -339,10 +344,12 @@ async def extension_settings_save(
             },
         )
     project = context["project"]
-    _write_extension_settings(project.directory / "sardine.toml", name, clean, schema.version)
-    await audit_record(request, user.username, "configured", "extension", name)
+    safe_name = str(context["name"])  # allowlisted activation entry, never raw input
+    _write_extension_settings(project.directory / "sardine.toml", safe_name, clean, schema.version)
+    await audit_record(request, user.username, "configured", "extension", safe_name)
     return RedirectResponse(
-        f"/extensions/settings/{quote(name)}?saved=1", status_code=status.HTTP_303_SEE_OTHER
+        f"/extensions/settings/{quote(safe_name)}?saved=1",
+        status_code=status.HTTP_303_SEE_OTHER,
     )
 
 
