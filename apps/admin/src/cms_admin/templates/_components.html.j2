@@ -17,10 +17,45 @@
 <div class="card admin-empty-state">
   <div class="card-body text-center py-5">
     <h2 class="h5">{{ heading }}</h2>
-    <p class="text-body-secondary mb-3 mx-auto admin-empty-state-body">{{ body }}</p>
+    {% if body %}<p class="text-body-secondary mb-3 mx-auto admin-empty-state-body">{{ body }}</p>{% endif %}
     {% if action_label %}<a class="btn btn-primary" href="{{ action_href }}">{{ action_label }}</a>{% endif %}
   </div>
 </div>
+{% endmacro %}
+
+{% macro filter_bar(action) %}
+{# DS-4/DS-5: one toolbar per list — scoped search and filters in a
+   single GET form; the caller provides the fields. #}
+<form method="get" action="{{ action }}" class="card mb-3 admin-filter-bar">
+  <div class="card-body d-flex flex-wrap gap-2 align-items-end py-2">
+    {{ caller() }}
+    <button type="submit" class="btn btn-outline-secondary btn-sm">{{ _("Filter") }}</button>
+  </div>
+</form>
+{% endmacro %}
+
+{% macro summary_line(listing) %}
+{# The DataTable contract (#250): the count is stated before the rows. #}
+<p class="form-text mb-2 admin-summary-line">{{ _("Showing %(first)s–%(last)s of %(total)s") | format(first=listing.first, last=listing.last, total=listing.total) }}</p>
+{% endmacro %}
+
+{% macro pagination(listing, base_url, params) %}
+{# DS-19: one page at a time. ``params`` carries the active filters so
+   paging never drops them. #}
+{% if listing.pages > 1 %}
+{% set query = params | dictsort | map("join", "=") | join("&") %}
+<nav aria-label="{{ _("Pagination") }}">
+  <ul class="pagination pagination-sm mb-0">
+    <li class="page-item{% if listing.page <= 1 %} disabled{% endif %}">
+      <a class="page-link" href="{{ base_url }}?page={{ listing.page - 1 }}{% if query %}&{{ query }}{% endif %}">{{ _("Previous") }}</a>
+    </li>
+    <li class="page-item disabled"><span class="page-link">{{ listing.page }} / {{ listing.pages }}</span></li>
+    <li class="page-item{% if listing.page >= listing.pages %} disabled{% endif %}">
+      <a class="page-link" href="{{ base_url }}?page={{ listing.page + 1 }}{% if query %}&{{ query }}{% endif %}">{{ _("Next") }}</a>
+    </li>
+  </ul>
+</nav>
+{% endif %}
 {% endmacro %}
 
 {% macro disclosure(summary, open=false) %}

@@ -1833,3 +1833,15 @@ msgstr "Nach oben"
 
 msgid "Move down"
 msgstr "Nach unten"
+
+msgid "Showing %(first)s–%(last)s of %(total)s"
+msgstr "Zeige %(first)s–%(last)s von %(total)s"
+
+msgid "Previous"
+msgstr "Zurück"
+
+msgid "Next"
+msgstr "Weiter"
+
+msgid "Pagination"
+msgstr "Seitennummerierung"

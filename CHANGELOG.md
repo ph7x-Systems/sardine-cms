@@ -10,6 +10,15 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Changed
 
+- The content lists (articles, pages, media) adopt the design system
+  (#244, ADR-0055): one anatomy — header with the create action,
+  toolbar with scoped search and filters, bulk actions, a summary line
+  ("Showing 1–25 of 30"), the table, pagination (DS-19: a collection
+  larger than 25 never renders in full; paging keeps the active
+  filters). Articles and pages gain scoped search; empty states carry
+  the next action. The media table's select/preview columns are
+  realigned with their headers.
+
 - The Menu screen is rebuilt as the design system's golden screen
   (#244, ADR-0055): open it and you see the navigation — master-detail
   with list-order reordering and scoped search — instead of a form.

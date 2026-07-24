@@ -81,10 +81,10 @@ content header with `breadcrumb`, `app-footer` with copyright. Surfaces:
 | Admin surface | AdminLTE/Bootstrap building blocks |
 | --- | --- |
 | Shell chrome (all authenticated pages) | app-header navbar, dark app-sidebar with the tin-rocket brand, skip link |
-| Design-system vocabulary (`_components.html.j2`, ADR-0055) | `page_header` (one h1 + the screen's single primary action), `empty_state` (meaning + next action), `disclosure` (native `details`, closed by default) — born on the menu golden screen, adopted screen by screen |
+| Design-system vocabulary (`_components.html.j2`, ADR-0055) | `page_header` (one h1 + the screen's single primary action), `empty_state` (meaning + next action), `disclosure` (native `details`, closed by default), `filter_bar` (one GET toolbar per list), `summary_line` + `pagination` (the DataTable contract, DS-19) — born on the menu golden screen, adopted by the content lists |
 | Menu (golden screen) | master-detail: list-group navigation with up/down reorder forms and scoped search past five items; editor card only on selection or Add; translations and advanced fields behind closed disclosures |
 | Dashboard | small-box stat tiles per status, cards, striped coverage table + progress |
-| Content lists | cards with striped/hover tables in Bootstrap `table-responsive` wrappers; one constant-width **Translations** coverage cell (`3/4 · 1 missing`, state in text + title, linked to the editor) — never a badge or column per language (ADR-0034) |
+| Content lists | the list anatomy (DS-4): `filter_bar` toolbar (scoped search + filters), bulk-action bar, `summary_line`, striped/hover tables in Bootstrap `table-responsive` wrappers, `pagination` past 25 rows (DS-19); one constant-width **Translations** coverage cell (`3/4 · 1 missing`, state in text + title, linked to the editor) — never a badge or column per language (ADR-0034) |
 | Side-by-side editors | Bootstrap grid (`row`/`col`, `admin-sbs`), cards, Markdown preview panel |
 | Forms | `form-control`/`form-label` (+ mono textarea), form-text hints, alert block |
 | Markdown editor (article bodies) | EasyMDE (MIT, vendored at `static/vendor/easymde/` — ADR-0023), Bootstrap Icons toolbar, localized titles, no built-in preview (the builder's preview is the truth) |

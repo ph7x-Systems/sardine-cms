@@ -139,6 +139,7 @@ async def media_list(
     q: str = "",
     show: str = "all",
     collection: str = "",
+    page: int = 1,
 ) -> object:
     """The library with server-side filters (M5): a text search over id,
     path, MIME type and alt texts, quick views — images only, assets
@@ -169,6 +170,9 @@ async def media_list(
     elif show == "missing-alt":
         assets = [asset for asset in assets if asset.missing_alt_languages()]
     project = _project(request)
+    from cms_admin.listing import paginate
+
+    assets, listing = paginate(assets, page)
     return _page(
         request,
         "media_list.html.j2",
@@ -176,6 +180,7 @@ async def media_list(
             "user": user,
             "csrf_token": session.csrf_token,
             "assets": assets,
+            "listing": listing,
             "total": total,
             "q": q,
             "show": show if show in ("all", "images", "missing-alt") else "all",

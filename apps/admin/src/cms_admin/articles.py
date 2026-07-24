@@ -161,6 +161,8 @@ async def articles_list(
     request: Request,
     user_session: tuple[User, AdminSession] = Depends(current_session),
     needs: str = Query(""),
+    q: str = Query(""),
+    page: int = Query(1),
 ) -> object:
     user, session = user_session
     everything = await get_db(request).run(lambda storage: storage.load_all_articles())
@@ -178,6 +180,16 @@ async def articles_list(
             if article.translation_state(Language(needs), source=source)
             is not TranslationState.COMPLETE
         ]
+    needle = q.strip().lower()
+    if needle:
+        articles = [
+            article
+            for article in articles
+            if needle in article.id.lower() or needle in article.source.title.lower()
+        ]
+    from cms_admin.listing import paginate
+
+    articles, listing = paginate(articles, page)
     row_actions_map = {
         article.id: available_transitions(article.status, user.role) for article in articles
     }
@@ -192,6 +204,8 @@ async def articles_list(
             "row_actions_map": row_actions_map,
             "target_languages": targets,
             "needs": needs,
+            "q": q,
+            "listing": listing,
         },
     )
 

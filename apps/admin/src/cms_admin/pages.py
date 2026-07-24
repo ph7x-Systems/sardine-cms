@@ -165,6 +165,8 @@ async def pages_list(
     request: Request,
     user_session: tuple[User, AdminSession] = Depends(current_session),
     needs: str = Query(""),
+    q: str = Query(""),
+    page: int = Query(1),
 ) -> object:
     user, session = user_session
     everything = await get_db(request).run(lambda storage: storage.load_all_pages())
@@ -175,12 +177,22 @@ async def pages_list(
     if needs and needs in {str(target) for target in targets}:
         source = _site_source(project)
         pages = [
-            page
-            for page in pages
-            if page.translation_state(Language(needs), source=source)
+            entry
+            for entry in pages
+            if entry.translation_state(Language(needs), source=source)
             is not TranslationState.COMPLETE
         ]
-    row_actions_map = {page.id: available_transitions(page.status, user.role) for page in pages}
+    needle = q.strip().lower()
+    if needle:
+        pages = [
+            entry
+            for entry in pages
+            if needle in entry.id.lower() or needle in entry.source.title.lower()
+        ]
+    from cms_admin.listing import paginate
+
+    pages, listing = paginate(pages, page)
+    row_actions_map = {entry.id: available_transitions(entry.status, user.role) for entry in pages}
     return _page_response(
         request,
         "pages_list.html.j2",
@@ -192,6 +204,8 @@ async def pages_list(
             "row_actions_map": row_actions_map,
             "target_languages": targets,
             "needs": needs,
+            "q": q,
+            "listing": listing,
         },
     )
 
