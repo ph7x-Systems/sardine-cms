@@ -39,7 +39,9 @@ configuration, no provider bundled.
       @property
       def capabilities(self) -> TranslationCapabilities: ...
 
-      def suggest(self, requests: Sequence[TranslationRequest]) -> tuple[TranslationSuggestion, ...]: ...
+      def suggest(
+          self, requests: Sequence[TranslationRequest]
+      ) -> tuple[TranslationSuggestion, ...]: ...
   ```
 
   `TranslationRequest` carries source text (Markdown, plain text or a

@@ -742,16 +742,17 @@ def translate(
         typer.echo(f"error: {language!r} is not a configured target language", err=True)
         raise typer.Exit(code=2)
 
+    from cms_core import Article, ArticleContent, Page, PageContent
     from cms_core.translations import TranslationRequest
 
     with project.open_storage() as storage:
         articles = [a for a in storage.load_all_articles() if a.deleted_at is None]
         pages = [p for p in storage.load_all_pages() if p.deleted_at is None]
-        entries: list[tuple[str, object]] = [
+        entries: list[tuple[str, Article | Page]] = [
             *(("article", article) for article in articles),
             *(("page", page) for page in pages),
         ]
-        requests: list[tuple[str, object, TranslationRequest]] = []
+        requests: list[tuple[str, Article | Page, TranslationRequest]] = []
         for entry_kind, entry in entries:
             state = entry.translation_state(target, source=source)
             if missing and state is not TranslationState.MISSING:
@@ -802,15 +803,19 @@ def translate(
                 )
                 applied += 1
                 continue
-            content_cls = type(entry.source)
-            translated = content_cls.model_validate(
-                entry.source.model_dump() | {"body_markdown": suggestion.target_text}
-            )
-            entry.set_translation(target, translated, source=source)
-            entry.updated_at = datetime.now(UTC)
-            if entry_kind == "article":
+            if isinstance(entry, Article):
+                translated = ArticleContent.model_validate(
+                    entry.source.model_dump() | {"body_markdown": suggestion.target_text}
+                )
+                entry.set_translation(target, translated, source=source)
+                entry.updated_at = datetime.now(UTC)
                 storage.save_article(entry)
             else:
+                translated = PageContent.model_validate(
+                    entry.source.model_dump() | {"body_markdown": suggestion.target_text}
+                )
+                entry.set_translation(target, translated, source=source)
+                entry.updated_at = datetime.now(UTC)
                 storage.save_page(entry)
             typer.echo(
                 f"  suggested {entry_kind} {entry.id}: "
