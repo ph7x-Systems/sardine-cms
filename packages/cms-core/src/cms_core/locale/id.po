@@ -1843,3 +1843,15 @@ msgstr "Berikutnya"
 
 msgid "Pagination"
 msgstr "Paginasi"
+
+msgid "Danger zone"
+msgstr "Zona berbahaya"
+
+msgid "On this page"
+msgstr "Di halaman ini"
+
+msgid "Content"
+msgstr "Konten"
+
+msgid "Trash keeps the entry restorable; nothing publishes from the trash."
+msgstr "Tempat sampah menjaga entri tetap dapat dipulihkan; tidak ada yang diterbitkan dari tempat sampah."

@@ -1,10 +1,8 @@
 {% extends "shell.html.j2" %}
 {% from "_fields.html.j2" import errors_block with context %}
+{% from "_components.html.j2" import editor_header with context %}
 {% block title %}{{ asset.id }} — Sardine CMS admin{% endblock %}
-{% block header %}
-<nav aria-label="Breadcrumb" class="admin-breadcrumb"><a href="/media">&larr; {{ _("Media") }}</a></nav>
-<h1 class="h3 mb-0">{{ asset.id }} <span class="badge text-bg-light border admin-tag">{{ asset.mime_type }}</span></h1>
-{% endblock %}
+{% block header %}{{ editor_header("/media", _("Media"), asset.id, '<span class="badge text-bg-light border admin-tag">' ~ asset.mime_type ~ "</span>" | safe) }}{% endblock %}
 {% block content %}
 {{ errors_block(errors) }}
 <div class="row admin-sbs">

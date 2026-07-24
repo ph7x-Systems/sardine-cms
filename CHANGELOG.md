@@ -10,6 +10,15 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Changed
 
+- The editors adopt the design system (#244, ADR-0055): every editor
+  header becomes back link → an `h1` carrying only the identity → the
+  status badge beside it (articles, pages, sections, media and the
+  three translation editors); the operations merge into one action
+  bar; long editors (article, page) gain "On this page" internal
+  navigation; and Move to trash leaves the header area for a bordered
+  **Danger zone** that closes the page — destructive actions live
+  there and nowhere else.
+
 - The content lists (articles, pages, media) adopt the design system
   (#244, ADR-0055): one anatomy — header with the create action,
   toolbar with scoped search and filters, bulk actions, a summary line
