@@ -23,6 +23,42 @@
 </div>
 {% endmacro %}
 
+{% macro editor_header(back_href, back_label, title, badge=None) %}
+{# DS-1/DS-10: back link, then one h1 carrying only the identity — the
+   status renders BESIDE it, never inside it. #}
+<nav aria-label="Breadcrumb" class="admin-breadcrumb"><a href="{{ back_href }}">&larr; {{ back_label }}</a></nav>
+<div class="d-flex align-items-center gap-2 flex-wrap">
+  <h1 class="h3 mb-0">{{ title }}</h1>
+  {% if badge %}{{ badge }}{% endif %}
+</div>
+{% endmacro %}
+
+{% macro action_bar(label) %}
+{# DS-10: the editor's operations in one region under the header. #}
+<div class="d-flex flex-wrap gap-2 mb-3 admin-action-bar" role="group" aria-label="{{ label }}">
+  {{ caller() }}
+</div>
+{% endmacro %}
+
+{% macro editor_nav(items) %}
+{# DS-10: long editors expose internal navigation — plain anchors. #}
+<nav aria-label="{{ _("On this page") }}" class="mb-3 admin-editor-nav">
+  <ul class="nav nav-pills flex-wrap gap-1 small">
+    {% for anchor, label in items %}
+    <li class="nav-item"><a class="nav-link py-1 px-2" href="#{{ anchor }}">{{ label }}</a></li>
+    {% endfor %}
+  </ul>
+</nav>
+{% endmacro %}
+
+{% macro danger_zone() %}
+{# DS-9/DS-11: destructive actions, visually separated, always last. #}
+<div class="card border-danger mb-3" id="danger">
+  <div class="card-header"><h2 class="card-title h6 mb-0 text-danger">{{ _("Danger zone") }}</h2></div>
+  <div class="card-body d-flex flex-wrap gap-2 align-items-center">{{ caller() }}</div>
+</div>
+{% endmacro %}
+
 {% macro filter_bar(action) %}
 {# DS-4/DS-5: one toolbar per list — scoped search and filters in a
    single GET form; the caller provides the fields. #}

@@ -1845,3 +1845,15 @@ msgstr "Suivant"
 
 msgid "Pagination"
 msgstr "Pagination"
+
+msgid "Danger zone"
+msgstr "Zone de danger"
+
+msgid "On this page"
+msgstr "Sur cette page"
+
+msgid "Content"
+msgstr "Contenu"
+
+msgid "Trash keeps the entry restorable; nothing publishes from the trash."
+msgstr "La corbeille garde l'entrée restaurable ; rien n'est publié depuis la corbeille."

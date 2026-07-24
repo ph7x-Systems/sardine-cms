@@ -1,13 +1,11 @@
 {% extends "shell.html.j2" %}
 {% from "_fields.html.j2" import preview_links_card, content_fields, metadata_fields, seo_fields, errors_block, state_badge, status_tag with context %}
+{% from "_components.html.j2" import editor_header, action_bar, editor_nav, danger_zone with context %}
 {% block title %}{{ article.id }} — Sardine CMS admin{% endblock %}
-{% block header %}
-<nav aria-label="Breadcrumb" class="admin-breadcrumb"><a href="/articles">&larr; {{ _("Articles") }}</a></nav>
-<h1 class="h3 mb-0">{{ article.id }} {{ status_tag(article.status) }}</h1>
-{% endblock %}
+{% block header %}{{ editor_header("/articles", _("Articles"), article.id, status_tag(article.status)) }}{% endblock %}
 {% block content %}
 {{ errors_block(errors) }}
-<div class="d-flex gap-2 mb-3">
+{% call action_bar(_("Actions")) %}
   <form method="post" action="/articles/{{ article.id }}/duplicate" class="mb-0">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <button type="submit" class="btn btn-outline-secondary btn-sm">{{ _("Duplicate as draft") }}</button>
@@ -15,23 +13,24 @@
   {% if preview_path %}
   <a class="btn btn-outline-secondary btn-sm" href="{{ preview_path }}">{{ _("View in preview") }}</a>
   {% endif %}
-  <form method="post" action="/trash/article/{{ article.id }}" class="mb-0">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-    <button type="submit" class="btn btn-outline-danger btn-sm">{{ _("Move to trash") }}</button>
-  </form>
-</div>
-{% if transitions %}
-<div class="mb-3 d-flex gap-2 admin-workflow" role="group" aria-label="{{ _('Workflow') }}">
   {% for t in transitions %}
   <form method="post" action="/articles/{{ article.id }}/status" class="mb-0">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <input type="hidden" name="to" value="{{ t.to }}">
-    <button type="submit" class="btn {{ 'btn-success' if t.to == 'published' else 'btn-outline-secondary' }}">{{ _(t.label) }}</button>
+    <button type="submit" class="btn btn-sm {{ 'btn-success' if t.to == 'published' else 'btn-outline-secondary' }}">{{ _(t.label) }}</button>
   </form>
   {% endfor %}
-</div>
-{% endif %}
-<div class="row admin-sbs">
+{% endcall %}
+{{ editor_nav([
+    ("content", _("Content")),
+    ("translations", _("Translations")),
+    ("notes", _("Editorial notes")),
+    ("design", _("Design preview")),
+    ("revisions", _("Revisions")),
+    ("preview-links", _("External preview links")),
+    ("danger", _("Danger zone")),
+]) }}
+<div class="row admin-sbs" id="content">
   <div class="col-lg-6">
     <form method="post" action="/articles/{{ article.id }}" class="admin-form"
           data-autosave data-autosave-url="/articles/{{ article.id }}/autosave">
@@ -84,7 +83,7 @@
     </div>
   </div>
 </div>
-<div class="card">
+<div class="card" id="translations">
   <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Translations") }}</h2></div>
   <div class="card-body p-0 table-responsive admin-table-wrap">
     <table class="table table-striped mb-0 admin-table">
@@ -105,9 +104,16 @@
     </table>
   </div>
 </div>
-{% include "_notes.html.j2" %}
-{% include "_design_preview.html.j2" %}
+<div id="notes">{% include "_notes.html.j2" %}</div>
+<div id="design">{% include "_design_preview.html.j2" %}</div>
 {% set base_url = "/articles/" ~ article.id %}
-{% include "_revisions.html.j2" %}
-{{ preview_links_card(preview_kind, preview_entry_id, preview_links, csrf_token) }}
+<div id="revisions">{% include "_revisions.html.j2" %}</div>
+<div id="preview-links">{{ preview_links_card(preview_kind, preview_entry_id, preview_links, csrf_token) }}</div>
+{% call danger_zone() %}
+  <form method="post" action="/trash/article/{{ article.id }}" class="mb-0">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <button type="submit" class="btn btn-outline-danger btn-sm">{{ _("Move to trash") }}</button>
+  </form>
+  <span class="form-text">{{ _("Trash keeps the entry restorable; nothing publishes from the trash.") }}</span>
+{% endcall %}
 {% endblock %}

@@ -1845,3 +1845,15 @@ msgstr "Weiter"
 
 msgid "Pagination"
 msgstr "Seitennummerierung"
+
+msgid "Danger zone"
+msgstr "Gefahrenzone"
+
+msgid "On this page"
+msgstr "Auf dieser Seite"
+
+msgid "Content"
+msgstr "Inhalt"
+
+msgid "Trash keeps the entry restorable; nothing publishes from the trash."
+msgstr "Der Papierkorb hält den Eintrag wiederherstellbar; aus dem Papierkorb wird nichts veröffentlicht."

@@ -678,3 +678,23 @@ def test_the_list_paginates_and_searches_scoped(tmp_path: Path) -> None:
 
         nothing = client.get("/articles?q=nowhere").text
         assert "Nothing matches the filter." in nothing
+
+
+def test_the_editor_follows_the_design_system(tmp_path: Path) -> None:
+    """DS-1: the h1 carries only the identity — the status renders
+    beside it. DS-9/DS-11: the danger zone is last, holding the
+    destructive action. DS-10: the long editor exposes internal
+    navigation."""
+    article = _article("orbital-notes", Language.PT_PT)
+    with _client(_app(tmp_path, article)) as client:
+        _sign_in(client)
+        page = client.get("/articles/orbital-notes").text
+
+        assert '<h1 class="h3 mb-0">orbital-notes</h1>' in page
+        assert "On this page" in page
+        assert 'href="#danger"' in page
+
+        # The danger zone is the last card; trash lives there and only there.
+        danger_at = page.index("Danger zone")
+        assert page.index("Move to trash") > danger_at
+        assert page.count("Move to trash") == 1

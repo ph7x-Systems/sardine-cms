@@ -190,10 +190,14 @@ design-system evolution issue.
 | Component | Status in v1 |
 | --- | --- |
 | PageLayout, Sidebar, Breadcrumbs, SearchBox (global) | provided by the shell (`shell.html.j2` / `base` chrome) — screens never rebuild them |
-| PageHeader | `page_header` macro (`_components.html.j2`) |
+| PageHeader | `page_header` macro (`_components.html.j2`); editors use `editor_header` (back link + h1 + status beside it) |
 | EmptyState | `empty_state` macro |
 | Disclosure | `disclosure` macro (native `details`, closed by default) |
-| ActionBar, DataTable, FilterBar, FormSection, DangerZone, StatusBadge | defined by v1, extracted as macros as each screen adopts the system (the patterns exist today as open-coded Bootstrap; extraction changes markup, never behavior). DataTable's internal order is fixed (#250): summary line → filters → search → table → pagination (DS-19) — never a differently-shaped table per screen |
+| ActionBar | `action_bar` macro; long editors add `editor_nav` (DS-10 internal navigation) |
+| FilterBar | `filter_bar` macro (one GET toolbar per list) |
+| DangerZone | `danger_zone` macro (bordered, last — DS-9/DS-11) |
+| DataTable | `summary_line` + `pagination` macros around the responsive table; internal order fixed (#250): summary line → filters → search → table → pagination (DS-19) — never a differently-shaped table per screen |
+| FormSection, StatusBadge | defined by v1, extracted as each remaining screen adopts the system (today: open-coded cards and the `status_tag`/`state_badge` partials; extraction changes markup, never behavior) |
 | Modal, Drawer, Toast | **reserved** — they imply client-side behavior in a JS-minimal panel; introducing any of them requires its own ADR |
 
 ### Page anatomies (v1)

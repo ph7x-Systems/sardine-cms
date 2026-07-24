@@ -1,10 +1,8 @@
 {% extends "shell.html.j2" %}
 {% from "_fields.html.j2" import text_field, textarea_field, errors_block, state_badge with context %}
+{% from "_components.html.j2" import editor_header with context %}
 {% block title %}{{ page.id }} · {{ language.value | upper }} — Sardine CMS admin{% endblock %}
-{% block header %}
-<nav aria-label="Breadcrumb" class="admin-breadcrumb"><a href="/pages/{{ page.id }}">&larr; {{ page.id }}</a></nav>
-<h1 class="h3 mb-0">{{ page.id }} — {{ language.value | upper }} {{ state_badge(state) }}</h1>
-{% endblock %}
+{% block header %}{{ editor_header("/pages/" ~ page.id, page.id, page.id ~ " — " ~ (language.value | upper), state_badge(state)) }}{% endblock %}
 {% block content %}
 {{ errors_block(errors) }}
 <div class="row admin-sbs">
