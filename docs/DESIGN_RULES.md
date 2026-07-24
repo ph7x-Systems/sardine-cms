@@ -82,3 +82,92 @@ per-language controls; content lists keep constant-width aggregate
 coverage, and editing surfaces open one language at a time past a
 small threshold. A 30-language fixture in the test suite enforces
 this for every future screen (#241).
+
+## Backoffice design system (ADR-0055)
+
+Screens are designed by task, not by page: the governing question is
+"how does an editor complete the task in seconds". These rules are
+objective on purpose — any pull request must be able to answer "is
+this screen conformant?" without a design review. The epic's final
+phase turns them into a CI conformance suite over every registered
+screen.
+
+- **DS-1** Exactly one `<h1>` per screen, containing only the screen
+  or entity title. Status badges and metadata render *beside* the h1,
+  never inside it.
+- **DS-2** Every screen inside the shell carries breadcrumbs
+  (`Home / …`). Standalone flows (login, reset, setup) are the only
+  exceptions.
+- **DS-3** A screen's primary action is one `btn-primary` in the page
+  header, aligned with the h1. A form's submit is that form's only
+  primary button and sits at the form's end. No screen shows two
+  primary buttons for different tasks in the same region.
+- **DS-4** List anatomy, always in this order: title → one-line
+  description → toolbar (search, filters, bulk actions) → table →
+  pagination. The create action lives in the header (DS-3).
+- **DS-5** Every collection that can exceed one screen has a search or
+  filter scoped to itself — the navbar's global search never counts.
+- **DS-6** Wide content scrolls inside its own container; at 320 px
+  the page never scrolls horizontally.
+- **DS-7** Empty states say what the emptiness means *and* offer the
+  next action (a link or button). A bare sentence is non-conforming.
+- **DS-8** Nothing repeats per language (see the section above): one
+  source control plus a translations disclosure or aggregate; the
+  number of visible controls is constant regardless of the language
+  count.
+- **DS-9** Form anatomy: summary/context → main fields → advanced
+  (disclosed, holding technical identifiers) → danger zone last.
+- **DS-10** Editors share one header: back link → h1 with status
+  beside it → action bar. Long editors (more than four cards) expose
+  internal navigation.
+- **DS-11** Destructive actions use outline-danger styling, live in
+  the danger zone or row menus, and always confirm or offer undo.
+- **DS-12** Status is a `StatusBadge`: fixed palette, text plus
+  `title`, never color alone.
+- **DS-13** Raw configuration internals — filesystem paths,
+  connection strings, environment values — never render in page
+  chrome.
+- **DS-14** Every screen renders correctly in both color schemes (the
+  axe gate runs both).
+- **DS-15** Every interactive control is reachable and operable by
+  keyboard; the skip link always works.
+- **DS-16** Screens scale by *selection*, never by rendering every
+  editable item at once: a collection's editor is master-detail — one
+  detail editor exists regardless of whether the collection holds 5
+  items or 500.
+- **DS-17** Forms scale by *depth*: at most one disclosed section is
+  open by default (basic visible, translations/advanced/SEO closed);
+  never four sections expanded on load.
+- **DS-18** Every screen has one clearly dominant work area. Title and
+  primary action orient it (DS-1, DS-3); no secondary panel competes
+  visually with the task — an empty panel given half the screen is the
+  canonical violation.
+
+These rules are executable on purpose: DS-8 compares the visible
+control count between the 2-language and 30-language fixtures; DS-16
+compares it between small and large collections; DS-17 counts open
+disclosures at load. A screen fails the suite, not a design review.
+
+Screens compose the component vocabulary (PageHeader, ActionBar,
+DataTable, FilterBar, EmptyState, FormSection, DangerZone,
+SidebarSection, StatusBadge, Disclosure — ADR-0055) instead of
+open-coding these patterns; a covered pattern outside the vocabulary
+is itself a non-conformance.
+
+**The golden screen.** The menu screen is the design system's
+reference implementation: it concentrates every pattern at once —
+list, form, languages, reordering, empty state, responsiveness — so
+phase 2 rebuilds it first, and a change to the system is judged by
+whether the menu screen still conforms. When the golden screen
+conforms, most screens align by construction.
+
+**The interaction budget.** Beyond the testable rules, every screen
+carries a budget — the UX counterpart of a performance budget: at
+most **one** primary action, **one** active editor, **one** open
+disclosure (DS-17), **one** decision per step (select, *then* edit —
+never both at once), and **zero** growth of visible elements with
+data size (DS-8, DS-16). Not every line is machine-checkable; the
+budget's job is to reframe review. The question for any panel PR is
+"does this increase the screen's interaction budget?" — and a yes
+requires the author to justify it in the PR, the same way a
+performance regression would.
