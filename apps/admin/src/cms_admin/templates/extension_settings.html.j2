@@ -1,6 +1,7 @@
 {% extends "shell.html.j2" %}
+{% from "_components.html.j2" import editor_header, form_section with context %}
 {% block title %}{{ _("Extension settings") }} — Sardine CMS admin{% endblock %}
-{% block header %}<h1 class="h3 mb-0">{{ _("Extension settings") }} — {{ name }}</h1>{% endblock %}
+{% block header %}{{ editor_header("/extensions", _("Extensions"), name) }}{% endblock %}
 {% block content %}
 
 {% if saved %}
@@ -13,9 +14,7 @@
 </div>
 {% endif %}
 
-<div class="card">
-  <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Declared settings (schema v%(version)s)") | format(version=schema.version) }}</h2></div>
-  <div class="card-body">
+{% call form_section(_("Declared settings (schema v%(version)s)") | format(version=schema.version)) %}
     <form method="post" action="/extensions/settings/{{ name }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
       {% for field in schema.fields %}
@@ -55,8 +54,6 @@
       </div>
       {% endfor %}
       <button type="submit" class="btn btn-primary">{{ _("Save settings") }}</button>
-      <a class="btn btn-outline-secondary" href="/extensions">{{ _("Back to extensions") }}</a>
     </form>
-  </div>
-</div>
+{% endcall %}
 {% endblock %}

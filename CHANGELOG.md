@@ -10,6 +10,14 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Changed
 
+- The settings screens adopt the design system (#244, ADR-0055):
+  themes, extensions and migration take the shared page header;
+  extension settings becomes an editor (back link, the extension's
+  name as the title) built on the new `form_section` component; and
+  the themes grid stays symmetric — a theme without a bundled
+  screenshot shows a neutral placeholder in the same slot instead of
+  collapsing the card.
+
 - The editors adopt the design system (#244, ADR-0055): every editor
   header becomes back link → an `h1` carrying only the identity → the
   status badge beside it (articles, pages, sections, media and the
