@@ -1857,3 +1857,6 @@ msgstr "Contenido"
 
 msgid "Trash keeps the entry restorable; nothing publishes from the trash."
 msgstr "La papelera mantiene la entrada restaurable; nada se publica desde la papelera."
+
+msgid "Findings"
+msgstr "Hallazgos"

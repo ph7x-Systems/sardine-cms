@@ -90,7 +90,7 @@ content header with `breadcrumb`, `app-footer` with copyright. Surfaces:
 | Markdown editor (article bodies) | EasyMDE (MIT, vendored at `static/vendor/easymde/` — ADR-0023), Bootstrap Icons toolbar, localized titles, no built-in preview (the builder's preview is the truth) |
 | Media library | upload card with validated file input, server-side filter/search form, quick-view links, per-language alt-text editors |
 | Workflow (status transitions) | role-filtered button group (`admin-workflow`), per-status badge colors |
-| Publishing panel | gate `callout` (success/danger), rules + issues tables in cards, target select, buttons |
+| Publishing panel | the #250 anatomy: summary (identity line, gate `callout`, bounded rules table) → Findings as a `filter_bar` + `summary_line` + paginated table (DS-19) → run area (deploy state, target cards, last run) |
 | Editorial notes (editors) | comment trail card with inline add form, author-or-admin removal |
 | List quick actions | per-row Bootstrap dropdown (bi-three-dots): workflow transitions + trash |
 | Trash | sidebar entry, per-kind tables with Restore / admin-only Delete forever |

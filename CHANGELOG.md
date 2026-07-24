@@ -10,6 +10,15 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Changed
 
+- The publishing screen is rebuilt task-first (#244, #250, ADR-0055):
+  summary before anything else (site identity — without the raw output
+  path —, the gate verdict and the bounded rules table), then
+  **Findings** as a real data table — severity/rule filters, scoped
+  search, a summary line and pagination instead of one flat unbounded
+  list — and the run area (deployment state, target choice, last run)
+  last. Understanding the publication state no longer requires
+  scrolling past hundreds of advisory rows.
+
 - The editors adopt the design system (#244, ADR-0055): every editor
   header becomes back link → an `h1` carrying only the identity → the
   status badge beside it (articles, pages, sections, media and the

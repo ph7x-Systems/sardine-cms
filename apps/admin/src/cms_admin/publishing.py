@@ -184,11 +184,41 @@ async def refresh_entry_preview(request: Request, entry: Article | Page) -> str 
 async def publishing_home(
     request: Request,
     user_session: tuple[User, AdminSession] = Depends(current_session),
+    severity: str = "",
+    rule: str = "",
+    q: str = "",
+    page: int = 1,
 ) -> object:
     user, session = user_session
     project = _project(request)
     content = await _site_content(request)
     languages = _site_targets(project)
+    context = report_context(
+        content,
+        tuple(languages),
+        _extension_rules(project),
+        source_language=_site_source(project),
+        disabled=project.validation_disabled if project else (),
+    )
+    # The findings area follows the DataTable contract (#250): filters,
+    # scoped search and pagination — never the full flat list.
+    report = context["report"]
+    issues = list(report.issues)  # type: ignore[attr-defined]
+    issue_rules = sorted({issue.code for issue in issues})
+    if severity in ("error", "warning"):
+        issues = [issue for issue in issues if issue.severity.value == severity]
+    if rule and rule in issue_rules:
+        issues = [issue for issue in issues if issue.code == rule]
+    needle = q.strip().lower()
+    if needle:
+        issues = [
+            issue
+            for issue in issues
+            if needle in issue.subject.lower() or needle in issue.message.lower()
+        ]
+    from cms_admin.listing import paginate
+
+    findings, listing = paginate(issues, page)
     return request.app.state.templates.TemplateResponse(
         request,
         "publishing.html.j2",
@@ -198,13 +228,13 @@ async def publishing_home(
             "csrf_token": session.csrf_token,
             "project": project,
             "project_dir": str(request.app.state.settings.project_dir.resolve()),
-            **report_context(
-                content,
-                tuple(languages),
-                _extension_rules(project),
-                source_language=_site_source(project),
-                disabled=project.validation_disabled if project else (),
-            ),
+            **context,
+            "findings": findings,
+            "listing": listing,
+            "issue_rules": issue_rules,
+            "severity": severity,
+            "rule": rule,
+            "q": q,
             "targets": TARGETS,
             "current_target": project.target if project else "generic",
             "deploy_state": _deploy_view(request),
