@@ -82,3 +82,58 @@ per-language controls; content lists keep constant-width aggregate
 coverage, and editing surfaces open one language at a time past a
 small threshold. A 30-language fixture in the test suite enforces
 this for every future screen (#241).
+
+## Backoffice design system (ADR-0055)
+
+Screens are designed by task, not by page: the governing question is
+"how does an editor complete the task in seconds". These rules are
+objective on purpose — any pull request must be able to answer "is
+this screen conformant?" without a design review. The epic's final
+phase turns them into a CI conformance suite over every registered
+screen.
+
+- **DS-1** Exactly one `<h1>` per screen, containing only the screen
+  or entity title. Status badges and metadata render *beside* the h1,
+  never inside it.
+- **DS-2** Every screen inside the shell carries breadcrumbs
+  (`Home / …`). Standalone flows (login, reset, setup) are the only
+  exceptions.
+- **DS-3** A screen's primary action is one `btn-primary` in the page
+  header, aligned with the h1. A form's submit is that form's only
+  primary button and sits at the form's end. No screen shows two
+  primary buttons for different tasks in the same region.
+- **DS-4** List anatomy, always in this order: title → one-line
+  description → toolbar (search, filters, bulk actions) → table →
+  pagination. The create action lives in the header (DS-3).
+- **DS-5** Every collection that can exceed one screen has a search or
+  filter scoped to itself — the navbar's global search never counts.
+- **DS-6** Wide content scrolls inside its own container; at 320 px
+  the page never scrolls horizontally.
+- **DS-7** Empty states say what the emptiness means *and* offer the
+  next action (a link or button). A bare sentence is non-conforming.
+- **DS-8** Nothing repeats per language (see the section above): one
+  source control plus a translations disclosure or aggregate; the
+  number of visible controls is constant regardless of the language
+  count.
+- **DS-9** Form anatomy: summary/context → main fields → advanced
+  (disclosed, holding technical identifiers) → danger zone last.
+- **DS-10** Editors share one header: back link → h1 with status
+  beside it → action bar. Long editors (more than four cards) expose
+  internal navigation.
+- **DS-11** Destructive actions use outline-danger styling, live in
+  the danger zone or row menus, and always confirm or offer undo.
+- **DS-12** Status is a `StatusBadge`: fixed palette, text plus
+  `title`, never color alone.
+- **DS-13** Raw configuration internals — filesystem paths,
+  connection strings, environment values — never render in page
+  chrome.
+- **DS-14** Every screen renders correctly in both color schemes (the
+  axe gate runs both).
+- **DS-15** Every interactive control is reachable and operable by
+  keyboard; the skip link always works.
+
+Screens compose the component vocabulary (PageHeader, ActionBar,
+DataTable, FilterBar, EmptyState, FormSection, DangerZone,
+SidebarSection, StatusBadge, Disclosure — ADR-0055) instead of
+open-coding these patterns; a covered pattern outside the vocabulary
+is itself a non-conformance.
