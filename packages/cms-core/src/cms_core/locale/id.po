@@ -1831,3 +1831,15 @@ msgstr "Naikkan"
 
 msgid "Move down"
 msgstr "Turunkan"
+
+msgid "Showing %(first)s–%(last)s of %(total)s"
+msgstr "Menampilkan %(first)s–%(last)s dari %(total)s"
+
+msgid "Previous"
+msgstr "Sebelumnya"
+
+msgid "Next"
+msgstr "Berikutnya"
+
+msgid "Pagination"
+msgstr "Paginasi"

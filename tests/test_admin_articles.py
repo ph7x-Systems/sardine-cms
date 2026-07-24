@@ -650,3 +650,31 @@ def test_a_published_slug_change_records_a_redirect(tmp_path: Path) -> None:
     assert '"/blog/launch-day/"' not in toml.split("[redirects]")[-1].split("=")[0] or True
     assert '"/blog/orbit/" = "/blog/launch-day/"' in toml
     assert '"/blog/launch-day/" =' not in toml  # no loop back out of the live page
+
+
+def test_the_list_paginates_and_searches_scoped(tmp_path: Path) -> None:
+    """DS-19: a collection larger than the page size never renders in
+    full — one page, a summary line, and paging that keeps the active
+    filters. DS-5: the list owns a scoped search."""
+    articles = [_article(f"entry-{n:02d}") for n in range(30)]
+    with _client(_app(tmp_path, *articles)) as client:
+        _sign_in(client)
+
+        first = client.get("/articles").text
+        assert "Showing 1–25 of 30" in first  # noqa: RUF001
+        assert first.count('form="bulk-form"') == 25  # one checkbox per rendered row
+        assert "entry-00" in first
+        assert "entry-29" not in first
+
+        second = client.get("/articles?page=2&q=&needs=").text
+        assert "Showing 26–30 of 30" in second  # noqa: RUF001
+        assert "entry-29" in second
+        assert "entry-00" not in second
+
+        searched = client.get("/articles?q=entry-07").text
+        assert "Showing 1–1 of 1" in searched  # noqa: RUF001
+        assert "entry-07" in searched
+        assert "entry-08" not in searched
+
+        nothing = client.get("/articles?q=nowhere").text
+        assert "Nothing matches the filter." in nothing
