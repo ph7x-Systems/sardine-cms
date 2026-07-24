@@ -51,6 +51,15 @@
 </nav>
 {% endmacro %}
 
+{% macro form_section(title, section_id=None) %}
+{# DS-9: one card per form area — the header names it, the caller
+   fills it. #}
+<div class="card mb-3"{% if section_id %} id="{{ section_id }}"{% endif %}>
+  <div class="card-header"><h2 class="card-title h6 mb-0">{{ title }}</h2></div>
+  <div class="card-body">{{ caller() }}</div>
+</div>
+{% endmacro %}
+
 {% macro danger_zone() %}
 {# DS-9/DS-11: destructive actions, visually separated, always last. #}
 <div class="card border-danger mb-3" id="danger">
