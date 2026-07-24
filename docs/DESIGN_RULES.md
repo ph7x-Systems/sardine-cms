@@ -86,11 +86,14 @@ this for every future screen (#241).
 ## Backoffice design system (ADR-0055)
 
 Screens are designed by task, not by page: the governing question is
-"how does an editor complete the task in seconds". These rules are
-objective on purpose — any pull request must be able to answer "is
-this screen conformant?" without a design review. The epic's final
-phase turns them into a CI conformance suite over every registered
-screen.
+"how does an editor complete the task in seconds". **One screen, one
+task** (#250): every admin screen corresponds to one primary task —
+the menu screen manages the menu; the publishing screen communicates
+publication state. Configure, analyze, execute and review-history
+never share a viewport. These rules are objective on purpose — any
+pull request must be able to answer "is this screen conformant?"
+without a design review. The epic's final phase turns them into a CI
+conformance suite over every registered screen.
 
 - **DS-1** Exactly one `<h1>` per screen, containing only the screen
   or entity title. Status badges and metadata render *beside* the h1,
@@ -142,11 +145,17 @@ screen.
   primary action orient it (DS-1, DS-3); no secondary panel competes
   visually with the task — an empty panel given half the screen is the
   canonical violation.
+- **DS-19** Pagination is mandatory (#250): a collection holding more
+  rows than the page size never renders in full — the table shows one
+  page and a summary line ("Showing 25 of 438"). A screen rendering
+  hundreds of rows is non-conforming.
 
 These rules are executable on purpose: DS-8 compares the visible
 control count between the 2-language and 30-language fixtures; DS-16
 compares it between small and large collections; DS-17 counts open
-disclosures at load. A screen fails the suite, not a design review.
+disclosures at load; DS-19 compares rendered row count against the
+page size on a large fixture. A screen fails the suite, not a design
+review.
 
 Screens compose the component vocabulary (PageHeader, ActionBar,
 DataTable, FilterBar, EmptyState, FormSection, DangerZone,
@@ -184,7 +193,7 @@ design-system evolution issue.
 | PageHeader | `page_header` macro (`_components.html.j2`) |
 | EmptyState | `empty_state` macro |
 | Disclosure | `disclosure` macro (native `details`, closed by default) |
-| ActionBar, DataTable, FilterBar, FormSection, DangerZone, StatusBadge | defined by v1, extracted as macros as each screen adopts the system (the patterns exist today as open-coded Bootstrap; extraction changes markup, never behavior) |
+| ActionBar, DataTable, FilterBar, FormSection, DangerZone, StatusBadge | defined by v1, extracted as macros as each screen adopts the system (the patterns exist today as open-coded Bootstrap; extraction changes markup, never behavior). DataTable's internal order is fixed (#250): summary line → filters → search → table → pagination (DS-19) — never a differently-shaped table per screen |
 | Modal, Drawer, Toast | **reserved** — they imply client-side behavior in a JS-minimal panel; introducing any of them requires its own ADR |
 
 ### Page anatomies (v1)
