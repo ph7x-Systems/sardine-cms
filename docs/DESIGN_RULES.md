@@ -131,9 +131,32 @@ screen.
   axe gate runs both).
 - **DS-15** Every interactive control is reachable and operable by
   keyboard; the skip link always works.
+- **DS-16** Screens scale by *selection*, never by rendering every
+  editable item at once: a collection's editor is master-detail — one
+  detail editor exists regardless of whether the collection holds 5
+  items or 500.
+- **DS-17** Forms scale by *depth*: at most one disclosed section is
+  open by default (basic visible, translations/advanced/SEO closed);
+  never four sections expanded on load.
+- **DS-18** Every screen has one clearly dominant work area. Title and
+  primary action orient it (DS-1, DS-3); no secondary panel competes
+  visually with the task — an empty panel given half the screen is the
+  canonical violation.
+
+These rules are executable on purpose: DS-8 compares the visible
+control count between the 2-language and 30-language fixtures; DS-16
+compares it between small and large collections; DS-17 counts open
+disclosures at load. A screen fails the suite, not a design review.
 
 Screens compose the component vocabulary (PageHeader, ActionBar,
 DataTable, FilterBar, EmptyState, FormSection, DangerZone,
 SidebarSection, StatusBadge, Disclosure — ADR-0055) instead of
 open-coding these patterns; a covered pattern outside the vocabulary
 is itself a non-conformance.
+
+**The golden screen.** The menu screen is the design system's
+reference implementation: it concentrates every pattern at once —
+list, form, languages, reordering, empty state, responsiveness — so
+phase 2 rebuilds it first, and a change to the system is judged by
+whether the menu screen still conforms. When the golden screen
+conforms, most screens align by construction.

@@ -72,7 +72,7 @@ that scales with language count).
 
 ### Objective rules
 
-DESIGN_RULES.md gains a numbered rule set (DS-1…DS-15) precise enough
+DESIGN_RULES.md gains a numbered rule set (DS-1…DS-18) precise enough
 that any pull request can answer "is this screen conformant?" without
 a design review. The rules are the contract; the audit inventory on
 the epic issue is the evidence they were derived from.
