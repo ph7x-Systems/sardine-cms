@@ -365,11 +365,19 @@ gate holding a real warning instead of an empty all-green report.
 
 ## Menu
 
-The **Menu** screen defines explicit navigation: items with per-language
-labels (source language as fallback), a numeric position and an internal
-or external URL. Defined items replace the automatic menu on the next
-build; re-adding an id updates it (that is also how items reorder), and
-an empty list keeps the automatic menu. Writes need the publisher role.
+The **Menu** screen is the design system's golden screen (ADR-0055):
+task-first master-detail. Open it and you see the navigation — a list
+of items in menu order with up/down reordering and, past five items, a
+scoped search. Select an item (or **Add item**) and the editor appears:
+label and URL first, then **Translations** and **Advanced** (id,
+position) as closed disclosures — one label field visible regardless
+of how many languages the project has. The id is optional: left empty,
+it derives from the label. With no custom items, the screen is an
+empty state explaining that the menu derives automatically from
+content (home anchors, blog, published pages) with the add action one
+click away. Defined items replace the automatic menu entirely on the
+next build; removing the last one returns to automatic derivation.
+Writes need the publisher role.
 
 ## Editorial notes and quick actions
 

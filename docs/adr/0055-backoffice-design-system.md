@@ -94,6 +94,20 @@ Phases 1–3 change structure and consistency only; the existing E2E
 suites must stay green **unchanged**. Behavioral polish (motion,
 skeletons, shortcuts) is explicitly phase 4.
 
+## V1 freeze (2026-07-24)
+
+With the golden screen implemented, **Design System v1 is frozen**:
+DESIGN_RULES.md carries the closed component inventory (shell-provided
+chrome; the extracted macros; patterns pending extraction; Modal,
+Drawer and Toast reserved behind their own ADR), the six supported
+page anatomies with every screen assigned to exactly one, the token
+rule (Bootstrap/AdminLTE variables only) and the lifecycle rule: any
+change to the system — component, anatomy, rule or variant — enters
+through an ADR or a design-system evolution issue, never inside a
+feature PR. This is the same stability contract themes and providers
+already have; it protects contributors from pattern churn mid-PR and
+keeps review objective.
+
 ## Consequences
 
 - #241 (the panel at 30+ languages) is absorbed: language scaling is

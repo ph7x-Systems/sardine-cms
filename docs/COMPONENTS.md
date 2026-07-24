@@ -81,6 +81,8 @@ content header with `breadcrumb`, `app-footer` with copyright. Surfaces:
 | Admin surface | AdminLTE/Bootstrap building blocks |
 | --- | --- |
 | Shell chrome (all authenticated pages) | app-header navbar, dark app-sidebar with the tin-rocket brand, skip link |
+| Design-system vocabulary (`_components.html.j2`, ADR-0055) | `page_header` (one h1 + the screen's single primary action), `empty_state` (meaning + next action), `disclosure` (native `details`, closed by default) — born on the menu golden screen, adopted screen by screen |
+| Menu (golden screen) | master-detail: list-group navigation with up/down reorder forms and scoped search past five items; editor card only on selection or Add; translations and advanced fields behind closed disclosures |
 | Dashboard | small-box stat tiles per status, cards, striped coverage table + progress |
 | Content lists | cards with striped/hover tables in Bootstrap `table-responsive` wrappers; one constant-width **Translations** coverage cell (`3/4 · 1 missing`, state in text + title, linked to the editor) — never a badge or column per language (ADR-0034) |
 | Side-by-side editors | Bootstrap grid (`row`/`col`, `admin-sbs`), cards, Markdown preview panel |

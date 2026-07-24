@@ -171,3 +171,53 @@ budget's job is to reframe review. The question for any panel PR is
 "does this increase the screen's interaction budget?" — and a yes
 requires the author to justify it in the PR, the same way a
 performance regression would.
+
+### The component inventory (v1 — closed)
+
+Screens build from this list and nothing else. A component outside it
+does not enter through a pull request; it enters through an ADR or a
+design-system evolution issue.
+
+| Component | Status in v1 |
+| --- | --- |
+| PageLayout, Sidebar, Breadcrumbs, SearchBox (global) | provided by the shell (`shell.html.j2` / `base` chrome) — screens never rebuild them |
+| PageHeader | `page_header` macro (`_components.html.j2`) |
+| EmptyState | `empty_state` macro |
+| Disclosure | `disclosure` macro (native `details`, closed by default) |
+| ActionBar, DataTable, FilterBar, FormSection, DangerZone, StatusBadge | defined by v1, extracted as macros as each screen adopts the system (the patterns exist today as open-coded Bootstrap; extraction changes markup, never behavior) |
+| Modal, Drawer, Toast | **reserved** — they imply client-side behavior in a JS-minimal panel; introducing any of them requires its own ADR |
+
+### Page anatomies (v1)
+
+Exactly six anatomies are supported; every screen declares one, and
+"which anatomy is this screen?" never has two answers:
+
+| Anatomy | Shape | Screens |
+| --- | --- | --- |
+| List | title → description → toolbar (search, filters, bulk) → table → pagination | articles, pages, media, translations, trash, activity, submissions, users, calendar |
+| Master-detail | list column (add, scoped search, ordering) → detail editor on selection | **menu** (the golden screen) |
+| Form | back link → header (status beside title) → main fields → disclosed advanced → danger zone | article/page/section editors and their translations, media detail, new-entry forms |
+| Dashboard | stat tiles → attention queue → report cards | dashboard |
+| Settings | card grid or card list with per-card actions | themes, extensions, extension settings, migration, publishing |
+| Standalone | single centered card, no shell | login, reset, setup, two-factor |
+
+### Tokens
+
+The panel's tokens are AdminLTE/Bootstrap's own custom properties —
+spacing scale, radii, typography, color modes, input heights.
+`admin.css` only adds accessibility fixes, no-JS fallbacks and the
+font faces; it never restyles the theme and never introduces new
+hardcoded values. A design-system component consumes Bootstrap
+utilities and variables exclusively — the same "tokens, not values"
+rule themes live under (§1).
+
+### Lifecycle — v1 is frozen
+
+This section, the rule set (DS-1…DS-18), the component inventory and
+the anatomies together are **Design System v1**, frozen as of
+ADR-0055. From here, any change — a new component, a new anatomy, a
+rule change, a variant of an existing pattern — happens through an
+ADR or a design-system evolution issue, never inside a feature PR.
+Contributors build against a stable specification, exactly as they do
+against theme and translation-provider conformance; review cites DS
+numbers, not taste.

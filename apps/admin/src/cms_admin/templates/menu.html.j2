@@ -1,73 +1,137 @@
 {% extends "shell.html.j2" %}
 {% from "_fields.html.j2" import errors_block with context %}
+{% from "_components.html.j2" import page_header, empty_state, disclosure with context %}
 {% block title %}{{ _("Menu") }} — Sardine CMS admin{% endblock %}
-{% block header %}<h1 class="h3 mb-0">{{ _("Menu") }}</h1>{% endblock %}
+{% block header %}{{ page_header(_("Menu"), _("Add item"), "/menu?new=1") }}{% endblock %}
 {% block content %}
 {{ errors_block(errors) }}
+{% set source = languages[0] %}
+{% set targets = languages[1:] %}
+{% if not items and not editing %}
+{{ empty_state(
+    _("No custom items yet"),
+    _("The menu derives automatically from content — home anchors, the blog and published pages. Custom items replace it entirely on the next build."),
+    _("Add custom item"),
+    "/menu?new=1") }}
+{% else %}
 <div class="row">
-  <div class="col-lg-7">
+  <div class="col-lg-5">
     <div class="card mb-3">
       <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Navigation items") }}</h2></div>
-      {% if items %}
-      <div class="card-body p-0 table-responsive admin-table-wrap">
-        <table class="table table-sm table-striped mb-0 admin-table admin-menu-table">
-          <thead><tr><th scope="col">#</th><th scope="col">{{ _("ID") }}</th><th scope="col">{{ _("Labels") }}</th><th scope="col">URL</th><th scope="col"></th></tr></thead>
-          <tbody>
-            {% for item in items %}
-            <tr>
-              <td class="text-end">{{ item.position }}</td>
-              <th scope="row">{{ item.id }}</th>
-              <td>{% for language, label in item.labels.items() | sort(attribute="0.value") %}<span class="badge text-bg-light border admin-tag me-1">{{ language.value }}: {{ label }}</span>{% endfor %}</td>
-              <td><code>{{ item.url }}</code></td>
-              <td>
-                <form method="post" action="/menu/{{ item.id }}/delete" class="mb-0">
-                  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                  <button type="submit" class="btn btn-outline-danger btn-sm">{{ _("Remove") }}</button>
-                </form>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+      {% if items | length > 5 %}
+      <div class="card-body border-bottom py-2">
+        <form method="get" action="/menu" class="mb-0">
+          <label class="visually-hidden" for="menu-search">{{ _("Search items") }}</label>
+          <input class="form-control form-control-sm admin-input" id="menu-search" type="search"
+                 name="q" value="{{ query }}" placeholder="{{ _("Search items") }}">
+        </form>
       </div>
-      <div class="card-footer form-text">{{ _("Defined items replace the automatic menu on the next build; re-adding an id updates it (that is also how items reorder). Empty list = automatic menu.") }}</div>
-      {% else %}
-      <div class="card-body"><p class="admin-empty mb-0">{{ _("No explicit items — the menu derives automatically from content (home anchors, blog, published pages).") }}</p></div>
       {% endif %}
+      <div class="list-group list-group-flush">
+        {% for item in shown_items %}
+        <div class="list-group-item d-flex align-items-center gap-2{% if selected and selected.id == item.id %} active{% endif %}">
+          <a class="flex-grow-1 text-decoration-none admin-menu-item{% if selected and selected.id == item.id %} text-reset{% endif %}"
+             href="/menu?item={{ item.id }}"{% if selected and selected.id == item.id %} aria-current="true"{% endif %}>
+            <span class="d-block">{{ item.label(source) }}</span>
+            <code class="small{% if selected and selected.id == item.id %} text-reset{% endif %}">{{ item.url }}</code>
+          </a>
+          <div class="btn-group btn-group-sm" role="group">
+            <form method="post" action="/menu/{{ item.id }}/move" class="mb-0 d-inline">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="direction" value="up">
+              <button type="submit" class="btn btn-outline-secondary btn-sm"
+                      {% if loop.first %}disabled{% endif %}
+                      aria-label="{{ _("Move up") }}" title="{{ _("Move up") }}">↑</button>
+            </form>
+            <form method="post" action="/menu/{{ item.id }}/move" class="mb-0 d-inline">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="direction" value="down">
+              <button type="submit" class="btn btn-outline-secondary btn-sm"
+                      {% if loop.last %}disabled{% endif %}
+                      aria-label="{{ _("Move down") }}" title="{{ _("Move down") }}">↓</button>
+            </form>
+          </div>
+        </div>
+        {% else %}
+        <div class="list-group-item"><p class="admin-empty mb-0">{% if query %}{{ _("No items match the search.") }}{% else %}{{ _("No custom items yet") }}{% endif %}</p></div>
+        {% endfor %}
+      </div>
+      <div class="card-footer form-text">{{ _("Custom items replace the automatic menu on the next build; the list order is the menu order.") }}</div>
     </div>
   </div>
-  <div class="col-lg-5">
+  <div class="col-lg-7">
+    {% if editing %}
     <div class="card">
-      <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Add or update an item") }}</h2></div>
+      <div class="card-header">
+        <h2 class="card-title h6 mb-0">{% if selected %}{{ selected.label(source) }}{% else %}{{ _("New item") }}{% endif %}</h2>
+      </div>
       <div class="card-body">
         <form method="post" action="/menu" class="admin-form">
           <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
           <div class="mb-2 admin-field">
-            <label class="form-label" for="menu-id">{{ _("ID") }}</label>
-            <input class="form-control admin-input" id="menu-id" name="id" required
-                   placeholder="{{ _("lowercase-with-dashes") }}">
+            <label class="form-label" for="label-{{ source.value }}">{{ _("Label") }}</label>
+            <input class="form-control admin-input" id="label-{{ source.value }}"
+                   name="label_{{ source.value }}"
+                   value="{{ selected.labels.get(source, '') if selected else '' }}">
           </div>
           <div class="mb-2 admin-field">
             <label class="form-label" for="menu-url">URL</label>
             <input class="form-control admin-input" id="menu-url" name="url" required
-                   placeholder="/about/ · https://example.com">
+                   placeholder="/about/ · https://example.com"
+                   value="{{ selected.url if selected else '' }}">
           </div>
-          <div class="mb-2 admin-field">
-            <label class="form-label" for="menu-position">{{ _("Position") }}</label>
-            <input class="form-control admin-input" id="menu-position" name="position"
-                   type="number" value="{{ items | length + 1 }}">
-          </div>
-          {% for language in languages %}
-          <div class="mb-2 admin-field">
-            <label class="form-label" for="label-{{ language.value }}">{{ _("Label") }} ({{ language.value | upper }})</label>
-            <input class="form-control admin-input" id="label-{{ language.value }}"
-                   name="label_{{ language.value }}">
-          </div>
-          {% endfor %}
+          {% set covered = (targets | select("in", selected.labels) | list | length) if selected else 0 %}
+          {% call disclosure(_("Translations") ~ " · " ~ covered ~ "/" ~ (targets | length)) %}
+            {% for language in targets %}
+            <details class="mb-1">
+              <summary class="form-text">
+                {{ language.value | upper }}
+                {%- if selected and selected.labels.get(language) %} ✓{% else %} —{% endif %}
+              </summary>
+              <div class="mt-1 mb-2 admin-field">
+                <label class="visually-hidden" for="label-{{ language.value }}">{{ _("Label") }} ({{ language.value | upper }})</label>
+                <input class="form-control admin-input" id="label-{{ language.value }}"
+                       name="label_{{ language.value }}"
+                       value="{{ selected.labels.get(language, '') if selected else '' }}">
+              </div>
+            </details>
+            {% endfor %}
+          {% endcall %}
+          {% call disclosure(_("Advanced")) %}
+            <div class="mb-2 admin-field">
+              <label class="form-label" for="menu-id">{{ _("ID") }}</label>
+              <input class="form-control admin-input" id="menu-id" name="id"
+                     placeholder="{{ _("lowercase-with-dashes") }}"
+                     value="{{ selected.id if selected else '' }}">
+              <div class="form-text">{{ _("Leave empty to derive it from the label; re-using an id updates that item.") }}</div>
+            </div>
+            <div class="mb-2 admin-field">
+              <label class="form-label" for="menu-position">{{ _("Position") }}</label>
+              <input class="form-control admin-input" id="menu-position" name="position"
+                     type="number" value="{{ selected.position if selected else items | length + 1 }}">
+            </div>
+          {% endcall %}
           <button type="submit" class="btn btn-primary">{{ _("Save item") }}</button>
         </form>
       </div>
+      {% if selected %}
+      <div class="card-footer">
+        <form method="post" action="/menu/{{ selected.id }}/delete" class="mb-0 d-flex align-items-center gap-2">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit" class="btn btn-outline-danger btn-sm">{{ _("Remove this item") }}</button>
+          <span class="form-text">{{ _("Removing the last item returns the menu to automatic derivation.") }}</span>
+        </form>
+      </div>
+      {% endif %}
     </div>
+    {% else %}
+    <div class="card">
+      <div class="card-body text-center py-5">
+        <p class="admin-empty mb-0">{{ _("Select an item to edit, or add a new one.") }}</p>
+      </div>
+    </div>
+    {% endif %}
   </div>
 </div>
+{% endif %}
 {% endblock %}
