@@ -45,7 +45,7 @@
 <nav aria-label="{{ _("On this page") }}" class="mb-3 admin-editor-nav">
   <ul class="nav nav-pills flex-wrap gap-1 small">
     {% for anchor, label in items %}
-    <li class="nav-item"><a class="nav-link py-1 px-2" href="#{{ anchor }}">{{ label }}</a></li>
+    <li class="nav-item"><a class="nav-link py-1 px-2 link-body-emphasis text-decoration-underline" href="#{{ anchor }}">{{ label }}</a></li>
     {% endfor %}
   </ul>
 </nav>
@@ -54,7 +54,7 @@
 {% macro danger_zone() %}
 {# DS-9/DS-11: destructive actions, visually separated, always last. #}
 <div class="card border-danger mb-3" id="danger">
-  <div class="card-header"><h2 class="card-title h6 mb-0 text-danger">{{ _("Danger zone") }}</h2></div>
+  <div class="card-header"><h2 class="card-title h6 mb-0 text-danger-emphasis">{{ _("Danger zone") }}</h2></div>
   <div class="card-body d-flex flex-wrap gap-2 align-items-center">{{ caller() }}</div>
 </div>
 {% endmacro %}
