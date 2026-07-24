@@ -1,0 +1,33 @@
+{# The design-system component vocabulary (ADR-0055), born on the
+   golden screen. Screens compose these instead of open-coding the
+   patterns; a covered pattern outside the vocabulary is itself a
+   non-conformance (DESIGN_RULES). #}
+
+{% macro page_header(title, action_label=None, action_href=None) %}
+{# DS-1/DS-3: one h1 carrying only the title; the screen's single
+   primary action beside it. #}
+<div class="d-flex justify-content-between align-items-center">
+  <h1 class="h3 mb-0">{{ title }}</h1>
+  {% if action_label %}<a class="btn btn-primary" href="{{ action_href }}">{{ action_label }}</a>{% endif %}
+</div>
+{% endmacro %}
+
+{% macro empty_state(heading, body, action_label=None, action_href=None) %}
+{# DS-7: what the emptiness means, then the next action. #}
+<div class="card admin-empty-state">
+  <div class="card-body text-center py-5">
+    <h2 class="h5">{{ heading }}</h2>
+    <p class="text-body-secondary mb-3 mx-auto admin-empty-state-body">{{ body }}</p>
+    {% if action_label %}<a class="btn btn-primary" href="{{ action_href }}">{{ action_label }}</a>{% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro disclosure(summary, open=false) %}
+{# DS-17: sections beyond the basics ship closed; native details, no
+   JavaScript. #}
+<details class="mb-2 admin-disclosure"{% if open %} open{% endif %}>
+  <summary class="form-text">{{ summary }}</summary>
+  <div class="mt-2 ps-2 admin-disclosure-body">{{ caller() }}</div>
+</details>
+{% endmacro %}

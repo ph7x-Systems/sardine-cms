@@ -1786,3 +1786,48 @@ msgstr "Sumber: dikonfigurasi untuk proyek ini"
 
 msgid "Source: schema default"
 msgstr "Sumber: bawaan skema"
+
+msgid "Add item"
+msgstr "Tambah item"
+
+msgid "No custom items yet"
+msgstr "Belum ada item khusus"
+
+msgid "The menu derives automatically from content — home anchors, the blog and published pages. Custom items replace it entirely on the next build."
+msgstr "Menu diturunkan secara otomatis dari konten — tautan beranda, blog, dan halaman terbit. Item khusus menggantikannya sepenuhnya pada build berikutnya."
+
+msgid "Add custom item"
+msgstr "Tambah item khusus"
+
+msgid "Search items"
+msgstr "Cari item"
+
+msgid "No items match the search."
+msgstr "Tidak ada item yang cocok dengan pencarian."
+
+msgid "Custom items replace the automatic menu on the next build; the list order is the menu order."
+msgstr "Item khusus menggantikan menu otomatis pada build berikutnya; urutan daftar adalah urutan menu."
+
+msgid "New item"
+msgstr "Item baru"
+
+msgid "Advanced"
+msgstr "Lanjutan"
+
+msgid "Leave empty to derive it from the label; re-using an id updates that item."
+msgstr "Biarkan kosong untuk menurunkannya dari label; menggunakan ulang sebuah id memperbarui item tersebut."
+
+msgid "Remove this item"
+msgstr "Hapus item ini"
+
+msgid "Removing the last item returns the menu to automatic derivation."
+msgstr "Menghapus item terakhir mengembalikan menu ke penurunan otomatis."
+
+msgid "Select an item to edit, or add a new one."
+msgstr "Pilih item untuk disunting, atau tambahkan yang baru."
+
+msgid "Move up"
+msgstr "Naikkan"
+
+msgid "Move down"
+msgstr "Turunkan"

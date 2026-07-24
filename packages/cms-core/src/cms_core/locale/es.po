@@ -1788,3 +1788,48 @@ msgstr "Origen: configurado para este proyecto"
 
 msgid "Source: schema default"
 msgstr "Origen: valor predeterminado del schema"
+
+msgid "Add item"
+msgstr "Añadir elemento"
+
+msgid "No custom items yet"
+msgstr "Aún no hay elementos personalizados"
+
+msgid "The menu derives automatically from content — home anchors, the blog and published pages. Custom items replace it entirely on the next build."
+msgstr "El menú se deriva automáticamente del contenido: anclas de la página de inicio, el blog y las páginas publicadas. Los elementos personalizados lo sustituyen por completo en la próxima build."
+
+msgid "Add custom item"
+msgstr "Añadir elemento personalizado"
+
+msgid "Search items"
+msgstr "Buscar elementos"
+
+msgid "No items match the search."
+msgstr "Ningún elemento coincide con la búsqueda."
+
+msgid "Custom items replace the automatic menu on the next build; the list order is the menu order."
+msgstr "Los elementos personalizados sustituyen el menú automático en la próxima build; el orden de la lista es el orden del menú."
+
+msgid "New item"
+msgstr "Nuevo elemento"
+
+msgid "Advanced"
+msgstr "Avanzado"
+
+msgid "Leave empty to derive it from the label; re-using an id updates that item."
+msgstr "Déjelo vacío para derivarlo de la etiqueta; reutilizar un id actualiza ese elemento."
+
+msgid "Remove this item"
+msgstr "Eliminar este elemento"
+
+msgid "Removing the last item returns the menu to automatic derivation."
+msgstr "Eliminar el último elemento devuelve el menú a la derivación automática."
+
+msgid "Select an item to edit, or add a new one."
+msgstr "Seleccione un elemento para editar o añada uno nuevo."
+
+msgid "Move up"
+msgstr "Subir"
+
+msgid "Move down"
+msgstr "Bajar"

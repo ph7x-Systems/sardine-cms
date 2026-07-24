@@ -1788,3 +1788,48 @@ msgstr "Quelle: für dieses Projekt konfiguriert"
 
 msgid "Source: schema default"
 msgstr "Quelle: Schema-Standardwert"
+
+msgid "Add item"
+msgstr "Eintrag hinzufügen"
+
+msgid "No custom items yet"
+msgstr "Noch keine eigenen Einträge"
+
+msgid "The menu derives automatically from content — home anchors, the blog and published pages. Custom items replace it entirely on the next build."
+msgstr "Das Menü leitet sich automatisch aus dem Inhalt ab — Startseiten-Anker, Blog und veröffentlichte Seiten. Eigene Einträge ersetzen es beim nächsten Build vollständig."
+
+msgid "Add custom item"
+msgstr "Eigenen Eintrag hinzufügen"
+
+msgid "Search items"
+msgstr "Einträge durchsuchen"
+
+msgid "No items match the search."
+msgstr "Keine Einträge entsprechen der Suche."
+
+msgid "Custom items replace the automatic menu on the next build; the list order is the menu order."
+msgstr "Eigene Einträge ersetzen beim nächsten Build das automatische Menü; die Listenreihenfolge ist die Menüreihenfolge."
+
+msgid "New item"
+msgstr "Neuer Eintrag"
+
+msgid "Advanced"
+msgstr "Erweitert"
+
+msgid "Leave empty to derive it from the label; re-using an id updates that item."
+msgstr "Leer lassen, um sie aus der Beschriftung abzuleiten; die Wiederverwendung einer Id aktualisiert diesen Eintrag."
+
+msgid "Remove this item"
+msgstr "Diesen Eintrag entfernen"
+
+msgid "Removing the last item returns the menu to automatic derivation."
+msgstr "Wird der letzte Eintrag entfernt, kehrt das Menü zur automatischen Ableitung zurück."
+
+msgid "Select an item to edit, or add a new one."
+msgstr "Wählen Sie einen Eintrag zum Bearbeiten oder legen Sie einen neuen an."
+
+msgid "Move up"
+msgstr "Nach oben"
+
+msgid "Move down"
+msgstr "Nach unten"

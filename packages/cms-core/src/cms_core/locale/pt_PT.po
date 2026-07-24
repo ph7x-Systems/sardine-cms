@@ -1788,3 +1788,48 @@ msgstr "Origem: configurado para este projeto"
 
 msgid "Source: schema default"
 msgstr "Origem: valor por omissão do schema"
+
+msgid "Add item"
+msgstr "Adicionar item"
+
+msgid "No custom items yet"
+msgstr "Ainda não há itens personalizados"
+
+msgid "The menu derives automatically from content — home anchors, the blog and published pages. Custom items replace it entirely on the next build."
+msgstr "O menu deriva automaticamente do conteúdo — âncoras da página inicial, o blogue e as páginas publicadas. Os itens personalizados substituem-no por completo na próxima build."
+
+msgid "Add custom item"
+msgstr "Adicionar item personalizado"
+
+msgid "Search items"
+msgstr "Pesquisar itens"
+
+msgid "No items match the search."
+msgstr "Nenhum item corresponde à pesquisa."
+
+msgid "Custom items replace the automatic menu on the next build; the list order is the menu order."
+msgstr "Os itens personalizados substituem o menu automático na próxima build; a ordem da lista é a ordem do menu."
+
+msgid "New item"
+msgstr "Novo item"
+
+msgid "Advanced"
+msgstr "Avançado"
+
+msgid "Leave empty to derive it from the label; re-using an id updates that item."
+msgstr "Deixe vazio para o derivar da etiqueta; reutilizar um id atualiza esse item."
+
+msgid "Remove this item"
+msgstr "Remover este item"
+
+msgid "Removing the last item returns the menu to automatic derivation."
+msgstr "Remover o último item devolve o menu à derivação automática."
+
+msgid "Select an item to edit, or add a new one."
+msgstr "Selecione um item para editar, ou adicione um novo."
+
+msgid "Move up"
+msgstr "Mover para cima"
+
+msgid "Move down"
+msgstr "Mover para baixo"

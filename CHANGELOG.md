@@ -8,6 +8,19 @@ features with their PRs, breaking changes and migrations — live in
 
 ## Unreleased
 
+### Changed
+
+- The Menu screen is rebuilt as the design system's golden screen
+  (#244, ADR-0055): open it and you see the navigation — master-detail
+  with list-order reordering and scoped search — instead of a form.
+  The editor appears on selection or Add; translations and technical
+  fields (id, position) live behind closed disclosures, so the screen
+  shows the same number of fields with 2 or 30 languages; the id is
+  optional and derives from the label; the empty state explains the
+  automatic menu and carries the add action. A first component
+  vocabulary (`page_header`, `empty_state`, `disclosure`) is born on
+  this screen and will spread from it.
+
 ### Added
 
 - Translation providers (#228): a `TranslationProvider` contract in
