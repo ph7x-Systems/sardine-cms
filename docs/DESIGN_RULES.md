@@ -160,3 +160,14 @@ list, form, languages, reordering, empty state, responsiveness — so
 phase 2 rebuilds it first, and a change to the system is judged by
 whether the menu screen still conforms. When the golden screen
 conforms, most screens align by construction.
+
+**The interaction budget.** Beyond the testable rules, every screen
+carries a budget — the UX counterpart of a performance budget: at
+most **one** primary action, **one** active editor, **one** open
+disclosure (DS-17), **one** decision per step (select, *then* edit —
+never both at once), and **zero** growth of visible elements with
+data size (DS-8, DS-16). Not every line is machine-checkable; the
+budget's job is to reframe review. The question for any panel PR is
+"does this increase the screen's interaction budget?" — and a yes
+requires the author to justify it in the PR, the same way a
+performance regression would.
