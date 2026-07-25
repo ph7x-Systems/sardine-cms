@@ -76,9 +76,24 @@ that links to it cannot.
 
 ## Changing a contract
 
-The version policy — what may change inside a version, what requires a
-new one, and how long a superseded version stays supported — lives in
-the deprecation policy (ADR, in preparation for 1.0). Until it lands,
-the working rule is the one every contract here already follows:
-additive changes inside a version, a new version for anything that
-could make a conforming implementation non-conforming.
+The normative policy is [ADR-0056](adr/0056-deprecation-policy.md). In
+short:
+
+- **Inside a version:** compatible additions, new optional or
+  informative checks, clarifications, extra fixtures for the same
+  invariant, and harness corrections that make a check measure the rule
+  it already published.
+- **A new version:** anything that could make a conforming
+  implementation non-conforming — a newly mandatory field or behavior,
+  changed semantics of an existing obligation, a changed public format,
+  or a check that starts enforcing a different invariant.
+- **Removal:** a deprecated public surface is not removed within the
+  same major version, and a deprecation only exists once it is
+  announced in the surface's own normative specification with a
+  replacement, the version it began in, and the earliest version it may
+  be removed in. The single exception — material security, privacy,
+  data-corruption or unsafe-operation risk — costs an advisory, a
+  documented justification, a migration and explicit release notes.
+
+Each surface records its own deprecations in its specification; this
+page does not track them, and neither restates the policy.
