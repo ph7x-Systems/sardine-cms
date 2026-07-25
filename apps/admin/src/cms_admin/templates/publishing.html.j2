@@ -1,7 +1,10 @@
 {% extends "shell.html.j2" %}
+{% from "_components.html.j2" import page_header, filter_bar, summary_line, pagination with context %}
 {% block title %}{{ _("Publishing") }} — Sardine CMS admin{% endblock %}
-{% block header %}<h1 class="h3 mb-0">{{ _("Publishing") }}</h1>{% endblock %}
+{% block header %}{{ page_header(_("Publishing")) }}{% endblock %}
 {% block content %}
+{# The #250 anatomy: summary first (the state is understood before any
+   table row), findings second (the DataTable contract), run third. #}
 {% if not project %}
 <div class="alert alert-danger admin-alert" role="alert">
   {{ _("No") }} <code>sardine.toml</code> {{ _("found in") }} <code>{{ project_dir }}</code> — {{ _("point") }}
@@ -9,9 +12,68 @@
 </div>
 {% else %}
 <p><strong>{{ project.site.name }}</strong> · {{ project.site.base_url }} ·
-  {{ _("theme") }} <code>{{ project.site.theme }}</code> · {{ _("output") }} <code>{{ project.output }}</code></p>
+  {{ _("theme") }} <code>{{ project.site.theme }}</code></p>
 {% endif %}
+{% set hide_issues = true %}
 {% include "_validation_report.html.j2" %}
+{% if report.issues %}
+<div class="card mb-3" id="findings">
+  <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Findings") }}</h2></div>
+  <div class="card-body pb-0">
+    {% call filter_bar("/publishing") %}
+      <div class="admin-field">
+        <label class="form-label mb-1" for="findings-q">{{ _("Search") }}</label>
+        <input class="form-control form-control-sm admin-input" id="findings-q" type="search"
+               name="q" value="{{ q }}" placeholder="{{ _("Search items") }}">
+      </div>
+      <div class="admin-field">
+        <label class="form-label mb-1" for="findings-severity">{{ _("Severity") }}</label>
+        <select class="form-select form-select-sm admin-input" id="findings-severity" name="severity">
+          <option value="">{{ _("Everything") }}</option>
+          <option value="error" {% if severity == "error" %}selected{% endif %}>{{ _("error") }}</option>
+          <option value="warning" {% if severity == "warning" %}selected{% endif %}>{{ _("warning") }}</option>
+        </select>
+      </div>
+      <div class="admin-field">
+        <label class="form-label mb-1" for="findings-rule">{{ _("Rule") }}</label>
+        <select class="form-select form-select-sm admin-input" id="findings-rule" name="rule">
+          <option value="">{{ _("Everything") }}</option>
+          {% for code in issue_rules %}
+          <option value="{{ code }}" {% if rule == code %}selected{% endif %}>{{ code }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    {% endcall %}
+    {{ summary_line(listing) }}
+  </div>
+  {% if findings %}
+  <div class="card-body p-0 table-responsive admin-table-wrap">
+    <table class="table table-sm mb-0 admin-table admin-issues-table">
+      <thead><tr><th scope="col">{{ _("Severity") }}</th><th scope="col">{{ _("Rule") }}</th><th scope="col">{{ _("Subject") }}</th><th scope="col">{{ _("Message") }}</th></tr></thead>
+      <tbody>
+        {% for issue in findings %}
+        <tr>
+          <td><span class="badge {{ 'text-bg-danger admin-state-missing' if issue.severity.value == 'error' else 'text-bg-warning admin-state-outdated' }} admin-state">{{ _(issue.severity.value) }}</span></td>
+          <td><code>{{ issue.code }}</code></td>
+          <td>
+            {% set link = subject_links.get(issue.subject) %}
+            {% if link %}<a href="{{ link }}">{{ issue.subject }}</a>{% else %}{{ issue.subject }}{% endif %}
+            {% if issue.language %} <span class="text-body-secondary">[{{ issue.language.value }}]</span>{% endif %}
+          </td>
+          <td>{{ _(issue.message) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="card-body pt-0"><p class="admin-empty mb-3">{{ _("Nothing matches the filter.") }}</p></div>
+  {% endif %}
+  {% if listing.pages > 1 %}
+  <div class="card-footer">{{ pagination(listing, "/publishing", {"severity": severity, "rule": rule, "q": q}) }}</div>
+  {% endif %}
+</div>
+{% endif %}
 {% if deploy_state %}
 <div class="card mb-3">
   <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Public site") }}</h2></div>

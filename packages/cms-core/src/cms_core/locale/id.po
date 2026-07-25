@@ -1855,3 +1855,6 @@ msgstr "Konten"
 
 msgid "Trash keeps the entry restorable; nothing publishes from the trash."
 msgstr "Tempat sampah menjaga entri tetap dapat dipulihkan; tidak ada yang diterbitkan dari tempat sampah."
+
+msgid "Findings"
+msgstr "Temuan"

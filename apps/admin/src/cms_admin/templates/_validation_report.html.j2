@@ -36,7 +36,7 @@
     </table>
   </div>
 </div>
-{% if report.issues %}
+{% if report.issues and not (hide_issues | default(false)) %}
 <div class="card mb-3">
   <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Issues") }}</h2></div>
   <div class="card-body p-0 table-responsive admin-table-wrap">
