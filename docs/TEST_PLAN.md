@@ -122,6 +122,10 @@ README promises. Grows one check per new guarded fact.
 | Theme conformance (all shipped themes) | `tests/test_theme_conformance.py` | in force |
 | Accessibility (axe serious/critical, 7 pages) | job `Accessibility (axe)` + `scripts/a11y_check.py` | in force |
 | W3C markup validity (Nu checker, all pages) | same job, `html5validator` | in force |
+| Editorial flow — the landing-page scenario through the real UI | job `Accessibility (axe)`, `scripts/editor_flow_check.py` | in force |
+| Onboarding flow — empty database to published site through the real UI | same job, `scripts/onboarding_flow_check.py` | in force |
+| UI conformance over every registered screen | `tests/test_ui_conformance.py` | in force |
+| No horizontal page scroll at 320 px (real attempted scroll) | same job, `scripts/ui_viewport_check.py` | in force |
 | Coverage floor (fail under threshold) | add with M2, target ≥90% on packages | planned |
 
 ## 3. Policies

@@ -10,6 +10,17 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Added
 
+- Onboarding-flow check (`scripts/onboarding_flow_check.py`) in CI
+  (#128): the browser path from an **empty database** — no project
+  file, no account — through the first-run wizard to a site built and
+  exported from the panel, driven with headless Chromium against the
+  real app. It also asserts what a fixed-database test cannot: an
+  unconfigured instance routes everything to the wizard, the wizard is
+  safe to abandon and resume without keeping partial state, and a
+  configured instance never exposes it again. Mechanical proof that no
+  step of the path is blocked; the "under ten minutes" metric still
+  requires a real tester.
+
 - The UI conformance suite (#244, ADR-0055): the backoffice design
   system becomes an executable contract. Every screen the admin
   registers is rendered and checked in CI — one `h1` carrying only the
