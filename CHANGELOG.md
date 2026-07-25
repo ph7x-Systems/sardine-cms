@@ -8,6 +8,21 @@ features with their PRs, breaking changes and migrations — live in
 
 ## Unreleased
 
+### Added
+
+- The UI conformance suite (#244, ADR-0055): the backoffice design
+  system becomes an executable contract. Every screen the admin
+  registers is rendered and checked in CI — one `h1` carrying only the
+  title, breadcrumbs, empty states that offer the next action, at most
+  one open disclosure, the DataTable order, pagination bounding large
+  collections, and the language-scale invariant (the controls reachable
+  without opening a disclosure are the same with 2 languages and with
+  30). A viewport gate drives Chromium at 320 px and asserts the page
+  cannot be scrolled sideways — measured as an attempted scroll, not a
+  derived width. Each check is proved to catch its own defect, and
+  UI_CONFORMANCE.md records which rules stay documented audits rather
+  than becoming fragile heuristics.
+
 ### Changed
 
 - The publishing screen is rebuilt task-first (#244, #250, ADR-0055):
