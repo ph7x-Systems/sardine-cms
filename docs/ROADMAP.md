@@ -10,6 +10,31 @@ the [issue tracker](https://github.com/ph7x-Systems/sardine-cms/issues)
 Operations: [DEPLOYMENT.md](DEPLOYMENT.md). Live demo:
 <https://sardine.ph7x.com>.
 
+## Direction v1 — frozen (#256)
+
+The order below is settled. It exists so implementation never pauses to
+re-argue direction; the rest of this page is the capability inventory
+behind it.
+
+**Where we are.** The product architecture is stable (themes,
+extensions and translation providers are versioned contracts with
+executable conformance suites), and the interface architecture is
+stable too: Design System v1 is frozen (ADR-0055, DS-1…DS-19) and every
+screen of the backoffice audit has adopted it.
+
+| # | Next | Depends on |
+| --- | --- | --- |
+| 1 | **UI conformance suite** — DS-1…DS-19 as CI checks over every registered screen, with the 30-language and large-collection fixtures | the adoptions, now complete |
+| 2 | **1.0** — deprecation policy, two production deployments beyond ph7x.com, every conformance suite documented as a public contract | 1 |
+| 3 | **Privacy and consent architecture** ([#232](https://github.com/ph7x-Systems/sardine-cms/issues/232)) | 2 |
+
+**Changing the order.** The roadmap does not change during a sprint.
+Reordering is discussed between sprints and enters by documentation
+issue — the same discipline the design system uses. The single
+criterion: a dependency proved wrong, or launch feedback showed a
+queued item matters more than a scheduled one. "It would be nice
+first" is not a criterion.
+
 ## Vision
 
 A static-first, multilingual CMS with the capability set editors expect
