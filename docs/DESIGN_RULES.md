@@ -227,7 +227,7 @@ rule themes live under (§1).
 
 ### Lifecycle — v1 is frozen
 
-This section, the rule set (DS-1…DS-18), the component inventory and
+This section, the rule set (DS-1…DS-19), the component inventory and
 the anatomies together are **Design System v1**, frozen as of
 ADR-0055. From here, any change — a new component, a new anatomy, a
 rule change, a variant of an existing pattern — happens through an
@@ -235,3 +235,20 @@ ADR or a design-system evolution issue, never inside a feature PR.
 Contributors build against a stable specification, exactly as they do
 against theme and translation-provider conformance; review cites DS
 numbers, not taste.
+
+**The vocabulary stays frozen until a real case proves it
+insufficient** (#256). A component is never added because a screen
+would look better with it; a screen composes what exists. Admission
+requires all three:
+
+1. **The problem recurs** — it appears on several screens, not one.
+2. **No existing component solves it** without abuse (stretching a
+   macro past what its name means counts as abuse, and is itself a
+   reason to stop and open the issue).
+3. **It goes through the process** — issue → ADR or Design Rules →
+   implementation, in that order.
+
+A screen that cannot be built from the vocabulary is evidence worth
+writing down; it is not a licence to invent a component inside a
+feature PR. This is what keeps the conformance suite aimed at a target
+that stops moving.
