@@ -89,3 +89,36 @@ The roadmap had accumulated execution history and stopped being a map
 (#155). The split: ROADMAP (product map), RELEASE_NOTES (features,
 PRs, migrations), CHANGELOG (per-version changes), PRODUCT_HISTORY
 (this file), DEPLOYMENT (operations), wiki by domain.
+
+## The interface joins the contracts (2026-07-24/25)
+
+Themes and providers were already versioned contracts with executable
+conformance; the panel's own interface was not. An audit of every
+registered screen found the drift was structural, not aesthetic — the
+primary action sat in three different places, no list owned a search,
+entity titles carried their status inside the `h1`, and one screen
+rendered a field per language, which meant a field per language
+forever.
+
+The answer followed the shape the project already trusted: a decision
+(ADR-0055), objective rules (DS-1…DS-19), one reference screen proving
+the model, adoption screen by screen, and finally conformance in CI.
+Two things made it hold. First, the vocabulary was **born on real
+screens** instead of designed in the abstract — each component exists
+because a screen needed it. Second, the system was **frozen with a
+stated way to unfreeze it**: evolutions arrive as issues, never inside
+feature pull requests, so contributors build against a specification
+that stops moving.
+
+Two measurement lessons are worth keeping. An early audit reported
+horizontal overflow that did not exist — it compared `scrollWidth`
+against the viewport, which inflates for content correctly clipped
+inside a scrolling container; the gate now performs a real attempted
+scroll. And the language rule is about **N**, not about a number: the
+test fixture is large so growth cannot hide, but a project with twelve
+languages and one with fifty are held to the same invariant.
+
+When the suite first ran correctly, no screen failed. It did not tidy
+the house; it found it tidy and now keeps it that way — which is what
+a conformance suite is for. From here the design system is
+infrastructure, not an epic.
