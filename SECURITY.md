@@ -2,13 +2,19 @@
 
 ## Supported versions
 
-| Version | Supported |
-| --- | --- |
-| 0.7.x | Yes — fixes land here |
-| < 0.7 | No — upgrade; releases are lockstep and migrations are additive |
+Security fixes land on the latest supported release line. The lines
+below are the supported ones and are reviewed with every release.
 
-The six packages release together; a security fix produces a new
-lockstep release rather than patches to older lines.
+| Line | Supported |
+| --- | --- |
+| 0.8.x | Yes — the current line; fixes land here |
+| < 0.8 | No — upgrade; releases are lockstep and migrations are additive |
+
+The six packages release together, so a security fix produces a new
+lockstep release rather than patches to older lines. From 1.0 the
+removal side of this is governed by the deprecation policy
+([ADR-0056](docs/adr/0056-deprecation-policy.md)), whose security
+exception is the only path to an early breaking change.
 
 ## Reporting a vulnerability
 
