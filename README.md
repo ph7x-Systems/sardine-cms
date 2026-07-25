@@ -116,12 +116,15 @@ tests/                          # unit and integration tests
 Developed in the open and released on PyPI (see the version badge above for
 the current release). Milestones 5, 6 and 7 (editorial completeness,
 extensibility, operations — email, two-factor authentication, webhooks,
-diagnostics) are closed; current work makes the ecosystem certifiable:
-themes, extensions and providers as versioned contracts with executable
-conformance suites. The content core, validator, deterministic builder,
-theme system, `cms` CLI and full browser editorial cycle are implemented
-and tested — the live demo is built with them on every merge. No secrets,
-personal data or client content live in this repository.
+diagnostics) are closed, and the ecosystem is certifiable: themes,
+providers and the panel's own interface are versioned contracts with
+executable conformance suites ([public contracts](docs/PUBLIC_CONTRACTS.md)).
+Current work is 1.0 readiness — a declaration of stability over what
+already ships, not a feature push. The content core, validator,
+deterministic builder, theme system, `cms` CLI and full browser
+editorial cycle are implemented and tested — the live demo is built with
+them on every merge. No secrets, personal data or client content live in
+this repository.
 
 ## Install
 
@@ -164,7 +167,10 @@ pytest                                       # tests
 CI (GitHub Actions) runs the same checks plus dependency/static security
 analysis, a docs link check, a full-history secret scan, accessibility and
 markup checks, backend conformance and an end-to-end example build on every
-push and pull request.
+push and pull request — eleven required checks in all. The panel's own
+interface is checked too: the UI conformance suite runs with the tests
+and a viewport gate runs with the accessibility job
+([UI_CONFORMANCE.md](docs/UI_CONFORMANCE.md)).
 
 ## Quickstart
 
@@ -203,6 +209,10 @@ database persist in named volumes (`sardine-site`, `sardine-data`).
 - [Architecture](docs/ARCHITECTURE.md), [design rules](docs/DESIGN_RULES.md),
   [theme guide](docs/THEME_GUIDE.md), [components](docs/COMPONENTS.md) and
   [ecosystem](docs/ECOSYSTEM.md) — contracts for contributors and extensions.
+- [Public contracts](docs/PUBLIC_CONTRACTS.md) — the map of every
+  public surface: what it is, where its specification lives, how it is
+  versioned and how conformance is verified; removal is governed by the
+  [deprecation policy](docs/adr/0056-deprecation-policy.md).
 - [Contributing](CONTRIBUTING.md) — workflow, rules and how to send your
   first pull request; [language pack guide](docs/LANGUAGE_PACK_GUIDE.md)
   for adding a language.

@@ -108,9 +108,9 @@ scans full history for secrets on every push, and fork pull requests
 receive no repository secrets at all — their service containers run on
 throwaway values.
 
-## Architecture security model — themes, extensions and providers (0.7.x)
+## Architecture security model — themes, extensions and providers
 
-The 0.7 line consolidated a model worth stating as policy
+Consolidated in the 0.7 line and standing policy since
 (ADR-0048–0051):
 
 - **Discovery never executes code.** Themes and extensions are listed
