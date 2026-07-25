@@ -5,6 +5,11 @@ contracts. This page is the community handbook: how to build something
 shareable, license it, name it, and get it listed. Policy rationale lives in
 [ADR-0011](adr/0011-community-ecosystem-policy.md).
 
+The canonical index of every public surface — what each one is, where
+its normative specification lives, how it is versioned and how it is
+verified — is [PUBLIC_CONTRACTS.md](PUBLIC_CONTRACTS.md). This page
+describes the ecosystem; that one is the map.
+
 ## What can be shared
 
 | Kind | Contract | Conformance gate |
