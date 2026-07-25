@@ -24,9 +24,59 @@ screen of the backoffice audit has adopted it.
 
 | # | Next | Depends on |
 | --- | --- | --- |
-| 1 | **UI conformance suite** — DS-1…DS-19 as CI checks over every registered screen, with the language-scale and large-collection fixtures | the adoptions, now complete |
-| 2 | **1.0** — deprecation policy, two production deployments beyond ph7x.com, every conformance suite documented as a public contract | 1 |
-| 3 | **Privacy and consent architecture** ([#232](https://github.com/ph7x-Systems/sardine-cms/issues/232)) | 2 |
+| 1 | **1.0 readiness** ([#261](https://github.com/ph7x-Systems/sardine-cms/issues/261)) — the scope below, the public contracts stated, the deprecation policy, the exit criteria | the UI conformance suite, now shipped |
+| 2 | **Privacy and consent architecture** ([#232](https://github.com/ph7x-Systems/sardine-cms/issues/232)) | 1 |
+
+### The 1.0 scope — frozen (#261)
+
+**1.0 is a declaration of stability, not a feature release.** Everything
+it covers already ships today; the version states that these surfaces
+can be built against.
+
+**In 1.0:** the content core and translation model; the deterministic
+builder, themes and deployment targets; the `cms` command line; the
+browser admin, including the design system and its conformance; the
+four storage engines; the extension contract and the provider families
+it carries (deployment, forms, comments, translation); WXR migration;
+and the operational set — email, two-factor authentication, webhooks
+and diagnostics.
+
+**Deferred to 1.1+:** the privacy and consent architecture (#232), the
+panel on Windows (#194), and any capability this page marks as needing
+an ADR first. A capability request arriving during the freeze goes to
+1.1+ by default; moving it needs the reordering rule above.
+
+**What stability means — and what it does not.** The 1.0 promise
+applies to **the documented public surfaces**: the published contracts,
+the CLI, the configuration file, the content formats, the HTTP surface
+the panel exposes and the behaviors the guides describe. It does not
+freeze every module, symbol or implementation detail that happens to
+exist in the repository. Including a capability in 1.0 does not make
+its internals public API — the supported surface is the one the
+documentation and the published contracts identify, and the first
+post-1.0 refactor is entitled to change everything else.
+
+Two kinds of published artifact carry versions, and they are not the
+same thing:
+
+- **Integration contracts** — implemented by third parties: the
+  translation-provider contract, forms providers and deployment
+  providers. Their version is a promise to implementers.
+- **Conformance suites** — executable definitions of what conforming
+  looks like: theme conformance, translation conformance, and the UI
+  conformance suite for the panel itself. A suite's version tracks the
+  rules it verifies.
+
+The UI conformance suite is public as an **architecture and
+contribution contract** for the panel — it is not an external
+integration promise like the translation contract, and it is not
+presented as one.
+
+**Comments providers** are in the 1.0 functional scope but are *not*
+one of the formalized versioned contracts: `CommentsProvider` is a data
+shape (a vendored island script plus a thread-URL function, ADR-0031)
+selected by name, with no contract version validated at selection.
+Giving it one is a 1.1+ decision with its own ADR, not a symmetry fix.
 
 **Changing the order.** The roadmap does not change during a sprint.
 Reordering is discussed between sprints and enters by documentation
