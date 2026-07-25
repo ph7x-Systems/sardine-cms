@@ -346,3 +346,26 @@ def test_design_preview_frames_the_entry_after_a_preview_build(tmp_path: Path) -
         client.post("/publishing/preview", data={"csrf_token": csrf})
         after = client.get("/articles/live").text
         assert '<iframe class="admin-design-preview" src="/preview/blog/live/"' in after
+
+
+def test_publishing_findings_follow_the_datatable_contract(tmp_path: Path) -> None:
+    """#250: findings render filtered and paginated — summary line,
+    severity/rule filters, scoped search — never the full flat list;
+    the header area carries no filesystem path (DS-13)."""
+    # An entry in review with no translations produces warnings.
+    app = _app(tmp_path, _article("half-done", ContentStatus.REVIEW))
+    with TestClient(app, base_url="https://testserver") as client:
+        _sign_in(client)
+        page = client.get("/publishing").text
+        assert "Findings" in page
+        assert 'name="severity"' in page
+        assert 'name="rule"' in page
+        assert "Showing" in page
+        # DS-13: the identity line names the site, never the output path.
+        head = page.split("Findings")[0]
+        assert "_site" not in head
+
+        # Filters narrow server-side and survive in the form.
+        warnings_only = client.get("/publishing?severity=error").text
+        empty = "Showing 0–0 of 0"  # noqa: RUF001
+        assert empty in warnings_only or "Nothing matches the filter." in warnings_only

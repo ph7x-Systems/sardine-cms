@@ -1857,3 +1857,6 @@ msgstr "Contenuto"
 
 msgid "Trash keeps the entry restorable; nothing publishes from the trash."
 msgstr "Il cestino mantiene la voce ripristinabile; nulla viene pubblicato dal cestino."
+
+msgid "Findings"
+msgstr "Rilievi"

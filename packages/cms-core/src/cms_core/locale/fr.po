@@ -1857,3 +1857,6 @@ msgstr "Contenu"
 
 msgid "Trash keeps the entry restorable; nothing publishes from the trash."
 msgstr "La corbeille garde l'entrée restaurable ; rien n'est publié depuis la corbeille."
+
+msgid "Findings"
+msgstr "Constats"
