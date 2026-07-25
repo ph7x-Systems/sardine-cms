@@ -86,7 +86,9 @@ title, breadcrumbs where applicable, primary-action placement,
 scoped search on collections, consistent empty states and pagination,
 keyboard operability, no horizontal overflow at 320 px, correct
 rendering in both color schemes, and no degradation with the
-30-language fixture. The interface becomes an executable contract.
+language-scale fixture — the rule is independence from the language
+count, not a particular number. The interface becomes an executable
+contract.
 
 ### No behavior changes in structural phases
 

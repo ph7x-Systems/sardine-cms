@@ -24,7 +24,7 @@ screen of the backoffice audit has adopted it.
 
 | # | Next | Depends on |
 | --- | --- | --- |
-| 1 | **UI conformance suite** — DS-1…DS-19 as CI checks over every registered screen, with the 30-language and large-collection fixtures | the adoptions, now complete |
+| 1 | **UI conformance suite** — DS-1…DS-19 as CI checks over every registered screen, with the language-scale and large-collection fixtures | the adoptions, now complete |
 | 2 | **1.0** — deprecation policy, two production deployments beyond ph7x.com, every conformance suite documented as a public contract | 1 |
 | 3 | **Privacy and consent architecture** ([#232](https://github.com/ph7x-Systems/sardine-cms/issues/232)) | 2 |
 

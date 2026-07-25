@@ -175,16 +175,26 @@ def test_large_collections_paginate(tmp_path: Path, path: str) -> None:
 
 def test_screens_do_not_grow_with_the_language_count(tmp_path: Path) -> None:
     """DS-8, measured the way the rule states it: the number of controls
-    a user can reach without opening a disclosure is the same with two
-    languages and with thirty."""
+    a user can reach without opening a disclosure does not grow with the
+    project's language count.
+
+    The fixture below registers a large language set because a large set
+    makes any per-language growth visible — its size is this test's
+    business, not a threshold of the rule. A screen that passes here
+    behaves the same with twelve languages or fifty.
+    """
     from cms_core.language_packs import LanguagePack, register_language_pack
 
+    # Any set large enough that per-language growth could not hide.
+    # Raise it freely: the rule is N-independence, so a bigger fixture
+    # only makes the same proof stronger.
+    extra_packs = 24
+
     many = ["pt-pt", "es", "fr", "de", "it", "id"]
-    for number in range(24):
+    for number in range(extra_packs):
         tag = f"zz-{number:02d}"
         register_language_pack(LanguagePack(tag=tag, native_name=f"Fixture {number:02d}"))
         many.append(tag)
-    assert len(many) == 30
 
     def controls(languages: list[str], directory: Path, path: str) -> int:
         toml = PROJECT_TOML.replace(
@@ -197,7 +207,10 @@ def test_screens_do_not_grow_with_the_language_count(tmp_path: Path) -> None:
     for path in ("/menu?item=home", "/menu?new=1"):
         few = controls(["pt-pt"], tmp_path / "few", path)
         lots = controls(many, tmp_path / "many", path)
-        assert lots == few, f"{path}: {few} controls with 2 languages, {lots} with 30"
+        assert lots == few, (
+            f"{path}: {few} controls with {len(['pt-pt']) + 1} language(s), "
+            f"{lots} with {len(many) + 1} — the screen grows with the language count"
+        )
 
 
 # --- The suite has teeth: each rule catches its own defect ------------
