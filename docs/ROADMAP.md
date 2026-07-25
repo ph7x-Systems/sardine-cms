@@ -56,8 +56,9 @@ its internals public API — the supported surface is the one the
 documentation and the published contracts identify, and the first
 post-1.0 refactor is entitled to change everything else.
 
-Two kinds of published artifact carry versions, and they are not the
-same thing:
+The canonical index of these surfaces is
+[PUBLIC_CONTRACTS.md](PUBLIC_CONTRACTS.md). Two kinds of published
+artifact carry versions, and they are not the same thing:
 
 - **Integration contracts** — implemented by third parties: the
   translation-provider contract, forms providers and deployment
