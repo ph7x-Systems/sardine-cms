@@ -1,6 +1,7 @@
 {% extends "shell.html.j2" %}
+{% from "_components.html.j2" import page_header with context %}
 {% block title %}{{ _("Themes") }} — Sardine CMS admin{% endblock %}
-{% block header %}<h1 class="h3 mb-0">{{ _("Themes") }}</h1>{% endblock %}
+{% block header %}{{ page_header(_("Themes")) }}{% endblock %}
 {% block content %}
 
 {% if activated %}
@@ -35,6 +36,8 @@
           {% if theme.screenshot %}
           <img src="/themes/screenshot/{{ theme.name }}{{ theme.screenshot.suffix }}" class="card-img-top admin-theme-shot" width="1280" height="800"
                alt="{{ _("Screenshot of the %(name)s theme") | format(name=theme.name) }}">
+          {% else %}
+          <div class="card-img-top admin-theme-shot admin-theme-shot-placeholder" aria-hidden="true"><i class="bi bi-palette"></i></div>
           {% endif %}
           <div class="card-body">
             <h3 class="h6 mb-1">{{ theme.name }}

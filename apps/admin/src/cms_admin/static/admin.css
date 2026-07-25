@@ -118,3 +118,14 @@
 .admin-calendar-chip a { text-decoration: none; }
 
 .admin-theme-shot { height: auto; }
+
+/* Design system (ADR-0055): themes without a bundled screenshot keep
+   the card grid symmetric — same slot, neutral placeholder. */
+.admin-theme-shot-placeholder {
+  aspect-ratio: 1280 / 800;
+  display: grid;
+  place-items: center;
+  background: var(--bs-tertiary-bg);
+  color: var(--bs-secondary-color);
+  font-size: 2.5rem;
+}

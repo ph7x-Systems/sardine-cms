@@ -197,7 +197,8 @@ design-system evolution issue.
 | FilterBar | `filter_bar` macro (one GET toolbar per list) |
 | DangerZone | `danger_zone` macro (bordered, last — DS-9/DS-11) |
 | DataTable | `summary_line` + `pagination` macros around the responsive table; internal order fixed (#250): summary line → filters → search → table → pagination (DS-19) — never a differently-shaped table per screen |
-| FormSection, StatusBadge | defined by v1, extracted as each remaining screen adopts the system (today: open-coded cards and the `status_tag`/`state_badge` partials; extraction changes markup, never behavior) |
+| FormSection | `form_section` macro (one card per form area) |
+| StatusBadge | the `status_tag`/`state_badge` partials (`_fields.html.j2`) — fixed palette, text plus `title`, defined once (DS-12) |
 | Modal, Drawer, Toast | **reserved** — they imply client-side behavior in a JS-minimal panel; introducing any of them requires its own ADR |
 
 ### Page anatomies (v1)

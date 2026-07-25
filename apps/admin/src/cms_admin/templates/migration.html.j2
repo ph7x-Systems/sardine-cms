@@ -1,6 +1,7 @@
 {% extends "shell.html.j2" %}
+{% from "_components.html.j2" import page_header with context %}
 {% block title %}{{ _("Migration") }} — Sardine CMS admin{% endblock %}
-{% block header %}<h1 class="h3 mb-0">{{ _("Migration") }}</h1>{% endblock %}
+{% block header %}{{ page_header(_("Migration")) }}{% endblock %}
 {% block content %}
 
 {% if stage == "upload" %}
