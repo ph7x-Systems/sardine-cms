@@ -241,6 +241,12 @@ jobs:
             /admin/articles/we-choose-the-tin/ \
             /admin/articles/we-choose-the-tin/translations/pt-pt/ \
             /admin/pages/home/ /admin/media/ /admin/publishing/
+      - name: Run the viewport gate over the admin (DS-6, real scroll)
+        run: |
+          python scripts/ui_viewport_check.py demo-admin \
+            /admin/ /admin/articles/ /admin/pages/ /admin/media/ \
+            /admin/publishing/ /admin/menu/ /admin/themes/ \
+            /admin/articles/we-choose-the-tin/
       - name: W3C markup validation (Nu checker)
         run: |
           python -m pip install html5validator

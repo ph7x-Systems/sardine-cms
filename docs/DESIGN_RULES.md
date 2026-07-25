@@ -92,8 +92,9 @@ the menu screen manages the menu; the publishing screen communicates
 publication state. Configure, analyze, execute and review-history
 never share a viewport. These rules are objective on purpose — any
 pull request must be able to answer "is this screen conformant?"
-without a design review. The epic's final phase turns them into a CI
-conformance suite over every registered screen.
+without a design review. The measurable ones **run in CI over every
+registered screen** — see [UI_CONFORMANCE.md](UI_CONFORMANCE.md), which
+also records which rules stay documented audits and why.
 
 - **DS-1** Exactly one `<h1>` per screen, containing only the screen
   or entity title. Status badges and metadata render *beside* the h1,
