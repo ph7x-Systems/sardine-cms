@@ -80,8 +80,12 @@ lists, forms, editors, switchers — must therefore scale by
 language being edited. No screen renders an unbounded run of
 per-language controls; content lists keep constant-width aggregate
 coverage, and editing surfaces open one language at a time past a
-small threshold. A 30-language fixture in the test suite enforces
-this for every future screen (#241).
+small threshold. The rule is about **N**, not about a number: a
+screen must behave identically whatever the project's language count
+is. The test suite proves it with a fixture carrying a language set
+large enough that any growth would show — the size is an
+implementation detail of the fixture, never a threshold of the rule
+(#241).
 
 ## Backoffice design system (ADR-0055)
 
@@ -152,7 +156,7 @@ also records which rules stay documented audits and why.
   hundreds of rows is non-conforming.
 
 These rules are executable on purpose: DS-8 compares the visible
-control count between the 2-language and 30-language fixtures; DS-16
+control count between a small and a large language set; DS-16
 compares it between small and large collections; DS-17 counts open
 disclosures at load; DS-19 compares rendered row count against the
 page size on a large fixture. A screen fails the suite, not a design

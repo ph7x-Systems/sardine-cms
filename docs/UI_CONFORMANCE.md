@@ -30,7 +30,7 @@ screen joins the suite the moment it registers.
 | DS-17 | `at-most-one-open-disclosure` | At most one `<details open>` at load |
 | DS-4, #250 | `datatable-order` | Where a summary line exists, a table follows it, and any filter bar for that table precedes it |
 | DS-19 | `check_pagination_bounds_large_collections` | With a collection larger than the page size: no more than one page of rows renders, and a full page carries a pagination control |
-| DS-8 | `test_screens_do_not_grow_with_the_language_count` | The number of controls reachable **without opening a disclosure** is identical with 2 languages and with 30 (a 30-language fixture registers 24 extra packs) |
+| DS-8 | `test_screens_do_not_grow_with_the_language_count` | The number of controls reachable **without opening a disclosure** is identical for a small and a large language set — the fixture registers enough extra packs that any per-language growth would show |
 | DS-6 | `scripts/ui_viewport_check.py` | The browser scrolls the document right; `window.scrollX` must stay 0 |
 | DS-14 | axe gate, `--scheme both` | Every audited screen passes serious/critical checks in both palettes |
 
@@ -50,7 +50,14 @@ scroll — not a derived width.
 DS-8 is measured the same way, for the same reason: controls behind a
 closed disclosure exist in the DOM but are not reachable, so the count
 that matters excludes them. This is what makes "the screen shows the
-same number of fields with 2 or 30 languages" a testable sentence.
+same number of fields whatever the language count" a testable
+sentence.
+
+The rule is about **N**, not about a number. The fixture uses a large
+set because a large set makes growth visible; the size is the
+fixture's business, never a threshold anyone should code against. A
+project with twelve languages and one with fifty are held to the same
+invariant.
 
 ## Documented audits (deliberately not automated)
 
