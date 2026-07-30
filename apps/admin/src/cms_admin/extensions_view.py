@@ -30,6 +30,7 @@ from cms_admin.audit import record as audit_record
 from cms_admin.auth import current_session, enforce_csrf
 from cms_admin.navigation import AdminScreen, register_screen
 from cms_admin.publishing import _project, _site_content
+from cms_admin.tomlwrite import toml_string
 
 router = APIRouter()
 
@@ -251,8 +252,7 @@ def _write_extension_settings(
         elif isinstance(value, int):
             rendered.append(f"{key} = {value}")
         else:
-            escaped = str(value).replace("\\", "\\\\").replace('"', '\\"')
-            rendered.append(f'{key} = "{escaped}"')
+            rendered.append(f"{key} = {toml_string(value)}")
     kept.extend(rendered)
     project_file.write_text("\n".join(kept) + "\n", encoding="utf-8")
 

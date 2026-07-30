@@ -27,6 +27,7 @@ from pydantic import ValidationError
 from cms_admin.auth import get_db, login_csrf_cookie_name, session_cookie_name
 from cms_admin.i18n import translate
 from cms_admin.security import hash_password, new_token, token_digest
+from cms_admin.tomlwrite import toml_string
 
 router = APIRouter()
 
@@ -173,16 +174,19 @@ async def setup_submit(request: Request) -> object:
             for tag in languages
             if tag in {t for t, _n in _language_choices()} and tag != source_language
         ]
-        listed = ", ".join(f'"{tag}"' for tag in chosen)
+        listed = ", ".join(toml_string(tag) for tag in chosen)
+        # Every value is escaped: a site name may contain a quote, and on
+        # Windows the storage URL contains backslashes that TOML would
+        # read as escapes (tomlwrite).
         _project_file(request).write_text(
             "[site]\n"
-            f'name = "{site_name}"\n'
-            f'base_url = "{base_url}"\n'
-            f'source_language = "{source_language}"\n'
+            f"name = {toml_string(site_name)}\n"
+            f"base_url = {toml_string(base_url)}\n"
+            f"source_language = {toml_string(source_language)}\n"
             f"languages = [{listed}]\n"
-            f'theme = "{theme}"\n'
+            f"theme = {toml_string(theme)}\n"
             "\n[storage]\n"
-            f'url = "{request.app.state.settings.storage_url}"\n',
+            f"url = {toml_string(request.app.state.settings.storage_url)}\n",
             encoding="utf-8",
         )
 

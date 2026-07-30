@@ -352,11 +352,22 @@ class FilesystemDeployer:
     # --- pieces ----------------------------------------------------------
 
     def _activate(self, site_dir: Path) -> None:
-        """Atomic: build the symlink aside, then rename over ``current``."""
+        """Build the pointer aside, then move it over ``current``.
+
+        The rename is atomic on POSIX. Windows refuses to rename onto an
+        existing directory link (``WinError 5``), so there the old
+        pointer is removed first — a sub-millisecond window between two
+        local filesystem calls, serialised by the deployment lock, and
+        the release directories themselves are never touched.
+        """
         staging = self.root / ".current.staging"
         staging.unlink(missing_ok=True)
-        staging.symlink_to(site_dir)
-        os.replace(staging, self._current)
+        staging.symlink_to(site_dir, target_is_directory=True)
+        try:
+            os.replace(staging, self._current)
+        except OSError:
+            self._current.unlink(missing_ok=True)
+            os.replace(staging, self._current)
 
     def _healthy(self) -> bool:
         marker = self._current / "sitemap.xml"

@@ -10,6 +10,17 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Fixed
 
+- The project file the first-run wizard writes is parseable on Windows.
+  Values were embedded unescaped, so a Windows storage path — with its
+  backslashes, which TOML reads as escape sequences — produced a
+  `sardine.toml` that could no longer be read; a site name containing a
+  quotation mark broke it on every platform. Both writers now share one
+  escaping helper.
+- Deployment activation works on Windows. Activating a release renames
+  the pointer over `current`, which Windows refuses when the name
+  already exists (`WinError 5`); the old pointer is now removed first
+  there, inside the deployment lock, leaving the release directories
+  untouched.
 - A configured **absolute** SQLite path is honoured as written. The
   project loader stripped every leading slash before deciding whether a
   path was absolute, so `sqlite:////var/lib/site/content.db` resolved
