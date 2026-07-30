@@ -1,0 +1,37 @@
+{# The shell every page shares: language and direction from the head
+   contract, one local stylesheet, semantic landmarks. `dir="rtl"` comes
+   from the active language pack — a theme that hardcodes direction
+   breaks every right-to-left site. #}
+<!DOCTYPE html>
+<html lang="{{ head.language.value }}"{% if head.direction == "rtl" %} dir="rtl"{% endif %}>
+<head>
+{% include "_head.html.j2" %}
+<link rel="stylesheet" href="{{ asset_urls['assets/site.css'] }}">
+</head>
+<body>
+<header>
+  <nav aria-label="Main">
+    <a href="{{ nav.home_url }}">{{ head.site_name }}</a>
+    <ul>
+      {% for entry in nav.menu %}<li><a href="{{ entry.url }}">{{ entry.label }}</a></li>{% endfor %}
+    </ul>
+    {# Never hardcode a language list: the builder knows which ones this
+       page exists in, and which one is current. #}
+    <ul>
+      {% for entry in nav.languages %}
+      <li><a href="{{ entry.url }}"{% if entry.current %} aria-current="true"{% endif %}>{{ entry.code }}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+</header>
+<main>
+{% block main %}{% endblock %}
+</main>
+<footer>
+  <ul>
+    {% for entry in footer.menu %}<li><a href="{{ entry.url }}">{{ entry.label }}</a></li>{% endfor %}
+  </ul>
+  <p>{{ footer.text }}</p>
+</footer>
+</body>
+</html>

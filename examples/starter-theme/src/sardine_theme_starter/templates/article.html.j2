@@ -1,0 +1,22 @@
+{% extends "base.html.j2" %}
+{% block main %}
+<article>
+  <h1>{{ article.title }}</h1>
+  <p>
+    {# Dates arrive both ways: ISO for machines, localised for readers.
+       A theme never formats a date itself. #}
+    <time datetime="{{ article.date_iso }}">{{ article.date_human }}</time>
+    {% if article.minutes %}· {{ article.minutes }}{% endif %}
+    {% if article.author %}· {{ article.author }}{% endif %}
+    {% if article.category %}· <a href="{{ article.category.url }}">{{ article.category.label }}</a>{% endif %}
+  </p>
+  {% if article.summary %}<p>{{ article.summary }}</p>{% endif %}
+  <div class="prose">{{ article.body_html }}</div>
+  {% if article.tags %}
+  <ul>
+    {% for tag in article.tags %}<li><a href="{{ tag.url }}">{{ tag.label }}</a></li>{% endfor %}
+  </ul>
+  {% endif %}
+  {% if comments %}<div>{{ comments }}</div>{% endif %}
+</article>
+{% endblock %}
