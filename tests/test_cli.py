@@ -111,7 +111,7 @@ def test_sqlite_backend_runs_in_wal_mode(tmp_path: Path) -> None:
 
     from cms_core.storage import create_storage
 
-    backend = create_storage(f"sqlite:///{tmp_path / 'cms.sqlite3'}")
+    backend = create_storage(f"sqlite:///{(tmp_path / 'cms.sqlite3').as_posix()}")
     backend.close()
     connection = sqlite3.connect(tmp_path / "cms.sqlite3")
     assert connection.execute("PRAGMA journal_mode").fetchone()[0] == "wal"
@@ -637,24 +637,25 @@ def test_absolute_sqlite_paths_are_honoured_as_written(tmp_path: Path) -> None:
     elsewhere = tmp_path / "elsewhere"
     elsewhere.mkdir()
     target = elsewhere / "content.db"
+    configured = target.as_posix()  # TOML-safe on every platform
     (tmp_path / "sardine.toml").write_text(
         '[site]\nname = "Aurora"\nbase_url = "https://example.com"\nlanguages = []\n'
-        f'\n[storage]\nurl = "sqlite:///{target}"\n',
+        f'\n[storage]\nurl = "sqlite:///{configured}"\n',
         encoding="utf-8",
     )
     project = load_project(tmp_path)
-    assert project.storage_url == f"sqlite:///{target}"
+    assert project.storage_url == f"sqlite:///{configured}"
 
     # And the round trip actually opens that file, not a nested copy.
     with project.open_storage():
         pass
     assert target.is_file()
-    assert not (tmp_path / str(target).lstrip("/")).exists()
+    assert not (tmp_path / configured.lstrip("/")).exists()
 
 
 def test_relative_and_memory_storage_urls_keep_working(tmp_path: Path) -> None:
     for url, expected in (
-        ("sqlite:///content.sqlite3", f"sqlite:///{tmp_path / 'content.sqlite3'}"),
+        ("sqlite:///content.sqlite3", f"sqlite:///{(tmp_path / 'content.sqlite3').as_posix()}"),
         ("sqlite:///:memory:", "sqlite:///:memory:"),
     ):
         (tmp_path / "sardine.toml").write_text(

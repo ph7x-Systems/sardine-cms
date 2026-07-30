@@ -204,11 +204,11 @@ def seed(storage: StorageBackend, project_dir: Path | None = None) -> tuple[int,
             cover_target = project_dir / "media" / "images" / f"{cover_id}.svg"
             cover_target.parent.mkdir(parents=True, exist_ok=True)
             if not cover_target.exists():
-                cover_target.write_text(svg, encoding="utf-8")
+                cover_target.write_text(svg, encoding="utf-8", newline="\n")
     if project_dir is not None:
         target = project_dir / "media" / "images" / "rocket.svg"
         target.parent.mkdir(parents=True, exist_ok=True)
         if not target.exists():
-            target.write_text(ROCKET_SVG, encoding="utf-8")
+            target.write_text(ROCKET_SVG, encoding="utf-8", newline="\n")
 
     return 2, len(ARTICLES) + 1, 2 + len(COVER_SVGS)

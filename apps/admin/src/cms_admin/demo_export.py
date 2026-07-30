@@ -138,7 +138,7 @@ def export_demo(
                     continue
                 target = out_dir / path.lstrip("/") / "index.html"
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(neutralize(response.text), encoding="utf-8")
+                target.write_text(neutralize(response.text), encoding="utf-8", newline="\n")
                 pages += 1
     static_src = Path(__file__).parent / "static"
     shutil.copytree(static_src, out_dir / "static", dirs_exist_ok=True)

@@ -99,13 +99,13 @@ def _app(tmp_path: Path, endpoint: str, timeout: int = 30) -> FastAPI:
         '[site]\nname = "Live"\nbase_url = "https://live.example"\nlanguages = []\n'
         "\n[deploy]\n"
         'provider = "swa"\n'
-        f'root = "{tmp_path / "store"}"\n'
+        f'root = "{(tmp_path / "store").as_posix()}"\n'
         f'deploy_url = "{endpoint}/deploy"\n'
         f'health_url = "{endpoint}/site"\n'
         f"timeout = {timeout}\n",
         encoding="utf-8",
     )
-    url = f"sqlite:///{tmp_path / 'content.db'}"
+    url = f"sqlite:///{(tmp_path / 'content.db').as_posix()}"
     with create_storage(url) as storage:
         storage.save_user(
             User(

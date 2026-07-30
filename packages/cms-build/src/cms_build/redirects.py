@@ -53,7 +53,7 @@ def write_redirects(project_file: Path, redirects: dict[str, str]) -> None:
         kept.extend(
             f'"{source}" = "{destination}"' for source, destination in sorted(redirects.items())
         )
-    project_file.write_text("\n".join(kept) + "\n", encoding="utf-8")
+    project_file.write_text("\n".join(kept) + "\n", encoding="utf-8", newline="\n")
 
 
 def migration_redirect_changes(

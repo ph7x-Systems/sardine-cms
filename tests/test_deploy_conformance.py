@@ -259,11 +259,11 @@ def test_a_third_provider_needs_no_core_change(tmp_path: Path) -> None:
         '\nextensions = ["test_deploy_conformance:extension"]\n'
         "\n[deploy]\n"
         'provider = "mirror"\n'
-        f'root = "{tmp_path / "store"}"\n'
-        f'mirror_root = "{tmp_path / "mirror"}"\n',
+        f'root = "{(tmp_path / "store").as_posix()}"\n'
+        f'mirror_root = "{(tmp_path / "mirror").as_posix()}"\n',
         encoding="utf-8",
     )
-    url = f"sqlite:///{tmp_path / 'content.db'}"
+    url = f"sqlite:///{(tmp_path / 'content.db').as_posix()}"
     with create_storage(url) as storage:
         storage.save_user(
             User(

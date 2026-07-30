@@ -420,11 +420,12 @@ def dump(
     (destination / "content.json").write_text(
         export_content_json(content.articles, content.pages, content.media, content.menu),
         encoding="utf-8",
+        newline="\n",
     )
     for path, body in export_markdown_files(list(content.articles)).items():
         target = destination / "markdown" / path
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(body, encoding="utf-8")
+        target.write_text(body, encoding="utf-8", newline="\n")
     typer.echo(f"dumped {len(content.articles)} article(s) into {destination}")
 
 
