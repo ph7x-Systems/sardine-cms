@@ -74,7 +74,12 @@
     </form>
   </div>
   <div class="col-lg-6">
-    <div class="card mb-3">
+    {# The preview follows the form instead of scrolling away after the
+       first card. It scrolls internally when the rendered entry is long,
+       so it is focusable and named — a scrollable region has to be
+       reachable from the keyboard. #}
+    <div class="card mb-3 admin-sticky-panel" tabindex="0" role="region"
+         aria-label="{{ _("Preview") }}">
       <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Preview") }}</h2></div>
       <div class="card-body">
         <p class="form-text">{{ _("Rendered with the builder's Markdown renderer (raw HTML disabled); shows the last saved body.") }}</p>

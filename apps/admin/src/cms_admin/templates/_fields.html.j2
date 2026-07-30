@@ -39,32 +39,43 @@
 {% endmacro %}
 
 {% macro picker_tile_meta(asset, widest) %}
-<span class="d-block"><code>{{ asset.id }}</code></span>
-<span class="form-text d-block">{{ asset.display_size[0] }}&times;{{ asset.display_size[1] }}{% if widest and asset.display_size[0] and asset.display_size[0] < widest %} &middot; {{ _("below the widest configured size") }}{% endif %}</span>
+{# What the picture is comes first — the alt text an editor wrote — and
+   the identifier stays available underneath for the rare case someone
+   needs it. Choosing an image should not require knowing its slug. #}
+<span class="d-block admin-picker-title">{{ asset.alt.get(picker_language) or asset.id }}</span>
+<span class="form-text d-block">
+  <code>{{ asset.id }}</code>
+  {% if asset.display_size[0] %}&middot; {{ asset.display_size[0] }}&times;{{ asset.display_size[1] }}{% endif %}
+  {%- if widest and asset.display_size[0] and asset.display_size[0] < widest %} &middot; {{ _("below the widest configured size") }}{% endif %}
+</span>
 {% endmacro %}
 
 {% macro cover_picker(assets, current, widest) %}
 {% if assets %}
-<details class="mb-2">
-  <summary class="form-text">{{ _("Choose from the library") }}</summary>
-  <div class="d-flex flex-wrap gap-2 mt-2" role="radiogroup" aria-label="{{ _("Cover") }}">
-    <label class="border rounded p-2">
-      <input class="form-check-input" type="radio" name="cover_pick" value="__keep__" checked>
-      {{ _("Keep current") }}
-    </label>
-    <label class="border rounded p-2">
-      <input class="form-check-input" type="radio" name="cover_pick" value="__none__">
-      {{ _("No cover") }}
+{# Picking an image is the task, so the pictures are on the screen: no
+   disclosure to discover, no identifier to type. The current choice
+   reads as chosen, and "no cover" is a tile like the rest so it never
+   hides in a corner. #}
+<div class="mb-2 admin-field">
+  <span class="form-label d-block">{{ _("Cover") }}</span>
+  <div class="d-flex flex-wrap gap-2 admin-picker" role="radiogroup" aria-label="{{ _("Cover") }}">
+    <label class="admin-picker-tile border rounded p-2{% if not current %} border-primary bg-body-tertiary{% endif %}">
+      <input class="form-check-input" type="radio" name="cover_pick" value="__none__"{% if not current %} checked{% endif %}>
+      <span class="admin-picker-none d-block my-1 rounded border" aria-hidden="true"></span>
+      <span class="d-block admin-picker-title">{{ _("No cover") }}</span>
     </label>
     {% for asset in assets %}
-    <label class="border rounded p-2{% if asset.id == current %} border-primary{% endif %}">
-      <input class="form-check-input" type="radio" name="cover_pick" value="{{ asset.id }}">
-      <img class="admin-thumb rounded border d-block my-1" src="/media-files/{{ asset.path }}" alt="" width="96" height="64" loading="lazy">
+    {% set chosen = asset.id == current %}
+    <label class="admin-picker-tile border rounded p-2{% if chosen %} border-primary bg-body-tertiary{% endif %}">
+      <input class="form-check-input" type="radio" name="cover_pick" value="{{ asset.id }}"{% if chosen %} checked{% endif %}>
+      <img class="admin-thumb rounded border d-block my-1" src="/media-files/{{ asset.path }}"
+           alt="" width="96" height="64" loading="lazy">
       {{ picker_tile_meta(asset, widest) }}
     </label>
     {% endfor %}
   </div>
-</details>
+  <div class="form-text">{{ _("Uploaded images appear here — manage them in the media library.") }}</div>
+</div>
 {% endif %}
 {% endmacro %}
 
@@ -90,8 +101,17 @@
 {% macro metadata_fields(form) %}
 {{ text_field("category", _("Category"), form.category, hint=_("a category slug, or empty")) }}
 {{ text_field("tags", _("Tags"), form.tags, hint=_("comma-separated slugs")) }}
-{{ text_field("cover", _("Cover"), form.cover, hint=_("a media asset id, or empty")) }}
 {{ cover_picker(image_assets | default([]), form.cover, picker_widest | default(0)) }}
+{% if not image_assets %}
+{{ text_field("cover", _("Cover"), form.cover, hint=_("a media asset id, or empty")) }}
+{% else %}
+<details class="mb-2">
+  <summary class="form-text">{{ _("Set the cover by identifier") }}</summary>
+  <div class="mt-2">
+    {{ text_field("cover", _("Cover"), form.cover, hint=_("a media asset id, or empty")) }}
+  </div>
+</details>
+{% endif %}
 {{ text_field("author", _("Author"), form.author, hint=_("editorial byline; empty shows the site name")) }}
 <div class="mb-1 form-check admin-field">
   <input class="form-check-input" type="checkbox" id="featured" name="featured" value="1"

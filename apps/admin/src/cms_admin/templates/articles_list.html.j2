@@ -53,7 +53,6 @@
       <thead>
         <tr>
           <th scope="col"><span class="visually-hidden">{{ _("Select") }}</span></th>
-          <th scope="col">{{ _("ID") }}</th>
           <th scope="col">{{ _("Title (EN)") }}</th>
           <th scope="col">{{ _("Status") }}</th>
           <th scope="col">{{ _("Translations") }}</th>
@@ -66,8 +65,13 @@
         <tr>
           <td><label class="mb-0"><span class="visually-hidden admin-visually-hidden">{{ _("Select %(id)s") | format(id=article.id) }}</span>
             <input class="form-check-input" type="checkbox" name="selected" value="{{ article.id }}" form="bulk-form"></label></td>
-          <th scope="row"><a href="/articles/{{ article.id }}">{{ article.id }}</a></th>
-          <td>{{ article.source.title }}</td>
+          {# The title is what an editor recognises; the identifier is the
+             technical handle and reads as a subtitle. Leading with the
+             slug made every list a column of hyphens. #}
+          <th scope="row">
+            <a href="/articles/{{ article.id }}">{{ article.source.title or article.id }}</a>
+            <span class="d-block form-text mb-0"><code>{{ article.id }}</code></span>
+          </th>
           <td>{{ status_tag(article.status) }}</td>
           <td>{{ translation_badges(article, target_languages, "/articles/" + article.id) }}</td>
           <td>{{ article.updated_at.strftime("%Y-%m-%d") }}</td>

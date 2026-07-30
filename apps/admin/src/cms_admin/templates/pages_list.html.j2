@@ -48,7 +48,6 @@
       <thead>
         <tr>
           <th scope="col"><span class="visually-hidden">{{ _("Select") }}</span></th>
-          <th scope="col">{{ _("ID") }}</th>
           <th scope="col">{{ _("Title (EN)") }}</th>
           <th scope="col">{{ _("Status") }}</th>
           <th scope="col">{{ _("Sections") }}</th>
@@ -62,8 +61,10 @@
         <tr>
           <td><label class="mb-0"><span class="visually-hidden admin-visually-hidden">{{ _("Select %(id)s") | format(id=page.id) }}</span>
             <input class="form-check-input" type="checkbox" name="selected" value="{{ page.id }}" form="bulk-form"></label></td>
-          <th scope="row"><a href="/pages/{{ page.id }}">{{ page.id }}</a></th>
-          <td>{{ page.source.title }}</td>
+          <th scope="row">
+            <a href="/pages/{{ page.id }}">{{ page.source.title or page.id }}</a>
+            <span class="d-block form-text mb-0"><code>{{ page.id }}</code></span>
+          </th>
           <td>{{ status_tag(page.status) }}</td>
           <td class="text-end">{{ page.sections | length }}</td>
           <td>{{ translation_badges(page, target_languages) }}</td>

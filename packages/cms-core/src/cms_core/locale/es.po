@@ -1860,3 +1860,9 @@ msgstr "La papelera mantiene la entrada restaurable; nada se publica desde la pa
 
 msgid "Findings"
 msgstr "Hallazgos"
+
+msgid "Set the cover by identifier"
+msgstr "Definir la portada por identificador"
+
+msgid "Uploaded images appear here — manage them in the media library."
+msgstr "Las imágenes subidas aparecen aquí; se gestionan en la biblioteca de medios."

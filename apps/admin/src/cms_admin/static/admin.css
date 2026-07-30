@@ -129,3 +129,27 @@
   color: var(--bs-secondary-color);
   font-size: 2.5rem;
 }
+
+/* Design system (ADR-0055): the media picker shows pictures, so the
+   tiles are a fixed size and the radio sits with the caption rather
+   than above the image. */
+.admin-picker-tile { max-width: 8.5rem; cursor: pointer; }
+.admin-picker-title { font-weight: 600; overflow-wrap: anywhere; }
+.admin-picker-none {
+  aspect-ratio: 96 / 64;
+  background: var(--bs-tertiary-bg);
+}
+
+/* Design system (ADR-0055): in a side-by-side editor the preview follows
+   the form instead of scrolling away after the first card — the point of
+   the second column is to be visible while you type in the first. Only
+   where there is room: below the main breakpoint the columns stack and a
+   sticky panel would cover the form. */
+@media (min-width: 992px) {
+  .admin-sticky-panel {
+    position: sticky;
+    top: 1rem;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+  }
+}

@@ -1860,3 +1860,9 @@ msgstr "Il cestino mantiene la voce ripristinabile; nulla viene pubblicato dal c
 
 msgid "Findings"
 msgstr "Rilievi"
+
+msgid "Set the cover by identifier"
+msgstr "Imposta la copertina per identificatore"
+
+msgid "Uploaded images appear here — manage them in the media library."
+msgstr "Le immagini caricate compaiono qui — si gestiscono nella libreria media."
