@@ -8,6 +8,16 @@ features with their PRs, breaking changes and migrations — live in
 
 ## Unreleased
 
+### Fixed
+
+- A configured **absolute** SQLite path is honoured as written. The
+  project loader stripped every leading slash before deciding whether a
+  path was absolute, so `sqlite:////var/lib/site/content.db` resolved
+  *inside* the project directory and the database was silently created
+  somewhere else. The URL form is now parsed by the same function the
+  storage backend uses; relative paths still resolve against the project
+  directory and `:memory:` passes through.
+
 ### Added
 
 - Onboarding-flow check (`scripts/onboarding_flow_check.py`) in CI

@@ -91,6 +91,34 @@ jobs:
           for pkg in $PACKAGES; do python -m pip install -e "$pkg"; done
       - run: pytest
 
+  test-windows:
+    name: Tests (pytest, Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+      - run: python -m pip install --upgrade pip
+      - name: Install the packages (PowerShell — no POSIX loop)
+        run: |
+          python -m pip install --group dev
+          foreach ($pkg in @("packages/cms-core", "packages/cms-validation", "packages/cms-build", "packages/cms-cli", "packages/cms-theme-ph7x-reference", "apps/admin")) {
+            python -m pip install -e $pkg
+          }
+      - run: pytest
+      - name: The new-user CLI path on Windows paths
+        run: |
+          python -m cms_cli.app --help
+          cms init winsite --name "Windows check" --base-url "https://win.example"
+          cms seed -p winsite
+          cms validate -p winsite
+          cms build -p winsite
+          cms export -p winsite --target generic
+          cms doctor -p winsite
+
   postgres-conformance:
     name: Backend conformance (PostgreSQL)
     runs-on: ubuntu-latest

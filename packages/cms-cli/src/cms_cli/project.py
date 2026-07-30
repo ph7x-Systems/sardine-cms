@@ -213,11 +213,18 @@ def load_project(directory: Path) -> Project:
     )
 
     storage_url = data.get("storage", {}).get("url", "sqlite:///content.sqlite3")
-    if storage_url.startswith("sqlite:///"):
-        # Relative SQLite paths are relative to the project directory.
-        raw_path = Path(storage_url.removeprefix("sqlite:///").lstrip("/"))
-        resolved = raw_path if raw_path.is_absolute() else directory / raw_path
-        storage_url = f"sqlite:///{resolved}"
+    if storage_url.startswith("sqlite:"):
+        # One parser, shared with the backend (sqlite_path_from_location):
+        # relative paths resolve against the project directory, absolute
+        # ones are honoured as written — stripping every leading slash
+        # here used to turn `sqlite:////var/lib/x.db` into a path *inside*
+        # the project. `:memory:` passes through untouched.
+        from cms_core.storage.sqlite import sqlite_path_from_location
+
+        raw = sqlite_path_from_location(storage_url.removeprefix("sqlite://"))
+        if raw != ":memory:":
+            path = Path(raw)
+            storage_url = f"sqlite:///{path if path.is_absolute() else directory / path}"
 
     deploy_data = data.get("deploy", {})
     build_data = data.get("build", {})
