@@ -623,3 +623,43 @@ def test_demo_reaches_a_served_site_in_one_command(
     assert again.exit_code == 0, again.output
     assert "created" not in again.output
     assert "seeded" not in again.output
+
+
+def test_absolute_sqlite_paths_are_honoured_as_written(tmp_path: Path) -> None:
+    """A configured absolute storage path must be used as given.
+
+    Regression: the loader stripped every leading slash before deciding
+    whether the path was absolute, so `sqlite:////var/lib/x.db` resolved
+    *inside* the project directory — the database was silently created
+    somewhere else. The URL form is now parsed by the same function the
+    backend uses.
+    """
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    target = elsewhere / "content.db"
+    (tmp_path / "sardine.toml").write_text(
+        '[site]\nname = "Aurora"\nbase_url = "https://example.com"\nlanguages = []\n'
+        f'\n[storage]\nurl = "sqlite:///{target}"\n',
+        encoding="utf-8",
+    )
+    project = load_project(tmp_path)
+    assert project.storage_url == f"sqlite:///{target}"
+
+    # And the round trip actually opens that file, not a nested copy.
+    with project.open_storage():
+        pass
+    assert target.is_file()
+    assert not (tmp_path / str(target).lstrip("/")).exists()
+
+
+def test_relative_and_memory_storage_urls_keep_working(tmp_path: Path) -> None:
+    for url, expected in (
+        ("sqlite:///content.sqlite3", f"sqlite:///{tmp_path / 'content.sqlite3'}"),
+        ("sqlite:///:memory:", "sqlite:///:memory:"),
+    ):
+        (tmp_path / "sardine.toml").write_text(
+            '[site]\nname = "Aurora"\nbase_url = "https://example.com"\nlanguages = []\n'
+            f'\n[storage]\nurl = "{url}"\n',
+            encoding="utf-8",
+        )
+        assert load_project(tmp_path).storage_url == expected
