@@ -19,7 +19,7 @@
           <th scope="row">{{ entry.id }}</th>
           <td>{{ entry.source.title }}</td>
           <td>{{ status_tag(entry.status) }}</td>
-          <td>{{ entry.deleted_at.strftime("%Y-%m-%d %H:%M") }} UTC</td>
+          <td>{{ when(entry.deleted_at) }}</td>
           <td class="d-flex gap-2">
             <form method="post" action="/trash/{{ kind }}/{{ entry.id }}/restore" class="mb-0">
               <input type="hidden" name="csrf_token" value="{{ csrf_token }}">

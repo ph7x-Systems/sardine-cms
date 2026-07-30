@@ -486,3 +486,66 @@ def test_replace_rejects_unsupported_bytes(tmp_path: Path) -> None:
         )
     assert bad.status_code == 422
     assert "unsupported type" in bad.text
+
+
+def test_cover_picker_bounds_the_library_and_searches_it(tmp_path: Path) -> None:
+    """A picker is a collection: at a hundred images it must not render a
+    hundred tiles. It states how many it shows, and the search narrows the
+    library instead of scrolling it (DS-5/DS-19)."""
+    assets = [_asset(f"shot-{index:03d}") for index in range(40)]
+    assets.append(
+        MediaAsset(
+            id="lighthouse",
+            path="lighthouse.png",
+            mime_type="image/png",
+            width=3,
+            height=2,
+            alt={Language.EN: "A lighthouse at dusk"},
+        )
+    )
+    app = _app(tmp_path, *assets)
+    with _client(app) as client:
+        token = _sign_in(client)
+        client.post(
+            "/articles",
+            data={"id": "scaled", "title": "Scaled", "csrf_token": token},
+            follow_redirects=True,
+        )
+        page = client.get("/articles/scaled").text
+        assert "Showing 12 of 41" in page
+        assert page.count('name="cover_pick"') == 13  # twelve tiles plus "No cover"
+        assert "shot-039" not in page
+
+        # The search reaches what the bound leaves out, by alt text as
+        # much as by identifier — an editor searches for the picture.
+        found = client.get("/articles/scaled", params={"media_q": "lighthouse at dusk"}).text
+        assert "Showing 1 of 1" in found
+        assert "lighthouse" in found
+        assert "shot-000" not in found
+
+
+def test_a_search_never_hides_the_current_cover(tmp_path: Path) -> None:
+    """The chosen image stays on screen whatever the search says: an
+    editor must never look at the field and conclude the cover is gone."""
+    assets = [_asset(f"shot-{index:03d}") for index in range(40)]
+    app = _app(tmp_path, *assets)
+    with _client(app) as client:
+        token = _sign_in(client)
+        client.post(
+            "/articles",
+            data={"id": "pinned", "title": "Pinned", "csrf_token": token},
+            follow_redirects=True,
+        )
+        client.post(
+            "/articles/pinned",
+            data={"title": "Pinned", "cover_pick": "shot-039", "csrf_token": token},
+            follow_redirects=True,
+        )
+        page = client.get("/articles/pinned", params={"media_q": "shot-001"}).text
+        assert 'value="shot-039" checked' in page, "the current cover lost its tile"
+        assert 'value="shot-001"' in page
+        # And the search itself says when it found nothing, rather than
+        # leaving an empty strip of tiles.
+        empty = client.get("/articles/pinned", params={"media_q": "no-such-image"}).text
+        assert "Showing 0 of 0" in empty
+        assert 'value="shot-039" checked' in empty

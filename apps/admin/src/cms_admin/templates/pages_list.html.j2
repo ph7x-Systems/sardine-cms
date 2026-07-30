@@ -68,7 +68,7 @@
           <td>{{ status_tag(page.status) }}</td>
           <td class="text-end">{{ page.sections | length }}</td>
           <td>{{ translation_badges(page, target_languages) }}</td>
-          <td>{{ page.updated_at.strftime("%Y-%m-%d") }}</td>
+          <td>{{ when(page.updated_at.date()) }}</td>
           <td>{{ row_actions("page", page.id, row_actions_map[page.id]) }}</td>
         </tr>
         {% endfor %}

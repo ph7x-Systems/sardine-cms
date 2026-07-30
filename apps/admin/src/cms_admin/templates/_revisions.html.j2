@@ -13,7 +13,7 @@
         {% for number, when, author in revisions %}
         <tr>
           <th scope="row">{{ number }}</th>
-          <td>{{ when.strftime("%Y-%m-%d %H:%M") }} UTC</td>
+          <td>{{ panel_when(when) }}</td>
           <td>{{ author }}</td>
           <td><a href="{{ base_url }}/revisions/{{ number }}">{{ _("View and restore") }}</a></td>
         </tr>

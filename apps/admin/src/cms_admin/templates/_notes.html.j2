@@ -9,7 +9,7 @@
     <div class="d-flex justify-content-between align-items-start border-bottom pb-2 mb-2">
       <div>
         <p class="mb-1">{{ body }}</p>
-        <p class="form-text mb-0">{{ author }} · {{ when.strftime("%Y-%m-%d %H:%M") }} UTC</p>
+        <p class="form-text mb-0">{{ author }} · {{ panel_when(when) }}</p>
       </div>
       {% if author == user.username or user.role.value == "admin" %}
       <form method="post" action="/notes/{{ note_kind }}/{{ entity_id }}/{{ seq }}/delete" class="mb-0 ms-2">

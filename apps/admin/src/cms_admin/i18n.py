@@ -16,8 +16,13 @@ Resolution order: the signed-in user's stored preference (set on
 """
 
 import gettext
+from collections.abc import Callable
+from datetime import date, datetime
 from io import BytesIO
 
+from babel import Locale as BabelLocale
+from babel.core import UnknownLocaleError
+from babel.dates import format_date, format_time
 from babel.messages.mofile import write_mo
 from babel.messages.pofile import read_po
 from cms_core import Language
@@ -149,7 +154,9 @@ def load_catalogs() -> dict[Language, gettext.NullTranslations]:
     for pack in registered_language_packs():
         if pack.admin_catalog is None:
             continue
-        catalog = read_po(BytesIO(pack.admin_catalog))
+        # The locale travels with the catalog: without it the writer
+        # cannot check plural counts and says so on every load.
+        catalog = read_po(BytesIO(pack.admin_catalog), locale=_babel_locale(Language(pack.tag)))
         buffer = BytesIO()
         write_mo(buffer, catalog)
         buffer.seek(0)
@@ -205,6 +212,52 @@ def translations_for(request: Request) -> gettext.NullTranslations:
     return catalogs.get(resolve_language(request), catalogs[SOURCE])
 
 
+def _babel_locale(language: Language) -> str:
+    """The panel's language tag as Babel spells it (``pt-pt`` ->
+    ``pt_PT``); unknown tags fall back to English rather than raising."""
+    tag = str(language).replace("-", "_")
+    parts = tag.split("_")
+    if len(parts) == 2:
+        tag = f"{parts[0].lower()}_{parts[1].upper()}"
+    try:
+        BabelLocale.parse(tag)
+    except (ValueError, UnknownLocaleError):
+        return "en"
+    return tag
+
+
+def date_formatter(language: Language) -> Callable[[object], str]:
+    """``datetime | date | None -> str`` in the panel's language.
+
+    A date an editor reads should be written the way that editor writes
+    dates — the panel speaks six languages, so `2026-01-18` was the one
+    format nobody had chosen. Times keep the minute and say UTC, because
+    every stored moment is UTC and scheduling depends on knowing it.
+    """
+    locale = _babel_locale(language)
+
+    def render(value: object) -> str:
+        if value is None:
+            return ""
+        if isinstance(value, datetime):
+            day = format_date(value, format="medium", locale=locale)
+            clock = format_time(value, format="short", locale=locale)
+            return f"{day}, {clock} UTC"
+        if isinstance(value, date):
+            return format_date(value, format="medium", locale=locale)
+        if isinstance(value, str) and value.strip():
+            # The scheduling inputs hold the datetime-local wire format;
+            # echoing them back in prose is what makes a typed moment
+            # readable without leaving the field.
+            try:
+                return render(datetime.fromisoformat(value.strip()))
+            except ValueError:
+                return value
+        return str(value)
+
+    return render
+
+
 def i18n_context(request: Request) -> dict[str, object]:
     """Jinja context processor: per-request gettext callables, plus the
     resolved panel language and its text direction (ADR-0034: the panel
@@ -218,6 +271,10 @@ def i18n_context(request: Request) -> dict[str, object]:
         "panel_language": language,
         "panel_dir": direction(language),
         "panel_language_choices": panel_languages(),
+        "when": date_formatter(language),
+        # Two partials bind a loop variable named `when`; the alias
+        # keeps the formatter reachable there.
+        "panel_when": date_formatter(language),
     }
 
 

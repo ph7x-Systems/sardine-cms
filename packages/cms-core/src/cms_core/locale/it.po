@@ -1894,3 +1894,18 @@ msgstr "%(count)s impostati"
 
 msgid "Scheduling"
 msgstr "Pianificazione"
+
+msgid "Search images"
+msgstr "Cerca immagini"
+
+msgid "Showing %(shown)s of %(total)s"
+msgstr "Visualizzati %(shown)s di %(total)s"
+
+msgid "Search to reach the rest, or set the cover by identifier below."
+msgstr "Cerca per raggiungere le altre, oppure imposta la copertina tramite identificatore qui sotto."
+
+msgid "current"
+msgstr "attuale"
+
+msgid "No image matches that search."
+msgstr "Nessuna immagine corrisponde a questa ricerca."

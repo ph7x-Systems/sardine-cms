@@ -198,3 +198,23 @@ def test_the_editors_follow_the_projects_language_set(tmp_path: Path) -> None:
     assert _site_source(project) == Language.PT_PT
     assert _site_targets(project) == (Language.ES,)
     assert _site_source(None) is Language.EN  # the no-project fallback
+
+
+def test_dates_render_in_the_panels_language(tmp_path: Path) -> None:
+    """A panel that speaks six languages must not print ISO timestamps.
+    The users list's date column follows the signed-in language; the wire
+    format stays where it belongs — inside an input."""
+    rendered: dict[Language, str] = {}
+    for language in (Language.PT_PT, Language.DE):
+        with TestClient(_app(tmp_path, language=language), base_url="https://testserver") as client:
+            _sign_in(client)
+            cells = client.get("/users").text.split("<tbody>")[-1]
+            assert not re.search(r"\d{4}-\d{2}-\d{2}", cells), "an ISO date reached a rendered cell"
+            dates = re.findall(r"<td>([^<]*20\d\d[^<]*)</td>", cells)
+            assert dates, f"{language} rendered no date at all"
+            rendered[language] = dates[0]
+    # Portuguese writes 19/07/2026 where German writes 19.07.2026: the
+    # separator proves the locale reached the formatter.
+    assert "/" in rendered[Language.PT_PT]
+    assert "." in rendered[Language.DE]
+    assert rendered[Language.PT_PT] != rendered[Language.DE]

@@ -1880,15 +1880,28 @@ msgstr "%(count)s aktif"
 msgid "%(count)s note"
 msgid_plural "%(count)s notes"
 msgstr[0] "%(count)s catatan"
-msgstr[1] "%(count)s catatan"
 
 msgid "%(count)s revision"
 msgid_plural "%(count)s revisions"
 msgstr[0] "%(count)s revisi"
-msgstr[1] "%(count)s revisi"
 
 msgid "%(count)s set"
 msgstr "%(count)s disetel"
 
 msgid "Scheduling"
 msgstr "Penjadwalan"
+
+msgid "Search images"
+msgstr "Cari gambar"
+
+msgid "Showing %(shown)s of %(total)s"
+msgstr "Menampilkan %(shown)s dari %(total)s"
+
+msgid "Search to reach the rest, or set the cover by identifier below."
+msgstr "Cari untuk menjangkau sisanya, atau tetapkan sampul melalui pengidentifikasi di bawah."
+
+msgid "current"
+msgstr "saat ini"
+
+msgid "No image matches that search."
+msgstr "Tidak ada gambar yang cocok dengan pencarian itu."
