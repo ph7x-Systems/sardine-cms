@@ -25,7 +25,8 @@ if str(STARTER_SRC) not in sys.path:
 def _starter() -> Theme:
     from sardine_theme_starter import StarterTheme
 
-    return StarterTheme()
+    theme: Theme = StarterTheme()
+    return theme
 
 
 @pytest.mark.parametrize(("check_name", "check"), conformance_checks())
