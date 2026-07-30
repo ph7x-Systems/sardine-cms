@@ -1861,6 +1861,12 @@ msgstr "Der Papierkorb hält den Eintrag wiederherstellbar; aus dem Papierkorb w
 msgid "Findings"
 msgstr "Befunde"
 
+msgid "Set the cover by identifier"
+msgstr "Titelbild über die Kennung setzen"
+
+msgid "Uploaded images appear here — manage them in the media library."
+msgstr "Hochgeladene Bilder erscheinen hier — verwaltet werden sie in der Medienbibliothek."
+
 msgid "Review the findings"
 msgstr "Befunde prüfen"
 

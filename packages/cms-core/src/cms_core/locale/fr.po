@@ -1861,6 +1861,12 @@ msgstr "La corbeille garde l'entrée restaurable ; rien n'est publié depuis la 
 msgid "Findings"
 msgstr "Constats"
 
+msgid "Set the cover by identifier"
+msgstr "Définir la couverture par identifiant"
+
+msgid "Uploaded images appear here — manage them in the media library."
+msgstr "Les images téléversées apparaissent ici — elles se gèrent dans la médiathèque."
+
 msgid "Review the findings"
 msgstr "Examiner les constats"
 

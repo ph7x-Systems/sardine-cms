@@ -1861,6 +1861,12 @@ msgstr "O lixo mantém a entrada restaurável; nada é publicado a partir do lix
 msgid "Findings"
 msgstr "Ocorrências"
 
+msgid "Set the cover by identifier"
+msgstr "Definir a capa por identificador"
+
+msgid "Uploaded images appear here — manage them in the media library."
+msgstr "As imagens carregadas aparecem aqui — geridas na biblioteca de media."
+
 msgid "Review the findings"
 msgstr "Rever as ocorrências"
 

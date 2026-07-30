@@ -54,12 +54,11 @@
         <tr>
           <th scope="col"><span class="visually-hidden">{{ _("Select") }}</span></th>
           <th scope="col">{{ _("Preview") }}</th>
-          <th scope="col">{{ _("ID") }}</th>
+          <th scope="col">{{ _("Alt (EN)") }}</th>
           <th scope="col">{{ _("Type") }}</th>
           <th scope="col">{{ _("Size") }}</th>
           <th scope="col">{{ _("Collection") }}</th>
           <th scope="col">{{ _("In use") }}</th>
-          <th scope="col">{{ _("Alt (EN)") }}</th>
           <th scope="col">{{ _("Translated alt") }}</th>
         </tr>
       </thead>
@@ -70,13 +69,17 @@
             <input class="form-check-input" type="checkbox" name="selected" value="{{ asset.id }}" form="bulk-form"></label></td>
           <td>{% if asset.is_image %}<img class="admin-thumb rounded border" src="/media-files/{{ asset.path }}"
                 alt="" width="72" height="48" loading="lazy">{% endif %}</td>
-          <th scope="row"><a href="/media/{{ asset.id }}">{{ asset.id }}</a></th>
+          {# An asset is recognised by what it shows, not by its slug: the
+             alt text leads and the identifier reads as a subtitle. #}
+          <th scope="row">
+            <a href="/media/{{ asset.id }}">{{ asset.alt.get(source_language) or asset.id }}</a>
+            <span class="d-block form-text mb-0"><code>{{ asset.id }}</code></span>
+          </th>
           <td>{{ asset.mime_type }}</td>
           <td>{% if asset.width %}{{ asset.width }}×{{ asset.height }}{% endif %}</td>
           <td>{% if asset.collection %}<a href="/media?collection={{ asset.collection }}">{{ asset.collection }}</a>{% endif %}</td>
           <td>{% if usage.get(asset.id) %}<span class="badge text-bg-secondary">{{ usage[asset.id] }}</span>
             {% else %}<span class="form-text">{{ _("unused") }}</span>{% endif %}</td>
-          <td>{{ asset.alt.get(source_language, "") }}</td>
           <td>
             {% set missing = asset.missing_alt_languages() %}
             {% if missing %}

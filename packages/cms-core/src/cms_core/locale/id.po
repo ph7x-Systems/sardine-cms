@@ -1859,6 +1859,12 @@ msgstr "Tempat sampah menjaga entri tetap dapat dipulihkan; tidak ada yang diter
 msgid "Findings"
 msgstr "Temuan"
 
+msgid "Set the cover by identifier"
+msgstr "Setel sampul lewat pengenal"
+
+msgid "Uploaded images appear here — manage them in the media library."
+msgstr "Gambar yang diunggah muncul di sini — dikelola di pustaka media."
+
 msgid "Review the findings"
 msgstr "Tinjau temuan"
 

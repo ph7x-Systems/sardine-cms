@@ -145,6 +145,7 @@ async def _picker_context(request: Request) -> dict[str, object]:
     return {
         "image_assets": [asset for asset in assets if asset.is_image],
         "picker_widest": max(widths) if widths else 0,
+        "picker_language": _site_source(project),
     }
 
 
