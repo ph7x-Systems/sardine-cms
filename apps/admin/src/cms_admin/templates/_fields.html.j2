@@ -1,3 +1,4 @@
+{% from "_components.html.j2" import quiet_panel with context %}
 {# Shared form building blocks for the editorial pages (Bootstrap idiom). #}
 
 {% macro text_field(name, label, value, required=false, hint=None) %}
@@ -207,9 +208,9 @@
 {% endmacro %}
 
 {% macro preview_links_card(kind, entry_id, links, csrf_token) %}
-<div class="card mb-3">
-  <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("External preview links") }}</h2></div>
-  <div class="card-body">
+{% call quiet_panel(_("External preview links"),
+    _("%(count)s active") | format(count=links | length) if links else _("none"),
+    collapsed=not links) %}
     <form method="post" action="/{{ kind }}s/{{ entry_id }}/preview-links" class="d-flex flex-wrap gap-2 align-items-end mb-2">
       <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
       <label class="mb-0">
@@ -235,6 +236,5 @@
     {% else %}
     <p class="admin-empty mb-0">{{ _("No active preview links.") }}</p>
     {% endif %}
-  </div>
-</div>
+{% endcall %}
 {% endmacro %}

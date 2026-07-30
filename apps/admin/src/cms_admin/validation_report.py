@@ -53,4 +53,16 @@ def report_context(
             subject_links[issue.subject] = f"/pages/{ident}"
         elif kind == "media":
             subject_links[issue.subject] = "/media"
-    return {"report": report, "scope": scope, "subject_links": subject_links}
+    # A bounded summary for surfaces that must not list every finding:
+    # rule -> how many, most first. The dashboard shows this and links to
+    # the publishing screen, which owns the filtered, paginated table.
+    tally: dict[str, int] = {}
+    for issue in report.issues:
+        tally[issue.code] = tally.get(issue.code, 0) + 1
+    issue_counts = sorted(tally.items(), key=lambda pair: (-pair[1], pair[0]))
+    return {
+        "report": report,
+        "scope": scope,
+        "subject_links": subject_links,
+        "issue_counts": issue_counts,
+    }

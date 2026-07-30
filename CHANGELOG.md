@@ -8,6 +8,28 @@ features with their PRs, breaking changes and migrations — live in
 
 ## Unreleased
 
+### Changed
+
+- The dashboard answers "is anything wrong?" instead of listing
+  everything that is: the advisory findings become a bounded tally per
+  rule with a link to the publishing screen, which owns the filters and
+  the pagination for them. The seeded project's dashboard goes from
+  6169 px to 1845 px — it had been roughly five thousand pixels of
+  wrapped advisory rows in a narrow column, on the first screen anyone
+  sees.
+- The status tiles no longer read as if pages did not exist. The counts
+  always covered articles and pages alike, but every tile's footer said
+  "Articles" and linked only there; each now links to both. The totals
+  line becomes three of the theme's own info-boxes, one per kind,
+  linking to its list.
+- An editor's auxiliary panels (editorial notes, revisions, external
+  preview links) arrive **collapsed**, with a one-line summary of what
+  they hold — "3 notes", "none yet". Four cards of emptiness had been
+  taking about five hundred pixels in the middle of the work area. They
+  use the vendored theme's own collapsible card (`card-tools` with
+  `data-lte-toggle="card-collapse"`) rather than a hand-rolled
+  disclosure.
+
 ### Fixed
 
 - The project file the first-run wizard writes is parseable on Windows.

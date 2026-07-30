@@ -1860,3 +1860,25 @@ msgstr "O lixo mantém a entrada restaurável; nada é publicado a partir do lix
 
 msgid "Findings"
 msgstr "Ocorrências"
+
+msgid "Review the findings"
+msgstr "Rever as ocorrências"
+
+msgid "none yet"
+msgstr "ainda nenhuma"
+
+msgid "none"
+msgstr "nenhum"
+
+msgid "%(count)s active"
+msgstr "%(count)s ativos"
+
+msgid "%(count)s note"
+msgid_plural "%(count)s notes"
+msgstr[0] "%(count)s nota"
+msgstr[1] "%(count)s notas"
+
+msgid "%(count)s revision"
+msgid_plural "%(count)s revisions"
+msgstr[0] "%(count)s revisão"
+msgstr[1] "%(count)s revisões"

@@ -82,14 +82,37 @@
         <i class="small-box-icon bi {{ icons[status.value] }}" aria-hidden="true"></i>
         {# The warning tone has dark text, so its footer link is dark too —
            same split the AdminLTE reference page makes. #}
-        <a href="/articles" class="small-box-footer {{ 'link-dark' if status.value == 'review' else 'link-light' }} link-underline-opacity-0 link-underline-opacity-50-hover">
-          {{ _("Articles") }} <i class="bi bi-link-45deg" aria-hidden="true"></i>
-        </a>
+        {# The count covers articles and pages alike — the label used to
+           say "Articles" for both, so the dashboard read as if pages
+           were not being reported at all. #}
+        <span class="small-box-footer {{ 'link-dark' if status.value == 'review' else 'link-light' }} d-flex justify-content-center gap-2">
+          <a class="{{ 'link-dark' if status.value == 'review' else 'link-light' }}" href="/articles?needs=">{{ _("Articles") }}</a>
+          <span aria-hidden="true">·</span>
+          <a class="{{ 'link-dark' if status.value == 'review' else 'link-light' }}" href="/pages">{{ _("Pages") }}</a>
+        </span>
       </div>
     </div>
     {% endfor %}
   </div>
-  <p class="text-body-secondary">{{ _("%(articles)s articles, %(pages)s pages, %(media)s media assets.") | format(articles=totals.articles, pages=totals.pages, media=totals.media) }}</p>
+  <div class="row">
+    {% for label, count, href, icon in (
+        (_("Articles"), totals.articles, "/articles", "bi-file-text"),
+        (_("Pages"), totals.pages, "/pages", "bi-layout-text-window"),
+        (_("Media"), totals.media, "/media", "bi-image"),
+    ) %}
+    <div class="col-12 col-md-4">
+      {# AdminLTE's info-box: the theme's own component for a labelled
+         count, in place of three numbers inside a sentence. #}
+      <a class="info-box text-decoration-none" href="{{ href }}">
+        <span class="info-box-icon"><i class="bi {{ icon }}" aria-hidden="true"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text">{{ label }}</span>
+          <span class="info-box-number">{{ count }}</span>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
 </section>
 
 <div class="row">
@@ -129,7 +152,30 @@
     </div>
   </div>
   <div class="col-lg-5">
+    {# The dashboard answers "is anything wrong?", not "list everything
+       that is wrong": the gate verdict and the rules table are bounded,
+       and the findings themselves live on the publishing screen, which
+       has the filters and the pagination for them. Rendering 35 advisory
+       rows here made the first screen anyone sees five thousand pixels
+       of noise. #}
+    {% set hide_issues = true %}
     {% include "_validation_report.html.j2" %}
+    {% if report.issues %}
+    <div class="card mb-4">
+      <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Findings") }}</h2></div>
+      <div class="card-body">
+        <ul class="list-unstyled mb-2">
+          {% for code, count in issue_counts %}
+          <li class="d-flex justify-content-between gap-2">
+            <span><code>{{ code }}</code></span>
+            <span class="text-body-secondary">{{ count }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+        <a href="/publishing#findings">{{ _("Review the findings") }}</a>
+      </div>
+    </div>
+    {% endif %}
     <div class="card mb-4">
       <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Build and export") }}</h2></div>
       <div class="card-body">
