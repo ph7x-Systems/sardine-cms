@@ -1,0 +1,14 @@
+{# The design preview's body alone, so it can live in a card of its
+   own (page editor) or as a tab beside the Markdown preview
+   (article editor). Context: preview_path, preview_ready. #}
+<div class="card-body p-0" data-design-preview-container
+       data-preview-title="{{ _('Design preview') }}">
+    {% if preview_ready %}
+    <iframe class="admin-design-preview" src="{{ preview_path }}"
+            title="{{ _("Design preview") }}" loading="lazy" data-design-preview></iframe>
+    {% else %}
+    <p class="admin-empty m-3" data-preview-empty>{{ _("Run a preview build from the") }}
+      <a href="/publishing">{{ _("Publishing") }}</a>
+      {{ _("panel to see this entry with the real theme; it refreshes on every save.") }}</p>
+    {% endif %}
+  </div>

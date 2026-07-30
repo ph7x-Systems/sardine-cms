@@ -1888,3 +1888,9 @@ msgid "%(count)s revision"
 msgid_plural "%(count)s revisions"
 msgstr[0] "%(count)s revisión"
 msgstr[1] "%(count)s revisiones"
+
+msgid "%(count)s set"
+msgstr "%(count)s definidos"
+
+msgid "Scheduling"
+msgstr "Programación"

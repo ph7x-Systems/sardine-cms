@@ -1,6 +1,6 @@
 {% extends "shell.html.j2" %}
 {% from "_fields.html.j2" import preview_links_card, content_fields, metadata_fields, seo_fields, errors_block, state_badge, status_tag with context %}
-{% from "_components.html.j2" import editor_header, action_bar, editor_nav, danger_zone with context %}
+{% from "_components.html.j2" import editor_header, action_bar, editor_nav, danger_zone, quiet_panel with context %}
 {% block title %}{{ article.id }} — Sardine CMS admin{% endblock %}
 {% block header %}{{ editor_header("/articles", _("Articles"), article.id, status_tag(article.status)) }}{% endblock %}
 {% block content %}
@@ -25,7 +25,6 @@
     ("content", _("Content")),
     ("translations", _("Translations")),
     ("notes", _("Editorial notes")),
-    ("design", _("Design preview")),
     ("revisions", _("Revisions")),
     ("preview-links", _("External preview links")),
     ("danger", _("Danger zone")),
@@ -43,9 +42,10 @@
         <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Metadata") }}</h2></div>
         <div class="card-body">{{ metadata_fields(form) }}{{ seo_fields(form) }}</div>
       </div>
-      <div class="card mb-3">
-        <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Custom fields") }}</h2></div>
-        <div class="card-body">
+      {% set custom_used = custom_rows | selectattr("name") | list | length %}
+      {% call quiet_panel(_("Custom fields"),
+          _("%(count)s set") | format(count=custom_used) if custom_used else _("none"),
+          collapsed=not custom_used) %}
           <p class="form-text">{{ _("Free-form name/value pairs carried to themes and extensions (ADR-0028); clear a value to drop its field.") }}</p>
           <div class="table-responsive admin-table-wrap">
             <table class="table table-sm mb-0 admin-table">
@@ -65,8 +65,7 @@
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
+      {% endcall %}
       <p class="form-text" role="status" aria-live="polite" data-autosave-status
          data-saving="{{ _('Saving…') }}" data-saved="{{ _('Saved') }}"
          data-invalid="{{ _('Autosave paused — fix invalid fields.') }}"></p>
@@ -79,11 +78,39 @@
        so it is focusable and named — a scrollable region has to be
        reachable from the keyboard. #}
     <div class="card mb-3 admin-sticky-panel" tabindex="0" role="region"
-         aria-label="{{ _("Preview") }}">
-      <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Preview") }}</h2></div>
-      <div class="card-body">
-        <p class="form-text">{{ _("Rendered with the builder's Markdown renderer (raw HTML disabled); shows the last saved body.") }}</p>
-        <div class="admin-preview">{{ preview_html | safe }}</div>
+         aria-label="{{ _("Preview") }}" id="design">
+      {# Two read-only renders of the same entry, so they share one card
+         through the theme's own header tabs instead of sitting eight
+         hundred pixels apart. Both are conveniences: no form field is
+         hidden behind a tab, because the panel is operable without
+         JavaScript. #}
+      <div class="card-header p-0 border-bottom-0">
+        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-markdown" data-bs-toggle="tab"
+                    data-bs-target="#pane-markdown" type="button" role="tab"
+                    aria-controls="pane-markdown" aria-selected="true">{{ _("Preview") }}</button>
+          </li>
+          {% if preview_path %}
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-design" data-bs-toggle="tab"
+                    data-bs-target="#pane-design" type="button" role="tab"
+                    aria-controls="pane-design" aria-selected="false">{{ _("Design preview") }}</button>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+      <div class="card-body tab-content">
+        <div class="tab-pane fade show active" id="pane-markdown" role="tabpanel"
+             aria-labelledby="tab-markdown">
+          <p class="form-text">{{ _("Rendered with the builder's Markdown renderer (raw HTML disabled); shows the last saved body.") }}</p>
+          <div class="admin-preview">{{ preview_html | safe }}</div>
+        </div>
+        {% if preview_path %}
+        <div class="tab-pane fade p-0" id="pane-design" role="tabpanel" aria-labelledby="tab-design">
+          {% include "_design_preview_body.html.j2" %}
+        </div>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -110,7 +137,6 @@
   </div>
 </div>
 <div id="notes">{% include "_notes.html.j2" %}</div>
-<div id="design">{% include "_design_preview.html.j2" %}</div>
 {% set base_url = "/articles/" ~ article.id %}
 <div id="revisions">{% include "_revisions.html.j2" %}</div>
 <div id="preview-links">{{ preview_links_card(preview_kind, preview_entry_id, preview_links, csrf_token) }}</div>

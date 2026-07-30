@@ -10,6 +10,15 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Changed
 
+- The article editor opens on the task instead of on everything at once:
+  **Custom fields** collapses while the entry uses none (an empty
+  two-row table had a card of its own), **Scheduling** moves behind a
+  disclosure that opens by itself when a moment is set, and the two
+  read-only previews — Markdown and the real-theme render — share one
+  card through the theme's own header tabs instead of sitting eight
+  hundred pixels apart. No form field is hidden behind a tab: the panel
+  stays operable without JavaScript.
+
 - The dashboard answers "is anything wrong?" instead of listing
   everything that is: the advisory findings become a bounded tally per
   rule with a link to the publishing screen, which owns the filters and
