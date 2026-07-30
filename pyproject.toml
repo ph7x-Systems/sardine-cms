@@ -39,7 +39,10 @@ select = [
 [tool.mypy]
 python_version = "3.12"
 strict = true
-files = ["apps", "packages", "tests"]
+files = ["apps", "packages", "tests", "examples/starter-theme/src"]
+# The starter theme is an example, not a distribution: it is not
+# installed, so mypy needs its source root to resolve it.
+mypy_path = "examples/starter-theme/src"
 exclude = ["build", "dist"]
 plugins = ["pydantic.mypy"]
 

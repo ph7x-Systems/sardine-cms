@@ -1,0 +1,58 @@
+/* [hidden] first, and with !important: the browser's own rule has zero
+   specificity, so any display utility further down silently defeats it —
+   and hidden content is often hidden for a reason (a consent notice, an
+   unsent form). This is the first line of every Sardine stylesheet. */
+[hidden] { display: none !important; }
+
+/* Tokens. Everything below consumes these; a site rebrands by shadowing
+   this file in its own theme/assets directory, without forking. */
+:root {
+  --measure: 42rem;
+  --gap: 1.5rem;
+  --ink: #16181d;
+  --paper: #fdfdfc;
+  --muted: #5b6069;
+  --accent: #1f5f8b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root { --ink: #e9e9e6; --paper: #16181d; --muted: #a2a7b0; --accent: #7fb2d6; }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: var(--gap);
+  background: var(--paper);
+  color: var(--ink);
+  font: 1rem/1.6 system-ui, sans-serif;
+}
+
+/* Flow-relative properties only — never margin-left or padding-right.
+   A language pack may declare right-to-left, and physical properties
+   break every such site without warning. */
+body > * { margin-inline: auto; max-width: var(--measure); }
+
+header nav ul, footer ul { display: flex; flex-wrap: wrap; gap: 0.75rem; padding: 0; list-style: none; }
+
+h1, h2, h3 { line-height: 1.25; text-wrap: balance; }
+p { text-wrap: pretty; }
+
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Images never overflow their column, and always keep their ratio: the
+   builder supplies width and height, so nothing shifts while loading. */
+img { max-width: 100%; height: auto; }
+
+/* Wide content scrolls inside itself rather than pushing the page. */
+table, pre { display: block; max-width: 100%; overflow-x: auto; }
+
+.section { margin-block: calc(var(--gap) * 2); }
+.field { margin-block-end: 0.5rem; }
+.item { margin-block-end: var(--gap); padding-inline-start: var(--gap); border-inline-start: 2px solid var(--muted); }
+
+time, .item time { color: var(--muted); }
+
+.prose > :first-child { margin-block-start: 0; }

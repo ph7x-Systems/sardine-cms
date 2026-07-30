@@ -6,6 +6,14 @@ tests; this guide shows the path. Read [DESIGN_RULES.md](DESIGN_RULES.md)
 first: conformance is what makes a theme a theme. The shipped components and
 islands are inventoried in [COMPONENTS.md](COMPONENTS.md).
 
+**Start from the starter theme.** `examples/starter-theme/` is a
+complete, conformance-certified theme small enough to read in one
+sitting: five templates, one stylesheet, no JavaScript, and one generic
+renderer that covers every section kind — including kinds it has never
+seen. Copy the directory, rename the package and the entry point, and
+replace templates one at a time. Its README explains what is
+deliberately absent and why.
+
 ## Level 0 — override the current theme (no code)
 
 Any project can reshape its theme without forking it (ADR-0007). Files under

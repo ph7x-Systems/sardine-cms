@@ -42,6 +42,15 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Added
 
+- A **starter theme** (`examples/starter-theme/`): a deliberately
+  minimal theme — five templates, one stylesheet, no JavaScript — that
+  passes the theme conformance suite in full, so it is a starting point
+  rather than a sketch. It carries no branch on a section kind: one
+  generic renderer covers fields, repeatable rows and images for every
+  kind, including kinds an extension invents, which is what the section
+  contract promises. Certified in CI beside the bundled themes, with a
+  test that keeps it small.
+
 - Onboarding-flow check (`scripts/onboarding_flow_check.py`) in CI
   (#128): the browser path from an **empty database** — no project
   file, no account — through the first-run wizard to a site built and

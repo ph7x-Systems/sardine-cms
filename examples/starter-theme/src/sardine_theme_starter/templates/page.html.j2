@@ -1,0 +1,13 @@
+{% extends "base.html.j2" %}
+{% block main %}
+<article>
+  <h1>{{ page.title }}</h1>
+  {% if page.description %}<p>{{ page.description }}</p>{% endif %}
+  {# The page body is Markdown rendered by the builder — print it, never
+     re-escape it. #}
+  {% if page.body_html %}<div class="prose">{{ page.body_html }}</div>{% endif %}
+  {% for section in sections %}
+  {% include "_section.html.j2" %}
+  {% endfor %}
+</article>
+{% endblock %}

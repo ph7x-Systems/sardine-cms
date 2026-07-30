@@ -1,0 +1,26 @@
+[project]
+name = "sardine-theme-starter"
+version = "0.1.0"
+description = "A deliberately minimal Sardine CMS theme: the shape of the contract, nothing else"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+authors = [{ name = "pH7x Systems", email = "support@ph7x.com" }]
+dependencies = ["sardine-cms-build>=0.8"]
+
+[project.urls]
+Homepage = "https://github.com/ph7x-Systems/sardine-cms"
+
+# How a theme announces itself: one entry point in the sardine.themes
+# group, mapping a name to a factory. `theme = "starter"` in
+# sardine.toml then finds it — no registration code, no imports at
+# startup (ADR-0012).
+[project.entry-points."sardine.themes"]
+starter = "sardine_theme_starter:StarterTheme"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sardine_theme_starter"]

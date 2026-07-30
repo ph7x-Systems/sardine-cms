@@ -16,7 +16,7 @@ echo "==> ruff check"
 echo "==> ruff format --check"
 "$PY" -m ruff format --check .
 echo "==> mypy"
-"$PY" -m mypy .
+"$PY" -m mypy    # no path argument: the config decides, exactly as CI does
 echo "==> bandit"
 "$PY" -m bandit -q -r apps packages scripts -x '*/static/*,*/assets/*' -ll -ii
 if [ "${FAST:-0}" = "1" ]; then

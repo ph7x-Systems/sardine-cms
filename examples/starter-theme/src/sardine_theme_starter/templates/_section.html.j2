@@ -1,0 +1,35 @@
+{# One renderer for every section kind, including kinds this theme has
+   never seen. That is the whole trick of the section contract:
+
+     section.key     a stable identifier, good for an anchor
+     section.kind    the kind's name — style on it, never branch on it
+     section.data    named fields; Markdown fields arrive as safe HTML
+     section.rows    repeatable items (FAQ entries, form fields, …)
+     section.images  media, each with url, alt, width, height, srcset
+
+   A real theme adds branches for the kinds it wants to art-direct and
+   keeps a fallback like this one for the rest. Dropping the fallback is
+   how a theme starts losing content silently. #}
+<section id="{{ section.key }}" class="section section-{{ section.kind }}">
+  {% for name, value in section.data | dictsort %}
+  <div class="field field-{{ name }}">{{ value }}</div>
+  {% endfor %}
+  {% for row in section.rows %}
+  <div class="item">
+    {% for name, value in row | dictsort %}
+    <div class="field field-{{ name }}">{{ value }}</div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+  {% for image in section.images %}
+  {# width and height are always present and always required: they are
+     what keeps the page from shifting while images load. #}
+  <figure>
+    <picture>
+      {% for source in image.sources %}<source type="{{ source.type }}" srcset="{{ source.srcset }}" sizes="100vw">{% endfor %}
+      <img src="{{ image.url }}"{% if image.srcset %} srcset="{{ image.srcset }}" sizes="100vw"{% endif %}
+           alt="{{ image.alt }}" width="{{ image.width }}" height="{{ image.height }}" loading="lazy">
+    </picture>
+  </figure>
+  {% endfor %}
+</section>
