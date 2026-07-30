@@ -21,6 +21,11 @@ features with their PRs, breaking changes and migrations — live in
   already exists (`WinError 5`); the old pointer is now removed first
   there, inside the deployment lock, leaving the release directories
   untouched.
+- Importing a portable export no longer loses the Markdown tree on
+  Windows. The importer keyed the files with the operating system's
+  separator while the format — and every consumer — uses a forward
+  slash, so on Windows no key matched: translations came from
+  `content.json` alone and their states were wrong after a round trip.
 - Text artifacts are byte-identical on every platform. The portable
   export, `release.json`, the seeded media and every project-file write
   used the platform's native line endings, so on Windows the same

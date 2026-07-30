@@ -644,7 +644,9 @@ def test_absolute_sqlite_paths_are_honoured_as_written(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     project = load_project(tmp_path)
-    assert project.storage_url == f"sqlite:///{configured}"
+    # Compare the path, not its spelling: the loader normalises to the
+    # platform's separator, which SQLite accepts either way.
+    assert Path(project.storage_url.removeprefix("sqlite:///")) == target
 
     # And the round trip actually opens that file, not a nested copy.
     with project.open_storage():
@@ -655,12 +657,42 @@ def test_absolute_sqlite_paths_are_honoured_as_written(tmp_path: Path) -> None:
 
 def test_relative_and_memory_storage_urls_keep_working(tmp_path: Path) -> None:
     for url, expected in (
-        ("sqlite:///content.sqlite3", f"sqlite:///{(tmp_path / 'content.sqlite3').as_posix()}"),
-        ("sqlite:///:memory:", "sqlite:///:memory:"),
+        ("sqlite:///content.sqlite3", tmp_path / "content.sqlite3"),
+        ("sqlite:///:memory:", ":memory:"),
     ):
         (tmp_path / "sardine.toml").write_text(
             '[site]\nname = "Aurora"\nbase_url = "https://example.com"\nlanguages = []\n'
             f'\n[storage]\nurl = "{url}"\n',
             encoding="utf-8",
         )
-        assert load_project(tmp_path).storage_url == expected
+        resolved = load_project(tmp_path).storage_url.removeprefix("sqlite:///")
+        assert resolved == expected if isinstance(expected, str) else Path(resolved) == expected
+
+
+def test_the_portable_import_keys_markdown_with_forward_slashes(tmp_path: Path) -> None:
+    """The portable format keys Markdown by `<article>/<language>.md` on
+    every platform.
+
+    Regression: the importer built those keys with the OS separator, so on
+    Windows every key read `article\\en.md`, no consumer matched it, and
+    the Markdown tree was silently ignored — translations imported from
+    content.json alone and their states came out wrong.
+    """
+    (tmp_path / "origin").mkdir()
+    (tmp_path / "clone").mkdir()
+    origin = make_project(tmp_path / "origin")
+    runner.invoke(app, ["seed", "-p", str(origin)])
+    assert runner.invoke(app, ["dump", "-p", str(origin)]).exit_code == 0
+
+    keys = sorted(
+        path.relative_to(origin / "portable" / "markdown").as_posix()
+        for path in (origin / "portable" / "markdown").rglob("*.md")
+    )
+    assert keys, "the dump wrote no Markdown"
+    assert all("/" in key and "\\" not in key for key in keys)
+
+    clone = make_project(tmp_path / "clone")
+    assert runner.invoke(app, ["import", str(origin / "portable"), "-p", str(clone)]).exit_code == 0
+    first = (origin / "portable" / "content.json").read_text(encoding="utf-8")
+    assert runner.invoke(app, ["dump", "-p", str(clone)]).exit_code == 0
+    assert (clone / "portable" / "content.json").read_text(encoding="utf-8") == first
