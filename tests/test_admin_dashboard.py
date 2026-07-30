@@ -128,7 +128,11 @@ def test_dashboard_reports_content_and_coverage(tmp_path: Path) -> None:
     with TestClient(app, base_url="https://testserver") as client:
         _sign_in(client)
         page = client.get("/").text
-    assert "2 articles, 0 pages, 0 media assets." in page
+    # The totals are AdminLTE info-boxes now, one per kind, each linking
+    # to its list — not three numbers inside a sentence.
+    assert 'class="info-box' in page
+    for label, href in (("Articles", "/articles"), ("Pages", "/pages"), ("Media", "/media")):
+        assert label in page and f'href="{href}"' in page
     assert "PT-PT" in page
     # one of two entries is fully translated in every target language
     assert "50%" in page

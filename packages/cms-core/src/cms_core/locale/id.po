@@ -1864,3 +1864,25 @@ msgstr "Setel sampul lewat pengenal"
 
 msgid "Uploaded images appear here — manage them in the media library."
 msgstr "Gambar yang diunggah muncul di sini — dikelola di pustaka media."
+
+msgid "Review the findings"
+msgstr "Tinjau temuan"
+
+msgid "none yet"
+msgstr "belum ada"
+
+msgid "none"
+msgstr "tidak ada"
+
+msgid "%(count)s active"
+msgstr "%(count)s aktif"
+
+msgid "%(count)s note"
+msgid_plural "%(count)s notes"
+msgstr[0] "%(count)s catatan"
+msgstr[1] "%(count)s catatan"
+
+msgid "%(count)s revision"
+msgid_plural "%(count)s revisions"
+msgstr[0] "%(count)s revisi"
+msgstr[1] "%(count)s revisi"

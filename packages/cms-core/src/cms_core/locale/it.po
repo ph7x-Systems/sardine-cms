@@ -1866,3 +1866,25 @@ msgstr "Imposta la copertina per identificatore"
 
 msgid "Uploaded images appear here — manage them in the media library."
 msgstr "Le immagini caricate compaiono qui — si gestiscono nella libreria media."
+
+msgid "Review the findings"
+msgstr "Esamina i rilievi"
+
+msgid "none yet"
+msgstr "ancora nessuna"
+
+msgid "none"
+msgstr "nessuno"
+
+msgid "%(count)s active"
+msgstr "%(count)s attivi"
+
+msgid "%(count)s note"
+msgid_plural "%(count)s notes"
+msgstr[0] "%(count)s nota"
+msgstr[1] "%(count)s note"
+
+msgid "%(count)s revision"
+msgid_plural "%(count)s revisions"
+msgstr[0] "%(count)s revisione"
+msgstr[1] "%(count)s revisioni"

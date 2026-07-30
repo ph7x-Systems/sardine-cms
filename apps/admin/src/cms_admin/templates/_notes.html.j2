@@ -1,8 +1,10 @@
+{% from "_components.html.j2" import quiet_panel with context %}
 {# Editorial notes card (M5). Context: notes (seq, when, author, body),
    note_kind ("article"/"page"), entity_id. #}
-<div class="card mb-3">
-  <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Editorial notes") }}</h2></div>
-  <div class="card-body">
+{% call quiet_panel(_("Editorial notes"),
+    ngettext("%(count)s note", "%(count)s notes", notes | length) | format(count=notes | length)
+    if notes else _("none yet"),
+    collapsed=not notes) %}
     {% for seq, when, author, body in notes %}
     <div class="d-flex justify-content-between align-items-start border-bottom pb-2 mb-2">
       <div>
@@ -29,5 +31,4 @@
       </label>
       <button type="submit" class="btn btn-outline-secondary btn-sm">{{ _("Add note") }}</button>
     </form>
-  </div>
-</div>
+{% endcall %}

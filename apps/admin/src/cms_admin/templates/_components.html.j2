@@ -51,6 +51,32 @@
 </nav>
 {% endmacro %}
 
+{% macro quiet_panel(title, summary, collapsed=true, section_id=None) %}
+{# DS-18: an editor's auxiliary panels are not the task, so they arrive
+   collapsed and the work area keeps the room.
+
+   This is AdminLTE's own collapsible card — `card-tools` with a
+   `btn-tool` bound to `data-lte-toggle="card-collapse"`, whose script is
+   already vendored — not a hand-rolled disclosure. The theme ships the
+   pattern; using it keeps one behaviour, one appearance, one set of
+   keyboard semantics. #}
+<div class="card mb-3{% if collapsed %} collapsed-card{% endif %}"{% if section_id %} id="{{ section_id }}"{% endif %}>
+  <div class="card-header d-flex justify-content-between align-items-center gap-2">
+    <h2 class="card-title h6 mb-0">{{ title }}</h2>
+    <div class="d-flex align-items-center gap-2">
+      {% if summary %}<span class="form-text mb-0">{{ summary }}</span>{% endif %}
+      <div class="card-tools">
+        <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse"
+                aria-label="{{ title }}">
+          <i class="bi {{ 'bi-plus-lg' if collapsed else 'bi-dash-lg' }}" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">{{ caller() }}</div>
+</div>
+{% endmacro %}
+
 {% macro form_section(title, section_id=None) %}
 {# DS-9: one card per form area — the header names it, the caller
    fills it. #}

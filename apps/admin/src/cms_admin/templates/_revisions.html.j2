@@ -1,7 +1,10 @@
+{% from "_components.html.j2" import quiet_panel with context %}
 {# Revision history card (ADR-0025). Context: revisions (list of
    (number, when, author)), base_url of the entity. #}
-<div class="card mb-3">
-  <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Revisions") }}</h2></div>
+{% call quiet_panel(_("Revisions"),
+    ngettext("%(count)s revision", "%(count)s revisions", revisions | length) | format(count=revisions | length)
+    if revisions else _("none yet"),
+    collapsed=not revisions) %}
   {% if revisions %}
   <div class="card-body p-0 table-responsive admin-table-wrap">
     <table class="table table-sm table-striped mb-0 admin-table admin-revisions-table">
@@ -22,4 +25,4 @@
   {% else %}
   <div class="card-body"><p class="admin-empty mb-0">{{ _("No revisions yet — they appear after the first save.") }}</p></div>
   {% endif %}
-</div>
+{% endcall %}
