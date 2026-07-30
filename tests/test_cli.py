@@ -652,7 +652,9 @@ def test_absolute_sqlite_paths_are_honoured_as_written(tmp_path: Path) -> None:
     with project.open_storage():
         pass
     assert target.is_file()
-    assert not (tmp_path / configured.lstrip("/")).exists()
+    # The point of the regression: exactly one database exists, and it is
+    # the configured one — no copy nested under the project directory.
+    assert sorted(tmp_path.rglob("content.db")) == [target]
 
 
 def test_relative_and_memory_storage_urls_keep_working(tmp_path: Path) -> None:
