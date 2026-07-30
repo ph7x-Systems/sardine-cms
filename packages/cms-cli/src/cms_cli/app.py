@@ -668,7 +668,11 @@ def import_command(
         raise typer.Exit(code=2)
     markdown_files = (
         {
-            str(path.relative_to(source / "markdown")): path.read_text(encoding="utf-8")
+            # The portable format keys by "<article>/<language>.md" with a
+            # forward slash on every platform — the exporter writes it that
+            # way and every consumer splits on it. Using the OS separator
+            # here made Windows imports silently drop the Markdown tree.
+            path.relative_to(source / "markdown").as_posix(): path.read_text(encoding="utf-8")
             for path in sorted((source / "markdown").rglob("*.md"))
         }
         if (source / "markdown").is_dir()
