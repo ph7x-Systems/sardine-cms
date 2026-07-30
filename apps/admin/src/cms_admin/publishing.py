@@ -61,7 +61,7 @@ def persist_target(project_file: Path, target: str) -> None:
             lines.insert(at + 1, f'target = "{target}"')
         else:
             lines.extend(["", "[build]", f'target = "{target}"'])
-    project_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    project_file.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
 
 _REQUIRE_EDITOR = require_at_least(Role.EDITOR)

@@ -49,7 +49,7 @@ def _write_site_theme(project_file: Path, name: str) -> None:
     else:
         at = next(i for i, line in enumerate(lines) if line.strip() == "[site]")
         lines.insert(at + 1, f'theme = "{name}"')
-    project_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    project_file.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
 
 def _render(

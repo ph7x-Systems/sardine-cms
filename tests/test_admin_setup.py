@@ -22,7 +22,7 @@ PASSWORD = "a sardine in space wins"
 def _app(tmp_path: Path) -> FastAPI:
     return create_app(
         AdminSettings(
-            storage_url=f"sqlite:///{tmp_path / 'content.db'}",
+            storage_url=f"sqlite:///{(tmp_path / 'content.db').as_posix()}",
             media_dir=tmp_path / "media",
             project_dir=tmp_path,
         )
@@ -64,7 +64,7 @@ def test_setup_creates_admin_project_and_signs_in(tmp_path: Path) -> None:
         assert response.headers["location"] == "/"
         dashboard = client.get("/").text
     # the admin account exists with the admin role — never a lesser one
-    with create_storage(f"sqlite:///{tmp_path / 'content.db'}") as storage:
+    with create_storage(f"sqlite:///{(tmp_path / 'content.db').as_posix()}") as storage:
         user = storage.load_user("dona")
     assert user is not None and user.role is Role.ADMIN
     # the project file carries the chosen identity
@@ -84,7 +84,7 @@ def test_setup_can_seed_the_example_site(tmp_path: Path) -> None:
             follow_redirects=False,
         )
         assert response.status_code == 303
-    with create_storage(f"sqlite:///{tmp_path / 'content.db'}") as storage:
+    with create_storage(f"sqlite:///{(tmp_path / 'content.db').as_posix()}") as storage:
         assert storage.list_page_ids()  # the example site is there
         assert storage.list_article_ids()
 
@@ -103,7 +103,7 @@ def test_setup_validates_and_keeps_the_form(tmp_path: Path) -> None:
 
 
 def test_a_configured_instance_never_exposes_setup(tmp_path: Path) -> None:
-    url = f"sqlite:///{tmp_path / 'content.db'}"
+    url = f"sqlite:///{(tmp_path / 'content.db').as_posix()}"
     with create_storage(url) as storage:
         storage.save_user(
             User(

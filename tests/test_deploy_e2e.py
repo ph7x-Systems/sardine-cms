@@ -40,7 +40,7 @@ def storage_url(request: pytest.FixtureRequest, tmp_path: Path) -> str:
     name = request.param
     url = dict(ENGINES)[name]
     if name == "sqlite":
-        return f"sqlite:///{tmp_path / 'content.db'}"
+        return f"sqlite:///{(tmp_path / 'content.db').as_posix()}"
     assert url is not None
     return url
 
@@ -59,7 +59,7 @@ def _app(tmp_path: Path, storage_url: str) -> FastAPI:
     (tmp_path / "sardine.toml").write_text(
         '[site]\nname = "Live"\nbase_url = "https://live.example"\nlanguages = []\n'
         "\n[deploy]\n"
-        f'root = "{tmp_path / "www"}"\n',
+        f'root = "{(tmp_path / "www").as_posix()}"\n',
         encoding="utf-8",
     )
     with create_storage(storage_url) as storage:
