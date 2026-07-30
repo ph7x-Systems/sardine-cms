@@ -179,10 +179,13 @@ with that entity's errors listed (the publish gate; disable only with
   uploading bytes identical to an existing asset is refused with a
   message naming the asset that already holds them.
 - **Picking images in the editors**: the article metadata card and the
-  section editor offer a library picker — thumbnails with dimensions,
-  chosen by radio (cover: pick, keep, or none) or checkbox (section
-  media: append to the ordered list). No script is required; the ID
-  text inputs remain the precise path. Images narrower than the widest
+  section editor offer a library picker — thumbnails captioned with the
+  alt text an editor wrote, chosen by radio (cover: pick, keep, or none)
+  or checkbox (section media: append to the ordered list). The picker
+  shows a page of tiles and states how many of how many; its own search
+  covers identifiers and alt text, so a large library is reached by
+  searching rather than scrolling. No script is required; the ID text
+  inputs remain the precise path. Images narrower than the widest
   configured responsive width are flagged so editors see when a source
   is too small for the site's layouts.
 - **Replace file**: the asset page swaps the file behind an asset
@@ -704,7 +707,12 @@ language the moment the pack is activated — the selector lists every
 registered pack with a catalog under the pack's own `native_name`, and
 the panel chrome renders `dir="rtl"` when the pack says so. An
 anti-drift test fails if any msgid is missing or untranslated in any
-bundled catalog. The editors' source and target language sets come
+bundled catalog. Dates follow the resolved language too: every moment
+the panel renders is written the way that language writes it (with
+`UTC` stated when the time of day matters), while the scheduling inputs
+keep the browser's `YYYY-MM-DDTHH:MM` wire format so the native
+calendar still reads them — the prose echo under the field says which
+moment that is. The editors' source and target language sets come
 from the project's `sardine.toml` (`source_language`, `languages`).
 Editorial content is never touched by panel i18n.
 

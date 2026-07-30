@@ -136,16 +136,43 @@ async def _load_article(request: Request, article_id: str) -> Article:
     return article
 
 
+PICKER_TILES = 12
+"""How many library images the cover picker renders at once. A picker is
+a collection: at a hundred assets, rendering all of them is not a
+choice, it is a wall. The search narrows; the media library holds the
+rest."""
+
+
 async def _picker_context(request: Request) -> dict[str, object]:
-    """Library images for the cover picker (#136), with the widest
-    configured responsive width so undersized sources are flagged."""
+    """Library images for the cover picker (#136), bounded and
+    searchable, with the widest configured responsive width so undersized
+    sources are flagged."""
     assets = await get_db(request).run(lambda storage: storage.load_all_media_assets())
     project = _project(request)
     widths = project.site.image_widths if project else ()
+    source = _site_source(project)
+    images = [asset for asset in assets if asset.is_image]
+    needle = str(request.query_params.get("media_q", "")).strip()
+    if needle:
+        lowered = needle.lower()
+        images = [
+            asset
+            for asset in images
+            if lowered in asset.id.lower()
+            or any(lowered in text.lower() for text in asset.alt.values())
+        ]
+    total = len(images)
     return {
-        "image_assets": [asset for asset in assets if asset.is_image],
+        "image_assets": images[:PICKER_TILES],
+        # The current choice stays visible even when the bound or a search
+        # would exclude it, so the field never looks like it lost its
+        # value. Keyed by id: the template knows which one is current.
+        "picker_by_id": {asset.id: asset for asset in assets if asset.is_image},
+        "picker_total": total,
+        "picker_shown": min(total, PICKER_TILES),
+        "picker_query": needle,
         "picker_widest": max(widths) if widths else 0,
-        "picker_language": _site_source(project),
+        "picker_language": source,
     }
 
 

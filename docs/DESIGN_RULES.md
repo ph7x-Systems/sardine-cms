@@ -114,7 +114,9 @@ also records which rules stay documented audits and why.
   description → toolbar (search, filters, bulk actions) → table →
   pagination. The create action lives in the header (DS-3).
 - **DS-5** Every collection that can exceed one screen has a search or
-  filter scoped to itself — the navbar's global search never counts.
+  filter scoped to itself — the navbar's global search never counts. A
+  chooser is a collection: an asset picker inside a form obeys this rule
+  exactly as a table does.
 - **DS-6** Wide content scrolls inside its own container; at 320 px
   the page never scrolls horizontally.
 - **DS-7** Empty states say what the emptiness means *and* offer the
@@ -153,7 +155,9 @@ also records which rules stay documented audits and why.
 - **DS-19** Pagination is mandatory (#250): a collection holding more
   rows than the page size never renders in full — the table shows one
   page and a summary line ("Showing 25 of 438"). A screen rendering
-  hundreds of rows is non-conforming.
+  hundreds of rows is non-conforming. A picker bounds itself the same
+  way: it renders a page of tiles, states how many of how many, and
+  leaves the rest to its search and to the library screen.
 
 These rules are executable on purpose: DS-8 compares the visible
 control count between a small and a large language set; DS-16

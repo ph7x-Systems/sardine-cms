@@ -30,7 +30,7 @@
                 </form>
               </td>
               <td>{{ account.language.value if account.language else _("Browser default") }}</td>
-              <td>{{ account.created_at.strftime("%Y-%m-%d") }}</td>
+              <td>{{ when(account.created_at.date()) }}</td>
               <td>
                 <form method="post" action="/users/{{ account.username }}/delete" class="mb-0">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">

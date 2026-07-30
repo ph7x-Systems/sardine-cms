@@ -36,7 +36,7 @@
       <tbody>
         {% for record in records %}
         <tr>
-          <td>{{ record.at.strftime("%Y-%m-%d %H:%M") }} UTC</td>
+          <td>{{ when(record.at) }}</td>
           <th scope="row">{{ record.actor }}</th>
           <td><span class="badge text-bg-light border admin-tag">{{ record.action }}</span></td>
           <td>{{ record.subject_kind }}: {{ record.subject_id }}</td>

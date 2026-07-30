@@ -36,6 +36,9 @@
   <label class="form-label" for="{{ name }}">{{ label }}</label>
   <input class="form-control admin-input" id="{{ name }}" name="{{ name }}"
          type="datetime-local" value="{{ value }}">
+  {# The input carries the wire format; the echo says the same moment in
+     the panel's language, so a scheduled date reads as a date. #}
+  {% if value %}<div class="form-text admin-when">{{ when(value) }}</div>{% endif %}
   {% if hint %}<div class="form-text admin-hint">{{ hint }}</div>{% endif %}
 </div>
 {% endmacro %}
@@ -53,19 +56,33 @@
 {% endmacro %}
 
 {% macro cover_picker(assets, current, widest) %}
-{% if assets %}
+{% if assets or picker_query %}
 {# Picking an image is the task, so the pictures are on the screen: no
    disclosure to discover, no identifier to type. The current choice
    reads as chosen, and "no cover" is a tile like the rest so it never
    hides in a corner. #}
 <div class="mb-2 admin-field">
   <span class="form-label d-block">{{ _("Cover") }}</span>
+  {{ picker_search("cover-picker-search") }}
   <div class="d-flex flex-wrap gap-2 admin-picker" role="radiogroup" aria-label="{{ _("Cover") }}">
     <label class="admin-picker-tile border rounded p-2{% if not current %} border-primary bg-body-tertiary{% endif %}">
       <input class="form-check-input" type="radio" name="cover_pick" value="__none__"{% if not current %} checked{% endif %}>
       <span class="admin-picker-none d-block my-1 rounded border" aria-hidden="true"></span>
       <span class="d-block admin-picker-title">{{ _("No cover") }}</span>
     </label>
+    {% set shown_ids = assets | map(attribute="id") | list %}
+    {% set pinned = picker_by_id.get(current) if current and current not in shown_ids else None %}
+    {% if pinned %}
+    {# The chosen image is pinned to the front, so a search never hides
+       what the field currently holds. #}
+    <label class="admin-picker-tile border rounded p-2 border-primary bg-body-tertiary">
+      <input class="form-check-input" type="radio" name="cover_pick" value="{{ pinned.id }}" checked>
+      <img class="admin-thumb rounded border d-block my-1" src="/media-files/{{ pinned.path }}"
+           alt="" width="96" height="64" loading="lazy">
+      {{ picker_tile_meta(pinned, widest) }}
+      <span class="form-text d-block">{{ _("current") }}</span>
+    </label>
+    {% endif %}
     {% for asset in assets %}
     {% set chosen = asset.id == current %}
     <label class="admin-picker-tile border rounded p-2{% if chosen %} border-primary bg-body-tertiary{% endif %}">
@@ -76,15 +93,37 @@
     </label>
     {% endfor %}
   </div>
-  <div class="form-text">{{ _("Uploaded images appear here — manage them in the media library.") }}</div>
+  <div class="form-text">
+    {{ _("Uploaded images appear here — manage them in the media library.") }}
+    {% if picker_total | default(0) > picker_shown | default(0) %}
+    {{ _("Search to reach the rest, or set the cover by identifier below.") }}
+    {% endif %}
+  </div>
 </div>
 {% endif %}
 {% endmacro %}
 
+{% macro picker_search(input_id) %}
+{# The picker's own search, scoped to the picker (DS-5). It sits inside
+   the editor's POST form, so it targets a sibling GET form by id —
+   nesting forms is invalid, and the panel works without scripts. #}
+<div class="d-flex flex-wrap gap-2 align-items-end mb-2">
+  <label class="mb-0" for="{{ input_id }}">
+    <span class="visually-hidden">{{ _("Search images") }}</span>
+    <input class="form-control form-control-sm admin-input" type="search" id="{{ input_id }}"
+           name="media_q" form="picker-search" value="{{ picker_query | default("") }}"
+           placeholder="{{ _("Search images") }}">
+  </label>
+  <button type="submit" form="picker-search" class="btn btn-outline-secondary btn-sm">{{ _("Search") }}</button>
+  <span class="form-text mb-0">{{ _("Showing %(shown)s of %(total)s") | format(shown=picker_shown | default(0), total=picker_total | default(0)) }}</span>
+</div>
+{% endmacro %}
+
 {% macro media_adder(assets, existing, widest) %}
-{% if assets %}
-<details class="mb-2">
+{% if assets or picker_query %}
+<details class="mb-2"{% if picker_query %} open{% endif %}>
   <summary class="form-text">{{ _("Add from the library") }}</summary>
+  {{ picker_search("media-adder-search") }}
   <div class="d-flex flex-wrap gap-2 mt-2">
     {% for asset in assets if asset.id not in existing %}
     <label class="border rounded p-2">
@@ -93,7 +132,10 @@
       {{ picker_tile_meta(asset, widest) }}
     </label>
     {% else %}
-    <span class="form-text">{{ _("Every library image is already in this section.") }}</span>
+    <span class="form-text">
+      {%- if picker_query %}{{ _("No image matches that search.") }}
+      {%- else %}{{ _("Every library image is already in this section.") }}{% endif %}
+    </span>
     {% endfor %}
   </div>
 </details>
@@ -248,7 +290,7 @@
       {% for link in links %}
       <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center gap-2">
         <span class="flex-grow-1"><input class="form-control admin-input" readonly value="{{ link.url }}" aria-label="{{ _("External preview links") }}"></span>
-        <span class="form-text mb-0">{{ link.expires_at.strftime("%Y-%m-%d %H:%M") }} UTC</span>
+        <span class="form-text mb-0">{{ when(link.expires_at) }}</span>
         <form method="post" action="/preview-links/{{ link.id }}/revoke" class="mb-0">
           <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
           <button type="submit" class="btn btn-outline-danger btn-sm">{{ _("Revoke") }}</button>

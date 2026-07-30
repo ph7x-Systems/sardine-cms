@@ -26,7 +26,7 @@
   <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
     <h2 class="card-title h6 mb-0">{{ submission.page_id }}/{{ submission.section_key }}
       <span class="badge text-bg-light border admin-tag">{{ submission.language }}</span></h2>
-    <span class="form-text mb-0">{{ submission.received_at.strftime("%Y-%m-%d %H:%M") }} UTC</span>
+    <span class="form-text mb-0">{{ when(submission.received_at) }}</span>
   </div>
   <div class="card-body">
     <dl class="admin-source mb-3">

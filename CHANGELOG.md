@@ -10,6 +10,15 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Changed
 
+- Choosing a cover works at library scale: the picker renders a page of
+  tiles instead of every image, says how many of how many it is showing,
+  and carries a search over identifiers and alt text — so an editor
+  finds the picture by what it is (DS-5, DS-19 applied to choosers).
+- Dates read as dates. Every rendered moment in the panel — lists,
+  activity, revisions, notes, submissions, trash, preview-link expiry —
+  now follows the signed-in panel language, and the scheduling fields
+  echo the moment they hold in prose beside the input. The wire format
+  stays inside the input, where the browser's own calendar reads it.
 - The article editor opens on the task instead of on everything at once:
   **Custom fields** collapses while the entry uses none (an empty
   two-row table had a card of its own), **Scheduling** moves behind a
@@ -41,6 +50,9 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Fixed
 
+- The Indonesian catalog declared one plural form while two entries
+  carried a second, which the catalog writer discarded with a warning on
+  every panel start; the catalog now matches the language.
 - The project file the first-run wizard writes is parseable on Windows.
   Values were embedded unescaped, so a Windows storage path — with its
   backslashes, which TOML reads as escape sequences — produced a

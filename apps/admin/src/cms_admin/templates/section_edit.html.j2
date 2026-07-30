@@ -5,6 +5,7 @@
 {% block header %}{{ editor_header("/pages/" ~ page.id, page.id, section.key, '<span class="badge text-bg-light border admin-tag">' ~ section.kind ~ "</span>" | safe) }}{% endblock %}
 {% block content %}
 {{ errors_block(errors) }}
+<form id="picker-search" method="get"></form>
 <form method="post" action="/pages/{{ page.id }}/sections/{{ section.key }}" class="admin-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
   <div class="card mb-3">

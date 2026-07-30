@@ -74,7 +74,7 @@
           </th>
           <td>{{ status_tag(article.status) }}</td>
           <td>{{ translation_badges(article, target_languages, "/articles/" + article.id) }}</td>
-          <td>{{ article.updated_at.strftime("%Y-%m-%d") }}</td>
+          <td>{{ when(article.updated_at.date()) }}</td>
           <td>{{ row_actions("article", article.id, row_actions_map[article.id]) }}</td>
         </tr>
         {% endfor %}
