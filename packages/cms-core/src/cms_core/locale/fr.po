@@ -1920,3 +1920,8 @@ msgid "%(count)s rule"
 msgid_plural "%(count)s rules"
 msgstr[0] "%(count)s règle"
 msgstr[1] "%(count)s règles"
+
+msgid "%(count)s kind"
+msgid_plural "%(count)s kinds"
+msgstr[0] "%(count)s type"
+msgstr[1] "%(count)s types"

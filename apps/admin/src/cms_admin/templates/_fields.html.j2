@@ -218,6 +218,20 @@
 {% endif %}
 {% endmacro %}
 
+{% macro row_menu(label) %}
+{# One row menu for the whole panel: a table row exposes one control for
+   its actions, not one control per action. The caller supplies the
+   items — each a small POST form, so the menu works as markup and the
+   dropdown only folds it away. #}
+<div class="dropdown">
+  <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button"
+          data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ label }}">
+    <i class="bi bi-three-dots" aria-hidden="true"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">{{ caller() }}</ul>
+</div>
+{% endmacro %}
+
 {% macro row_actions(kind, entity_id, transitions) %}
 {# List quick actions (M5): the workflow transitions and trash for this
    row, in a Bootstrap dropdown — no editor round-trip. #}

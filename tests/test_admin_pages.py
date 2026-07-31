@@ -695,3 +695,54 @@ def test_the_section_picker_appends_without_duplicates(tmp_path: Path) -> None:
     assert saved is not None
     hero = next(s for s in saved.sections if s.key == "hero")
     assert hero.source.media == ["existing-art", "fresh-art"]  # appended once, order kept
+
+
+def test_a_section_row_carries_one_actions_control(tmp_path: Path) -> None:
+    """A section row exposed five buttons — move up, move down, duplicate,
+    hide, remove — so six sections meant thirty controls. Reordering stays
+    direct; the rest folds into the same row menu the content lists use."""
+    page = _page("home", _hero(), Section(key="story-one", kind="story", source=SectionContent()))
+    app = _app(tmp_path, page)
+    with _client(app) as client:
+        _sign_in(client)
+        editor = client.get("/pages/home").text
+
+    # The first table is the translations matrix; the sections table
+    # is the one holding the row actions.
+    rows = editor.split('id="sections"')[1].split("<tbody>")[1].split("</tbody>")[0]
+    assert rows.count("dropdown-toggle") == 2, "one row menu per section"
+    # Move stays a button; the folded actions stay reachable as markup.
+    assert rows.count('name="direction"') == 4
+    for action in ("Duplicate", "Hide", "Remove"):
+        assert f'class="dropdown-item">{action}<' in rows or f'text-danger">{action}<' in rows, (
+            f"{action} is not in the row menu"
+        )
+    # Only the move buttons remain as buttons on the row itself.
+    assert rows.count('class="btn btn-outline-secondary btn-sm"') == 4
+
+
+def test_the_block_catalogue_arrives_collapsed(tmp_path: Path) -> None:
+    """Ten block kinds with a description apiece is a catalogue, and
+    adding a block is occasional: the panel ships closed and says how many
+    kinds it holds."""
+    app = _app(tmp_path, _page("home", _hero()))
+    with _client(app) as client:
+        _sign_in(client)
+        editor = client.get("/pages/home").text
+
+    panel = editor[editor.index('id="add-block"') - 200 : editor.index('id="add-block"') + 400]
+    assert "collapsed-card" in panel, "the block catalogue opens by default"
+    assert "kinds" in panel, "the panel does not say what it holds"
+
+
+def test_the_block_catalogue_opens_on_an_empty_page(tmp_path: Path) -> None:
+    """A page with no sections has nothing else to do, so the catalogue
+    is the task there and arrives open. It folds away once the page has
+    sections to edit."""
+    app = _app(tmp_path, _page("blank"))
+    with _client(app) as client:
+        _sign_in(client)
+        editor = client.get("/pages/blank").text
+
+    panel = editor[editor.index('id="add-block"') - 200 : editor.index('id="add-block"') + 400]
+    assert "collapsed-card" not in panel, "an empty page hides its only action"

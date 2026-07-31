@@ -140,13 +140,15 @@ with that entity's errors listed (the publish gate; disable only with
 - **Page building (#127)**: sections add from a visual **block
   gallery** — one card per kind (bundled and extension-contributed)
   with a description; keys derive from the kind automatically (a
-  custom-kind form stays behind "advanced"). Rows **duplicate**
+  custom-kind form stays behind "advanced"). The gallery is a panel that
+  opens on request, naming how many kinds it holds. Each section row
+  carries the up/down buttons and one actions menu holding **duplicate**
   (content, translations and visibility copied), **hide/show** (hidden
   sections keep everything but leave every build and never block
-  translation parity), **delete with undo** (the flash restores the
-  section, translations included), and reorder by **drag-and-drop** —
-  a progressive enhancement; the up/down buttons remain the keyboard
-  and no-JS path. Sections whose kind the theme does not implement are
+  translation parity) and **delete with undo** (the flash restores the
+  section, translations included). Reordering also works by
+  **drag-and-drop** — a progressive enhancement; the up/down buttons
+  remain the keyboard and no-JS path. Sections whose kind the theme does not implement are
   badged as rendering generically.
 - **Pages**: metadata, an optional long-form Markdown body (rendered
   between the header and the sections — a page can be a document, a

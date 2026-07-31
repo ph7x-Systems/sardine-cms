@@ -1,6 +1,6 @@
 {% extends "shell.html.j2" %}
-{% from "_fields.html.j2" import preview_links_card, seo_fields, text_field, textarea_field, datetime_field, errors_block, state_badge, status_tag, translation_badges with context %}
-{% from "_components.html.j2" import editor_header, action_bar, editor_nav, danger_zone with context %}
+{% from "_fields.html.j2" import preview_links_card, seo_fields, text_field, textarea_field, datetime_field, errors_block, state_badge, status_tag, translation_badges, row_menu with context %}
+{% from "_components.html.j2" import editor_header, action_bar, editor_nav, danger_zone, quiet_panel with context %}
 {% block title %}{{ page.id }} — Sardine CMS admin{% endblock %}
 {% block header %}{{ editor_header("/pages", _("Pages"), page.id, status_tag(page.status)) }}{% endblock %}
 {% block content %}
@@ -113,6 +113,9 @@
             {% if section.kind in generic_kinds %}<span class="badge text-bg-light border" title="{{ _("Renders generically in the current theme.") }}">{{ _("generic") }}</span>{% endif %}</td>
           <td>{{ translation_badges(section, target_languages) }}</td>
           <td class="admin-row-actions d-flex gap-1">
+            {# Reordering stays direct — it is the one action worth a
+               button per row. Everything else lives in the row menu,
+               the same one the content lists use. #}
             <form method="post" action="/pages/{{ page.id }}/sections/{{ section.key }}/move" class="mb-0">
               <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
               <input type="hidden" name="direction" value="up">
@@ -125,23 +128,28 @@
               <button type="submit" class="btn btn-outline-secondary btn-sm" {% if loop.last %}disabled{% endif %}
                       aria-label="{{ _('Move %(key)s down') | format(key=section.key) }}">&darr;</button>
             </form>
-            <form method="post" action="/pages/{{ page.id }}/sections/{{ section.key }}/duplicate" class="mb-0">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-              <button type="submit" class="btn btn-outline-secondary btn-sm"
-                      aria-label="{{ _('Duplicate section %(key)s') | format(key=section.key) }}">{{ _("Duplicate") }}</button>
-            </form>
-            <form method="post" action="/pages/{{ page.id }}/sections/{{ section.key }}/visibility" class="mb-0">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-              <input type="hidden" name="action" value="{{ 'show' if section.hidden else 'hide' }}">
-              <button type="submit" class="btn btn-outline-secondary btn-sm"
-                      aria-label="{{ (_('Show section %(key)s') if section.hidden else _('Hide section %(key)s')) | format(key=section.key) }}">
-                {{ _("Show") if section.hidden else _("Hide") }}</button>
-            </form>
-            <form method="post" action="/pages/{{ page.id }}/sections/{{ section.key }}/delete" class="mb-0">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-              <button type="submit" class="btn btn-outline-danger btn-sm"
-                      aria-label="{{ _('Remove section %(key)s') | format(key=section.key) }}">{{ _("Remove") }}</button>
-            </form>
+            {% call row_menu(_('Actions for %(id)s') | format(id=section.key)) %}
+            <li>
+              <form method="post" action="/pages/{{ page.id }}/sections/{{ section.key }}/duplicate" class="mb-0">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="dropdown-item">{{ _("Duplicate") }}</button>
+              </form>
+            </li>
+            <li>
+              <form method="post" action="/pages/{{ page.id }}/sections/{{ section.key }}/visibility" class="mb-0">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="action" value="{{ 'show' if section.hidden else 'hide' }}">
+                <button type="submit" class="dropdown-item">{{ _("Show") if section.hidden else _("Hide") }}</button>
+              </form>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form method="post" action="/pages/{{ page.id }}/sections/{{ section.key }}/delete" class="mb-0">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="dropdown-item text-danger">{{ _("Remove") }}</button>
+              </form>
+            </li>
+            {% endcall %}
           </td>
         </tr>
         {% endfor %}
@@ -155,9 +163,12 @@
   <div class="card-body"><p class="admin-empty mb-0">{{ _("No sections yet.") }}</p></div>
   {% endif %}
 </div>
-<div class="card" id="add-block">
-  <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Add a block") }}</h2></div>
-  <div class="card-body">
+{# Adding a block is an occasional act, and its catalogue is ten cards
+   of description. It arrives collapsed, like every auxiliary panel in an
+   editor (DS-18), and says how many kinds it holds. #}
+{% call quiet_panel(_("Add a block"),
+    ngettext("%(count)s kind", "%(count)s kinds", kind_hints | length) | format(count=kind_hints | length),
+    collapsed=page.sections | length > 0, section_id="add-block") %}
     {% set gallery_meta = {
       "hero": ("bi-fonts", _("Opening statement with a large heading.")),
       "story": ("bi-body-text", _("Narrative prose with stat pairs and images.")),
@@ -197,8 +208,7 @@
         <button type="submit" class="btn btn-primary">{{ _("Add section") }}</button>
       </form>
     </details>
-  </div>
-</div>
+{% endcall %}
 <div id="notes">{% include "_notes.html.j2" %}</div>
 <div id="design">{% include "_design_preview.html.j2" %}</div>
 {% set base_url = "/pages/" ~ page.id %}
