@@ -153,12 +153,14 @@
   </div>
   <div class="col-lg-5">
     {# The dashboard answers "is anything wrong?", not "list everything
-       that is wrong": the gate verdict and the rules table are bounded,
-       and the findings themselves live on the publishing screen, which
-       has the filters and the pagination for them. Rendering 35 advisory
-       rows here made the first screen anyone sees five thousand pixels
-       of noise. #}
+       that is wrong": the gate verdict states the outcome, the findings
+       tally bounds it per rule, and both the rule catalogue and the
+       findings themselves live on the publishing screen, which has the
+       filters and the pagination for them. The rule descriptions wrapped
+       to five lines apiece in this column — reference text where a
+       reader wanted a verdict. #}
     {% set hide_issues = true %}
+    {% set hide_rules = true %}
     {% include "_validation_report.html.j2" %}
     {% if report.issues %}
     <div class="card mb-4">

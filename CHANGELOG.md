@@ -10,6 +10,17 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Changed
 
+- The publishing screen reads as a list of things to fix. The same
+  finding was reported once per language — five identical rows differing
+  only in a tag — so findings now collapse into one row carrying the
+  languages it covers. The seeded project goes from 35 rows over two
+  pages to 11 rows on one, with nothing lost: the language tags are on
+  the row.
+- The dashboard states the verdict without reprinting the rule
+  catalogue. Six rule descriptions wrapped to five lines apiece in a
+  narrow column — reference text where a reader wanted an answer. The
+  gate line and the per-rule tally stay, the catalogue lives on the
+  publishing screen, and the dashboard goes from 2061 px to 1206 px.
 - Choosing a cover works at library scale: the picker renders a page of
   tiles instead of every image, says how many of how many it is showing,
   and carries a search over identifiers and alt text — so an editor

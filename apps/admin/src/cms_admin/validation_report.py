@@ -6,8 +6,65 @@ ran, not only what failed) and the issue list with subjects linked to their
 edit screens.
 """
 
+from dataclasses import dataclass
+
 from cms_core import SOURCE_LANGUAGE, TARGET_LANGUAGES, Language
-from cms_validation import Report, RuleSet, SiteContent, ValidationContext, default_ruleset
+from cms_validation import (
+    Issue,
+    Report,
+    RuleSet,
+    SiteContent,
+    ValidationContext,
+    default_ruleset,
+)
+
+
+@dataclass(frozen=True, slots=True)
+class FindingGroup:
+    """One finding as a reader meets it: the same rule saying the same
+    thing about the same subject, in however many languages.
+
+    A five-language project reports a title-length hint five times over —
+    identical severity, rule, subject and message, differing only in the
+    language tag. Five rows carry no more information than one row with
+    five tags, and they cost the reader five times the reading.
+    """
+
+    code: str
+    severity: str
+    subject: str
+    message: str
+    languages: tuple[str, ...]
+    count: int
+
+
+def group_issues(issues: list[Issue]) -> list[FindingGroup]:
+    """Collapse issues that differ only by language, keeping first-seen
+    order so the report still reads in the order the rules ran."""
+    order: list[tuple[str, str, str, str]] = []
+    languages: dict[tuple[str, str, str, str], list[str]] = {}
+    counts: dict[tuple[str, str, str, str], int] = {}
+    for issue in issues:
+        key = (issue.code, issue.severity.value, issue.subject, issue.message)
+        if key not in counts:
+            order.append(key)
+            languages[key] = []
+            counts[key] = 0
+        counts[key] += 1
+        if issue.language is not None:
+            languages[key].append(issue.language.value)
+    return [
+        FindingGroup(
+            code=code,
+            severity=severity,
+            subject=subject,
+            message=message,
+            languages=tuple(languages[key]),
+            count=counts[key],
+        )
+        for key in order
+        for code, severity, subject, message in (key,)
+    ]
 
 
 def run_report(

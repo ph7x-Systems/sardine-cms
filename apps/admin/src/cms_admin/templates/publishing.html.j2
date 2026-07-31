@@ -51,16 +51,20 @@
     <table class="table table-sm mb-0 admin-table admin-issues-table">
       <thead><tr><th scope="col">{{ _("Severity") }}</th><th scope="col">{{ _("Rule") }}</th><th scope="col">{{ _("Subject") }}</th><th scope="col">{{ _("Message") }}</th></tr></thead>
       <tbody>
-        {% for issue in findings %}
+        {% for finding in findings %}
         <tr>
-          <td><span class="badge {{ 'text-bg-danger admin-state-missing' if issue.severity.value == 'error' else 'text-bg-warning admin-state-outdated' }} admin-state">{{ _(issue.severity.value) }}</span></td>
-          <td><code>{{ issue.code }}</code></td>
+          <td><span class="badge {{ 'text-bg-danger admin-state-missing' if finding.severity == 'error' else 'text-bg-warning admin-state-outdated' }} admin-state">{{ _(finding.severity) }}</span></td>
+          <td><code>{{ finding.code }}</code></td>
           <td>
-            {% set link = subject_links.get(issue.subject) %}
-            {% if link %}<a href="{{ link }}">{{ issue.subject }}</a>{% else %}{{ issue.subject }}{% endif %}
-            {% if issue.language %} <span class="text-body-secondary">[{{ issue.language.value }}]</span>{% endif %}
+            {% set link = subject_links.get(finding.subject) %}
+            {% if link %}<a href="{{ link }}">{{ finding.subject }}</a>{% else %}{{ finding.subject }}{% endif %}
+            {# The languages the same finding covers, as tags on one row
+               rather than one row apiece. #}
+            {% for tag in finding.languages %}
+            <span class="badge text-bg-light border admin-tag">{{ tag | upper }}</span>
+            {% endfor %}
           </td>
-          <td>{{ _(issue.message) }}</td>
+          <td>{{ _(finding.message) }}</td>
         </tr>
         {% endfor %}
       </tbody>

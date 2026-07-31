@@ -348,11 +348,16 @@ three attempts with backoff. Every URL is reported as fetched, reused
 failed URL keeps its remote reference visibly in the body. A re-run finds
 the already-rewritten bodies and has nothing left to fetch.
 
-The validation report (shared with the dashboard) always shows the whole
-story, not only failures: a gate callout (open/blocked) with the scope that
-was validated (articles, pages, media assets, languages), one row per rule
-with its outcome — every rule is listed even when it passes — and the issue
-list with each subject linked to its edit screen. The five default rules:
+The validation report always shows the whole story, not only failures: a
+gate callout (open/blocked) with the scope that was validated (articles,
+pages, media assets, languages), one row per rule with its outcome — every
+rule is listed even when it passes — and the findings list with each
+subject linked to its edit screen. A finding covering several languages is
+one row carrying its language tags, not one row per language. The dashboard
+shares the gate callout and a per-rule tally of findings; the rule table and
+the findings list live on the Publishing panel, which owns validation as its
+task and gives the findings their filters, search and pagination. The five
+default rules:
 
 | Rule | Checks that |
 | --- | --- |

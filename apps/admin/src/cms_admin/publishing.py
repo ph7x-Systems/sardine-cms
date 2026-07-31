@@ -26,7 +26,7 @@ from fastapi.responses import RedirectResponse
 from cms_admin.audit import record as audit_record
 from cms_admin.auth import current_session, enforce_csrf, get_db, require_at_least
 from cms_admin.navigation import AdminScreen, register_screen
-from cms_admin.validation_report import report_context, run_report
+from cms_admin.validation_report import group_issues, report_context, run_report
 
 logger = logging.getLogger("cms_admin.publishing")
 
@@ -218,7 +218,9 @@ async def publishing_home(
         ]
     from cms_admin.listing import paginate
 
-    findings, listing = paginate(issues, page)
+    # Group before paginating: a page of findings is a page of things to
+    # fix, not a page of language variants of one thing.
+    findings, listing = paginate(group_issues(issues), page)
     return request.app.state.templates.TemplateResponse(
         request,
         "publishing.html.j2",
