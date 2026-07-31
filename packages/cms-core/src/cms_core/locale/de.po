@@ -1925,3 +1925,9 @@ msgid "%(count)s kind"
 msgid_plural "%(count)s kinds"
 msgstr[0] "%(count)s Typ"
 msgstr[1] "%(count)s Typen"
+
+msgid "Change the cover"
+msgstr "Titelbild ändern"
+
+msgid "not in the library"
+msgstr "nicht in der Bibliothek"

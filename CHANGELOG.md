@@ -10,6 +10,11 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Changed
 
+- The article editor shows the cover it has instead of the covers it
+  could have: once an entry has one, the library folds behind "Change the
+  cover" and the chosen image stays on screen with its alt text. An entry
+  without a cover still opens on the picker, and so does a search. The
+  editor goes from 3380 px to 2892 px and from 49 visible controls to 42.
 - The page editor stops spending the screen on things nobody asked for
   yet. A section row exposed five buttons — move up, move down,
   duplicate, hide, remove — so six sections meant thirty controls;
@@ -77,6 +82,14 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Fixed
 
+- The editor's preview never actually followed the form. The design
+  system promised a panel that stays beside the fields instead of
+  scrolling away after the first card, but the theme's main region
+  carries `overflow: auto`, which made that region — not the page — the
+  panel's scrollport; the region never scrolls, so the panel never stuck.
+  Above the stacking breakpoint the region no longer claims the scroll,
+  and the viewport gate now scrolls the editor with the wheel and fails
+  if the preview leaves the top of the screen.
 - The Indonesian catalog declared one plural form while two entries
   carried a second, which the catalog writer discarded with a warning on
   every panel start; the catalog now matches the language.

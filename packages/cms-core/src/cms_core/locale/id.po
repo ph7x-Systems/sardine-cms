@@ -1919,3 +1919,9 @@ msgstr[0] "%(count)s aturan"
 msgid "%(count)s kind"
 msgid_plural "%(count)s kinds"
 msgstr[0] "%(count)s jenis"
+
+msgid "Change the cover"
+msgstr "Ubah sampul"
+
+msgid "not in the library"
+msgstr "tidak ada di pustaka"

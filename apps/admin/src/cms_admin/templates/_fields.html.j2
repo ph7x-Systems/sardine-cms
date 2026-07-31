@@ -61,8 +61,29 @@
    disclosure to discover, no identifier to type. The current choice
    reads as chosen, and "no cover" is a tile like the rest so it never
    hides in a corner. #}
+{% set settled = current and not picker_query %}
 <div class="mb-2 admin-field">
   <span class="form-label d-block">{{ _("Cover") }}</span>
+  {% if settled %}
+  {# The cover is chosen: the editor needs to see which one, not four
+     alternatives nobody asked for. The library folds away until someone
+     is actually changing the choice — the same rule the block gallery
+     and the destination follow. #}
+  {% set chosen = picker_by_id.get(current) %}
+  <div class="d-flex gap-2 align-items-center mb-2 admin-picker-current">
+    {% if chosen %}
+    <img class="admin-thumb rounded border" src="/media-files/{{ chosen.path }}"
+         alt="" width="96" height="64" loading="lazy">
+    <span>{{ chosen.alt.get(picker_language) or chosen.id }}
+      <span class="form-text d-block"><code>{{ current }}</code></span></span>
+    {% else %}
+    <span><code>{{ current }}</code>
+      <span class="form-text d-block">{{ _("not in the library") }}</span></span>
+    {% endif %}
+  </div>
+  {% endif %}
+  <details class="admin-disclosure"{% if not settled %} open{% endif %}>
+    {% if settled %}<summary class="form-text">{{ _("Change the cover") }}</summary>{% endif %}
   {{ picker_search("cover-picker-search") }}
   <div class="d-flex flex-wrap gap-2 admin-picker" role="radiogroup" aria-label="{{ _("Cover") }}">
     <label class="admin-picker-tile border rounded p-2{% if not current %} border-primary bg-body-tertiary{% endif %}">
@@ -99,6 +120,7 @@
     {{ _("Search to reach the rest, or set the cover by identifier below.") }}
     {% endif %}
   </div>
+  </details>
 </div>
 {% endif %}
 {% endmacro %}

@@ -181,8 +181,11 @@ with that entity's errors listed (the publish gate; disable only with
   uploading bytes identical to an existing asset is refused with a
   message naming the asset that already holds them.
 - **Picking images in the editors**: the article metadata card and the
-  section editor offer a library picker — thumbnails captioned with the
-  alt text an editor wrote, chosen by radio (cover: pick, keep, or none)
+  section editor offer a library picker. Once an entry has a cover, the
+  editor shows that image with its alt text and folds the library behind
+  "Change the cover"; an entry without one opens on the picker. The
+  picker itself is thumbnails captioned with the alt text an editor
+  wrote, chosen by radio (cover: pick, keep, or none)
   or checkbox (section media: append to the ordered list). The picker
   shows a page of tiles and states how many of how many; its own search
   covers identifiers and alt text, so a large library is reached by

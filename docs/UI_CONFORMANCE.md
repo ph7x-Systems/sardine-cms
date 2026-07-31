@@ -32,6 +32,7 @@ screen joins the suite the moment it registers.
 | DS-19 | `check_pagination_bounds_large_collections` | With a collection larger than the page size: no more than one page of rows renders, and a full page carries a pagination control |
 | DS-8 | `test_screens_do_not_grow_with_the_language_count` | The number of controls reachable **without opening a disclosure** is identical for a small and a large language set — the fixture registers enough extra packs that any per-language growth would show |
 | DS-6 | `scripts/ui_viewport_check.py` | The browser scrolls the document right; `window.scrollX` must stay 0 |
+| DS-18 | `scripts/ui_viewport_check.py` | At 1280 px the browser wheels an editor to the end of its side-by-side row; a preview panel whose top has left the viewport has stopped following the form |
 | DS-14 | axe gate, `--scheme both` | Every audited screen passes serious/critical checks in both palettes |
 
 Each check is proved to catch its own defect: `test_each_check_catches_its_defect`
@@ -46,6 +47,17 @@ compared `document.scrollWidth` against the viewport and reported
 correctly clipped inside `overflow-x: auto`, and the page never moved.
 The suite therefore measures what the user experiences — an attempted
 scroll — not a derived width.
+
+The sticky-preview check is measured the same way, and for a sharper
+reason: the promise had been false for as long as it had been written
+down. The rule lived in one CSS declaration that the theme's own layout
+silently outranked, so the preview scrolled away like any other card
+while the documentation said otherwise. Reading the stylesheet would
+have confirmed the promise; scrolling the page disproved it. The check
+therefore wheels the real browser — and it wheels to the end of the
+panel's row rather than the end of the page, because a sticky panel is
+released when its column ends and asserting otherwise would fail a
+correct layout.
 
 DS-8 is measured the same way, for the same reason: controls behind a
 closed disclosure exist in the DOM but are not reachable, so the count
@@ -88,7 +100,8 @@ python -m cms_admin.demo_export \
   --out demo-admin/admin \
   --media-dir examples/multilingual-company-site/media \
   --project-dir examples/multilingual-company-site
-python scripts/ui_viewport_check.py demo-admin /admin/ /admin/articles/ /admin/menu/
+python scripts/ui_viewport_check.py demo-admin /admin/ /admin/articles/ /admin/menu/ \
+  /admin/articles/we-choose-the-tin/
 ```
 
 The axe gate needs its pinned bundle; the CI job shows the exact

@@ -549,3 +549,36 @@ def test_a_search_never_hides_the_current_cover(tmp_path: Path) -> None:
         empty = client.get("/articles/pinned", params={"media_q": "no-such-image"}).text
         assert "Showing 0 of 0" in empty
         assert 'value="shot-039" checked' in empty
+
+
+def test_a_chosen_cover_folds_the_library_away(tmp_path: Path) -> None:
+    """An entry with a cover does not need four alternatives on screen.
+    The chosen image stays visible with its alt text and the library
+    waits behind a disclosure; an entry without a cover still opens on
+    the picker, because there choosing is the task."""
+    assets = [_asset("tin-photo"), _asset("rocket-photo")]
+    app = _app(tmp_path, *assets)
+    with _client(app) as client:
+        token = _sign_in(client)
+        client.post(
+            "/articles",
+            data={"id": "coverless", "title": "Coverless", "csrf_token": token},
+            follow_redirects=True,
+        )
+        empty = client.get("/articles/coverless").text
+        assert "Change the cover" not in empty, "an entry without a cover hid the picker"
+
+        client.post(
+            "/articles/coverless",
+            data={"title": "Coverless", "cover_pick": "tin-photo", "csrf_token": token},
+            follow_redirects=True,
+        )
+        settled = client.get("/articles/coverless").text
+
+    assert "Change the cover" in settled, "the library stayed open on a settled cover"
+    assert "A tin, heroic" in settled, "the chosen image lost its caption"
+    # A search reopens it: someone searching is changing the choice.
+    with _client(app) as client:
+        _sign_in(client)
+        searching = client.get("/articles/coverless", params={"media_q": "rocket"}).text
+    assert "Change the cover" not in searching
