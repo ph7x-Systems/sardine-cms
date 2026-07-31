@@ -191,3 +191,18 @@ def test_static_assets_do_not_require_a_session(tmp_path: Path) -> None:
     with TestClient(_app(tmp_path)) as client:
         response = client.get("/static/admin.css", follow_redirects=False)
     assert response.status_code == 200
+
+
+def test_the_dashboard_states_the_verdict_without_the_rule_catalogue(tmp_path: Path) -> None:
+    """The rule descriptions are reference text: on a status surface they
+    wrapped to five lines apiece where a reader wanted a verdict. The
+    gate line and the per-rule tally stay; the catalogue lives on the
+    publishing screen, which owns validation as its task."""
+    app = _app(tmp_path)
+    with TestClient(app, base_url="https://testserver") as client:
+        _sign_in(client)
+        dashboard = client.get("/").text
+        publishing = client.get("/publishing").text
+    assert "Publish gate" in dashboard
+    assert "Checks that" not in dashboard, "the rule catalogue is back on the dashboard"
+    assert "Checks that" in publishing, "the publishing screen lost the rule catalogue"

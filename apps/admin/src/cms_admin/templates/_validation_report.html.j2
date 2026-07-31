@@ -14,6 +14,10 @@
     {{ _("across %(rules)s rules — publishing stays blocked until the errors are fixed.") | format(rules=report.results | length) }}</p>
 </div>
 {% endif %}
+{% if not (hide_rules | default(false)) %}
+{# The rule catalogue states what ran, passes included — a contract of
+   the report. It belongs where validation is the task; on a status
+   surface the gate line above already carries the verdict. #}
 <div class="card mb-3">
   <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Rules") }}</h2></div>
   <div class="card-body p-0 table-responsive admin-table-wrap">
@@ -36,6 +40,7 @@
     </table>
   </div>
 </div>
+{% endif %}
 {% if report.issues and not (hide_issues | default(false)) %}
 <div class="card mb-3">
   <div class="card-header"><h2 class="card-title h6 mb-0">{{ _("Issues") }}</h2></div>

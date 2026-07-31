@@ -14,6 +14,7 @@ from cms_core import (
     new_page,
 )
 from cms_validation import (
+    Issue,
     RuleSet,
     Severity,
     SiteContent,
@@ -160,3 +161,66 @@ def test_seo_hints_warn_and_are_disableable() -> None:
 
     quiet = RuleSet(rules=default_ruleset(), disabled={"seo-hints"}).run(content, CONTEXT)
     assert not [issue for issue in quiet.issues if issue.code == "seo-hints"]
+
+
+def test_findings_group_by_everything_but_the_language() -> None:
+    """A five-language project reports the same hint five times over,
+    identical but for the language tag. The panel reads them as one
+    finding covering five languages — five rows carry no more information
+    than one row with five tags."""
+    from cms_admin.validation_report import group_issues
+
+    issues = [
+        Issue(
+            code="seo-hints",
+            severity=Severity.WARNING,
+            message="description length reads poorly in search results",
+            subject="article:tin",
+            language=language,
+        )
+        for language in (None, Language("de"), Language("es"), Language("fr"), Language("pt-pt"))
+    ]
+    issues.append(
+        Issue(
+            code="required-translations",
+            severity=Severity.WARNING,
+            message="translation is missing",
+            subject="article:rocket",
+            language=Language("de"),
+        )
+    )
+    groups = group_issues(issues)
+
+    assert len(groups) == 2, "the language variants did not collapse"
+    hint, missing = groups
+    assert hint.count == 5
+    assert hint.languages == ("de", "es", "fr", "pt-pt"), "the source render carries no tag"
+    assert missing.count == 1
+    # Order follows the rules, so the report still reads as it ran.
+    assert [group.code for group in groups] == ["seo-hints", "required-translations"]
+
+
+def test_a_different_message_is_a_different_finding() -> None:
+    """Grouping collapses language, never substance: two rules, two
+    subjects or two messages stay two findings."""
+    from cms_admin.validation_report import group_issues
+
+    groups = group_issues(
+        [
+            Issue(
+                code="seo-hints",
+                severity=Severity.WARNING,
+                message="title is too long",
+                subject="article:tin",
+                language=Language("de"),
+            ),
+            Issue(
+                code="seo-hints",
+                severity=Severity.WARNING,
+                message="description is too short",
+                subject="article:tin",
+                language=Language("de"),
+            ),
+        ]
+    )
+    assert len(groups) == 2
