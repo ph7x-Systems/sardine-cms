@@ -146,6 +146,22 @@
    where there is room: below the main breakpoint the columns stack and a
    sticky panel would cover the form. */
 @media (min-width: 992px) {
+  /* The theme gives the main region overflow:auto, which makes that
+     region — not the page — the sticky panel's scrollport. The region
+     never scrolls, so the panel never stuck: it scrolled away like any
+     other card and the second column's whole point was lost. Above the
+     breakpoint no screen overflows the region, so the page can be the
+     scrollport again. Below it the columns stack, the sticky rule does
+     not apply, and the region keeps its own scrolling.
+
+     The selector matches the theme's own specificity on purpose; the
+     viewport check asserts the panel really pins, so a theme upgrade
+     that moves this rule fails loudly instead of quietly un-sticking
+     the preview. */
+  .sidebar-expand-lg.layout-fixed .app-main {
+    overflow: visible;
+  }
+
   .admin-sticky-panel {
     position: sticky;
     top: 1rem;
