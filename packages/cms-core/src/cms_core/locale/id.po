@@ -1915,3 +1915,7 @@ msgstr "ubah"
 msgid "%(count)s rule"
 msgid_plural "%(count)s rules"
 msgstr[0] "%(count)s aturan"
+
+msgid "%(count)s kind"
+msgid_plural "%(count)s kinds"
+msgstr[0] "%(count)s jenis"

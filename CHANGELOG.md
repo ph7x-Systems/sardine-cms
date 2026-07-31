@@ -10,6 +10,14 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Changed
 
+- The page editor stops spending the screen on things nobody asked for
+  yet. A section row exposed five buttons — move up, move down,
+  duplicate, hide, remove — so six sections meant thirty controls;
+  reordering stays direct and the rest folds into the same row menu the
+  content lists already use. The block catalogue, ten kinds with a
+  description apiece, arrives collapsed and says how many kinds it holds.
+  The editor goes from 2800 px to 2386 px and from 94 visible controls to
+  70.
 - The publishing screen leads with publishing. The run controls now sit
   under the gate verdict instead of below a screen and a half of
   advisory detail, the findings keep their place beneath them, and the
