@@ -10,6 +10,14 @@ features with their PRs, breaking changes and migrations — live in
 
 ### Changed
 
+- The publishing screen leads with publishing. The run controls now sit
+  under the gate verdict instead of below a screen and a half of
+  advisory detail, the findings keep their place beneath them, and the
+  rule catalogue closes the screen inside a collapsed panel — the
+  verdict already states what ran. Where the site lives is a project
+  decision, not a per-run one, so the four destination descriptions open
+  only when someone changes them. The screen goes from 2660 px to
+  1608 px, with the primary action on the first screen.
 - The publishing screen reads as a list of things to fix. The same
   finding was reported once per language — five identical rows differing
   only in a tag — so findings now collapse into one row carrying the

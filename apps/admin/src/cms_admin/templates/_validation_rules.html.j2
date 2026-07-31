@@ -1,0 +1,22 @@
+{# The rule catalogue: what ran, passes included. Rendered as a card
+   where validation is a status line, and inside a collapsed panel
+   where validation is the task and the verdict is already stated. #}
+<div class="table-responsive admin-table-wrap">
+    <table class="table table-sm table-striped mb-0 admin-table admin-rules-table">
+      <thead><tr><th scope="col">{{ _("Rule") }}</th><th scope="col">{{ _("Checks that") }}</th><th scope="col">{{ _("Result") }}</th></tr></thead>
+      <tbody>
+        {% for result in report.results %}
+        <tr>
+          <td><code>{{ result.rule }}</code></td>
+          <td>{{ _(result.description) }}</td>
+          <td>
+            {% if result.ok %}<span class="badge text-bg-success admin-state admin-state-complete">{{ _("pass") }}</span>
+            {% elif result.errors %}<span class="badge text-bg-danger admin-state admin-state-missing">{{ ngettext("%(count)s error", "%(count)s errors", result.errors | length) | format(count=result.errors | length) }}</span>
+              {% if result.warnings %}<span class="badge text-bg-warning admin-state admin-state-outdated">{{ ngettext("%(count)s warning", "%(count)s warnings", result.warnings | length) | format(count=result.warnings | length) }}</span>{% endif %}
+            {% else %}<span class="badge text-bg-warning admin-state admin-state-outdated">{{ ngettext("%(count)s warning", "%(count)s warnings", result.warnings | length) | format(count=result.warnings | length) }}</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>

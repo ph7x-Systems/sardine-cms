@@ -206,3 +206,28 @@ def test_the_dashboard_states_the_verdict_without_the_rule_catalogue(tmp_path: P
     assert "Publish gate" in dashboard
     assert "Checks that" not in dashboard, "the rule catalogue is back on the dashboard"
     assert "Checks that" in publishing, "the publishing screen lost the rule catalogue"
+
+
+def test_publishing_leads_with_the_task_and_closes_with_the_reference(tmp_path: Path) -> None:
+    """Someone opens this screen to publish. The run controls sit under
+    the gate verdict, the findings keep their place below, and the rule
+    catalogue closes the screen collapsed — the verdict already says what
+    ran, so the descriptions are reference, not status."""
+    # An entry in review missing a translation gives the screen a finding
+    # to show, so the findings card is on the page to be ordered.
+    app = _app(tmp_path, _article("incomplete", ContentStatus.REVIEW))
+    with TestClient(app, base_url="https://testserver") as client:
+        _sign_in(client)
+        page = client.get("/publishing").text
+
+    run = page.index("Build &amp; export")
+    findings = page.index('id="findings"')
+    rules = page.index('id="rules"')
+    assert run < findings < rules, "the screen no longer reads verdict, task, detail, reference"
+    assert "collapsed-card" in page[rules - 400 : rules + 400], (
+        "the rule catalogue opens by default"
+    )
+    # The destination is a project decision, not a per-run one: it is
+    # named in the summary and its four descriptions stay closed.
+    assert "Destination" in page
+    assert page.index("Destination") < page.index("Where will the site live?")
