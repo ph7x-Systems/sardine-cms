@@ -733,3 +733,16 @@ def test_the_block_catalogue_arrives_collapsed(tmp_path: Path) -> None:
     panel = editor[editor.index('id="add-block"') - 200 : editor.index('id="add-block"') + 400]
     assert "collapsed-card" in panel, "the block catalogue opens by default"
     assert "kinds" in panel, "the panel does not say what it holds"
+
+
+def test_the_block_catalogue_opens_on_an_empty_page(tmp_path: Path) -> None:
+    """A page with no sections has nothing else to do, so the catalogue
+    is the task there and arrives open. It folds away once the page has
+    sections to edit."""
+    app = _app(tmp_path, _page("blank"))
+    with _client(app) as client:
+        _sign_in(client)
+        editor = client.get("/pages/blank").text
+
+    panel = editor[editor.index('id="add-block"') - 200 : editor.index('id="add-block"') + 400]
+    assert "collapsed-card" not in panel, "an empty page hides its only action"

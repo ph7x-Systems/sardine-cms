@@ -168,7 +168,7 @@
    editor (DS-18), and says how many kinds it holds. #}
 {% call quiet_panel(_("Add a block"),
     ngettext("%(count)s kind", "%(count)s kinds", kind_hints | length) | format(count=kind_hints | length),
-    section_id="add-block") %}
+    collapsed=page.sections | length > 0, section_id="add-block") %}
     {% set gallery_meta = {
       "hero": ("bi-fonts", _("Opening statement with a large heading.")),
       "story": ("bi-body-text", _("Narrative prose with stat pairs and images.")),

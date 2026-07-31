@@ -104,6 +104,11 @@ def _drive(base: str) -> list[str]:
 
         for kind in ("hero", "story", "faq", "cta"):
             page.goto(f"{base}/pages/landing")
+            # The catalogue opens by itself on an empty page and folds
+            # away once the page has sections — open it as a reader does.
+            toggle = page.locator('#add-block [data-lte-toggle="card-collapse"]')
+            if page.locator("#add-block.collapsed-card").count():
+                toggle.click()
             page.click(f".admin-block-gallery form:has(input[value='{kind}']) button")
             page.wait_for_url(f"{base}/pages/landing/sections/{kind}")
             step(f"block added from the gallery: {kind}")
