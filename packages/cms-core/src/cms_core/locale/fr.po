@@ -1909,3 +1909,14 @@ msgstr "actuelle"
 
 msgid "No image matches that search."
 msgstr "Aucune image ne correspond à cette recherche."
+
+msgid "Destination"
+msgstr "Destination"
+
+msgid "change"
+msgstr "modifier"
+
+msgid "%(count)s rule"
+msgid_plural "%(count)s rules"
+msgstr[0] "%(count)s règle"
+msgstr[1] "%(count)s règles"

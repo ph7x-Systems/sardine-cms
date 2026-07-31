@@ -206,12 +206,18 @@ with that entity's errors listed (the publish gate; disable only with
 
 ## Publishing panel
 
-`/publishing` shows the project (`sardine.toml`), the full validation
-report, and two actions: **Preview build** (any role) into a temporary
-directory served under `/preview/`, and **Build & export** (publisher and
-up) which validates first, then writes the project's output directory with
-the chosen target's extras (`generic`, `swa`, `nginx`, `astro`). Every run is
-recorded and shown on the panel and the dashboard.
+`/publishing` shows the project (`sardine.toml`), the gate verdict, and
+two actions directly beneath it: **Preview build** (any role) into a
+temporary directory served under `/preview/`, and **Build & export**
+(publisher and up) which validates first, then writes the project's output
+directory with the chosen target's extras (`generic`, `swa`, `nginx`,
+`astro`). Every run is recorded and shown on the panel and the dashboard.
+
+The screen reads verdict → run → findings → rules. The destination is
+remembered in the project, so it appears as a line naming the current
+choice and opens for editing on request; the rule catalogue closes the
+screen in a collapsed panel, since the verdict already states how many
+rules ran and what they found.
 
 ## Backup, restore and foreign import
 

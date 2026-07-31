@@ -1905,3 +1905,13 @@ msgstr "saat ini"
 
 msgid "No image matches that search."
 msgstr "Tidak ada gambar yang cocok dengan pencarian itu."
+
+msgid "Destination"
+msgstr "Tujuan"
+
+msgid "change"
+msgstr "ubah"
+
+msgid "%(count)s rule"
+msgid_plural "%(count)s rules"
+msgstr[0] "%(count)s aturan"
